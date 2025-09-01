@@ -6,7 +6,9 @@
     "check": "ts-node src/index.ts",
     "build": "tsc",
     "watch": "ts-node src/index.ts --watch",
-    "test:db": "ts-node src/test-db.ts"
+    "test:db": "ts-node src/test-db.ts",
+   "dashboard": "ts-node src/dashboard/server.ts"
+
   },
   "keywords": [],
   "author": "",
@@ -16,13 +18,20 @@
     "@types/chokidar": "^1.7.5",
     "@types/node": "^24.3.0",
     "@types/pg": "^8.15.5",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
   "dependencies": {
     "chalk": "^5.6.0",
     "chokidar": "^4.0.3",
+    "next": "^15.5.2",
     "pg": "^8.16.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-hot-toast": "^2.6.0",
+    "recharts": "^3.1.2",
     "ts-morph": "^26.0.0",
     "zod": "^4.1.5"
   }
