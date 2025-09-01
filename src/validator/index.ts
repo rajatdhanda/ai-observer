@@ -6,6 +6,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as ts from 'typescript';
+import { RegistryValidator } from './registry-validator';
 
 export interface ValidationResult {
   critical: ValidationIssue[];
@@ -18,8 +19,10 @@ export interface ValidationResult {
     hasHooks: boolean;
     hasComponents: boolean;
     hasRegistries: boolean;
+    registryScore: number;
     chainsComplete: ChainValidation[];
   };
+  registryValidation?: any;
 }
 
 export interface ValidationIssue {
@@ -86,10 +89,18 @@ export class ProjectValidator {
     await this.validateErrorHandling();
     await this.validateLoadingStates();
     await this.validateAPITypeSafety();
-    await this.validateRegistries();
     await this.validateCacheInvalidation();
     await this.validateFormValidation();
     await this.validateAuthGuards();
+    
+    // Validate registries
+    let registryValidation;
+    try {
+      registryValidation = await this.validateRegistriesWithValidator();
+    } catch (error) {
+      console.error('Registry validation error:', error);
+      registryValidation = null;
+    }
     
     // Check complete chains
     const chains = await this.validateCompleteChains();
@@ -105,8 +116,10 @@ export class ProjectValidator {
       score: Math.round(score),
       summary: {
         ...structure,
+        registryScore: registryValidation && registryValidation.score ? registryValidation.score : 0,
         chainsComplete: chains
-      }
+      },
+      registryValidation
     };
   }
 
@@ -339,41 +352,7 @@ export class ProjectValidator {
     }
   }
 
-  private async validateRegistries() {
-    const registryPath = path.join(this.projectPath, 'src', 'constants');
-    if (!fs.existsSync(registryPath)) return;
-    
-    // Check if registries exist
-    const registryFiles = this.getFiles(registryPath, '.ts');
-    let hasRoutes = false;
-    let hasQueryKeys = false;
-    
-    for (const file of registryFiles) {
-      const source = fs.readFileSync(file, 'utf-8');
-      if (source.includes('Routes')) hasRoutes = true;
-      if (source.includes('QueryKeys')) hasQueryKeys = true;
-    }
-    
-    if (!hasRoutes) {
-      this.warnings.push({
-        type: 'missing-registry',
-        severity: 'warning',
-        file: 'src/constants/registries.ts',
-        message: 'Missing Routes registry',
-        suggestion: 'Create Routes const to prevent typos in navigation'
-      });
-    }
-    
-    if (!hasQueryKeys) {
-      this.warnings.push({
-        type: 'missing-registry',
-        severity: 'warning',
-        file: 'src/constants/registries.ts',
-        message: 'Missing QueryKeys registry',
-        suggestion: 'Create QueryKeys for consistent cache management'
-      });
-    }
-  }
+  // Removed duplicate - using the one with RegistryValidator
 
   private async validateCacheInvalidation() {
     const hooksPath = path.join(this.projectPath, 'src', 'hooks');
@@ -432,6 +411,77 @@ export class ProjectValidator {
         }
       }
     }
+  }
+
+  private async validateRegistriesWithValidator() {
+    const registryValidator = new RegistryValidator(this.projectPath);
+    const validation = await registryValidator.validate();
+    
+    // Add issues from registry validation
+    if (!validation.registries.routes.found) {
+      this.warnings.push({
+        type: 'missing-registry',
+        severity: 'warning',
+        file: 'src/constants/routes.ts',
+        message: 'No Routes registry found',
+        suggestion: 'Create a Routes constant to prevent hardcoded URLs'
+      });
+    }
+    
+    if (!validation.registries.queryKeys.found) {
+      this.warnings.push({
+        type: 'missing-registry',
+        severity: 'warning',
+        file: 'src/constants/queryKeys.ts',
+        message: 'No QueryKeys registry found',
+        suggestion: 'Create QueryKeys for consistent cache management'
+      });
+    }
+    
+    // Add issues for hardcoded values
+    validation.usage.invalid.forEach(usage => {
+      this.issues.push({
+        type: 'missing-registry',
+        severity: 'critical',
+        file: usage.file,
+        line: usage.line,
+        message: `Hardcoded value: ${usage.value}`,
+        suggestion: usage.suggestion || 'Use registry constant instead'
+      });
+    });
+    
+    // Add typo warnings
+    validation.usage.typos.forEach(typo => {
+      this.warnings.push({
+        type: 'missing-registry',
+        severity: 'warning',
+        file: typo.file,
+        line: typo.line,
+        message: `Possible typo: "${typo.found}"`,
+        suggestion: `Did you mean "${typo.suggestion}"?`
+      });
+    });
+    
+    // Add passed checks
+    if (validation.registries.routes.found) {
+      this.passed.push({
+        type: 'registry',
+        file: validation.registries.routes.file || '',
+        status: 'passed',
+        message: '✅ Routes registry found'
+      });
+    }
+    
+    if (validation.registries.queryKeys.found) {
+      this.passed.push({
+        type: 'registry',
+        file: validation.registries.queryKeys.file || '',
+        status: 'passed',
+        message: '✅ QueryKeys registry found'
+      });
+    }
+    
+    return validation;
   }
 
   private async validateAuthGuards() {

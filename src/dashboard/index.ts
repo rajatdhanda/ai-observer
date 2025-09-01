@@ -9,6 +9,7 @@ import { ProjectValidator } from '../validator';
 import { renderValidationView } from './components/validation-view';
 import { TableMapper } from '../validator/table-mapper';
 import { renderTableFlowView } from './components/table-flow-view';
+import { renderRegistryView } from './components/registry-view';
 
 const PORT = 3001;
 
@@ -121,6 +122,9 @@ class Dashboard {
       } else if (req.url === '/api/table-flow-view') {
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(renderTableFlowView(this.tableMappingResults));
+      } else if (req.url === '/api/registry-view') {
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(renderRegistryView(this.validationResults));
       } else if (req.url === '/enhanced') {
         const enhancedPath = path.join(__dirname, 'enhanced.html');
         const html = fs.readFileSync(enhancedPath, 'utf-8');
@@ -416,6 +420,7 @@ Available projects: ${this.availableProjects.length}
       <button class="btn" onclick="analyzeBusiness()">Analyze Business Logic</button>
       <button class="btn" onclick="runValidation()" style="background: linear-gradient(to right, #ef4444, #f59e0b);">🔍 Run 80-20 Validation</button>
       <button class="btn" onclick="mapTableFlow()" style="background: linear-gradient(to right, #8b5cf6, #3b82f6);">🗺️ Map Table Usage</button>
+      <button class="btn" onclick="showRegistryValidation()" style="background: linear-gradient(to right, #10b981, #14b8a6);">📋 Registry Check</button>
     </div>
     
     <div id="errorPanel" class="section" style="display: none; background: #7f1d1d; border: 2px solid #ef4444;">
@@ -588,6 +593,35 @@ Available projects: ${this.availableProjects.length}
         
         // Fetch the rendered view
         const viewRes = await fetch('/api/table-flow-view');
+        const viewHtml = await viewRes.text();
+        results.innerHTML = viewHtml;
+      }
+      
+      async function showRegistryValidation() {
+        const panel = document.getElementById('registryPanel');
+        if (!panel) {
+          // Create registry panel if it doesn't exist
+          const container = document.querySelector('.container');
+          const newPanel = document.createElement('div');
+          newPanel.id = 'registryPanel';
+          newPanel.className = 'section';
+          newPanel.style.display = 'none';
+          newPanel.innerHTML = '<h2>📋 Registry Validation</h2><div id="registryResults"></div>';
+          container.insertBefore(newPanel, container.querySelector('.grid'));
+        }
+        
+        const resultsPanel = document.getElementById('registryPanel');
+        const results = document.getElementById('registryResults');
+        resultsPanel.style.display = 'block';
+        results.innerHTML = '<div style="color: #64748b;">Checking registry usage...</div>';
+        
+        // Make sure validation has been run first
+        if (!${this.validationResults ? 'true' : 'false'}) {
+          await fetch('/api/validate');
+        }
+        
+        // Fetch the rendered registry view
+        const viewRes = await fetch('/api/registry-view');
         const viewHtml = await viewRes.text();
         results.innerHTML = viewHtml;
       }
