@@ -468,20 +468,9 @@
       
       <!-- Flows -->
       <div class="entity-list">
-        <h3>Flows</h3>
+        <h3>Data Flows</h3>
         <div id="flowsList">
-          <div class="entity-item">
-            <span>Authentication</span>
-            <span class="health-indicator health-good"></span>
-          </div>
-          <div class="entity-item">
-            <span>Order Processing</span>
-            <span class="health-indicator health-warning"></span>
-          </div>
-          <div class="entity-item">
-            <span>User Registration</span>
-            <span class="health-indicator health-error"></span>
-          </div>
+          <!-- Will be populated dynamically -->
         </div>
       </div>
     </div>
@@ -639,11 +628,94 @@
       document.getElementById('hookCount').textContent = uniqueHooks.length;
       
       const hooksList = document.getElementById('hooksList');
-      hooksList.innerHTML = uniqueHooks.slice(0, 5).map(hook => `
-        <div class="entity-item">
-          <span>${hook}</span>
-        </div>
-      `).join('');
+      hooksList.innerHTML = uniqueHooks.slice(0, 10).map(hook => {
+        // Find which tables use this hook
+        const tablesUsingHook = tables.filter(([_, table]) => 
+          table.hooks?.some(h => h.hookName === hook)
+        ).map(([name]) => name);
+        
+        return `
+          <div class="entity-item" onclick="showHookDetails('${hook}')" style="cursor: pointer;">
+            <span>${hook}</span>
+            <span class="entity-meta" style="font-size: 10px;">${tablesUsingHook.length} tables</span>
+          </div>
+        `;
+      }).join('');
+      
+      // Load flows dynamically
+      loadDataFlows(tables);
+    }
+    
+    function loadDataFlows(tables) {
+      const flowsList = document.getElementById('flowsList');
+      
+      // Identify common flows based on table relationships
+      const flows = [];
+      
+      // Authentication flow
+      if (tables.some(([name]) => name.toLowerCase().includes('user') || name.toLowerCase().includes('auth'))) {
+        flows.push({
+          name: 'Authentication',
+          tables: tables.filter(([name]) => 
+            name.toLowerCase().includes('user') || 
+            name.toLowerCase().includes('auth') || 
+            name.toLowerCase().includes('session')
+          ).map(([name]) => name),
+          health: 'good'
+        });
+      }
+      
+      // Content flow
+      if (tables.some(([name]) => name.toLowerCase().includes('post') || name.toLowerCase().includes('comment'))) {
+        flows.push({
+          name: 'Content Management',
+          tables: tables.filter(([name]) => 
+            name.toLowerCase().includes('post') || 
+            name.toLowerCase().includes('comment') || 
+            name.toLowerCase().includes('engagement')
+          ).map(([name]) => name),
+          health: 'warning'
+        });
+      }
+      
+      // Professional/Profile flow
+      if (tables.some(([name]) => name.toLowerCase().includes('professional') || name.toLowerCase().includes('profile'))) {
+        flows.push({
+          name: 'User Profiles',
+          tables: tables.filter(([name]) => 
+            name.toLowerCase().includes('professional') || 
+            name.toLowerCase().includes('profile') ||
+            name.toLowerCase().includes('skill')
+          ).map(([name]) => name),
+          health: 'good'
+        });
+      }
+      
+      // Live session flow
+      if (tables.some(([name]) => name.toLowerCase().includes('live') || name.toLowerCase().includes('session'))) {
+        flows.push({
+          name: 'Live Sessions',
+          tables: tables.filter(([name]) => 
+            name.toLowerCase().includes('live') || 
+            name.toLowerCase().includes('session') ||
+            name.toLowerCase().includes('stream')
+          ).map(([name]) => name),
+          health: 'warning'
+        });
+      }
+      
+      flowsList.innerHTML = flows.map(flow => {
+        const healthClass = `health-${flow.health}`;
+        return `
+          <div class="entity-item" onclick="showFlowDetails('${flow.name}', ${JSON.stringify(flow.tables).replace(/"/g, '&quot;')})" style="cursor: pointer;">
+            <span>${flow.name}</span>
+            <div>
+              <span class="entity-meta" style="font-size: 10px;">${flow.tables.length} tables</span>
+              <span class="health-indicator ${healthClass}"></span>
+            </div>
+          </div>
+        `;
+      }).join('') || '<div style="color: #64748b; padding: 10px; font-size: 12px;">No flows detected</div>';
     }
 
     function selectTable(tableName) {
@@ -775,6 +847,260 @@
       `;
     }
 
+    function showHookDetails(hookName) {
+      const mainContent = document.getElementById('mainContent');
+      const queryContent = document.getElementById('queryContent');
+      
+      // Find all tables that use this hook
+      const tablesData = tableMapping?.tables || analysisData?.tables || {};
+      const hookUsage = [];
+      
+      Object.entries(tablesData).forEach(([tableName, table]) => {
+        const hookInfo = table.hooks?.find(h => h.hookName === hookName);
+        if (hookInfo) {
+          hookUsage.push({
+            table: tableName,
+            hook: hookInfo,
+            components: hookInfo.usedInComponents || [],
+            operations: hookInfo.operations || [],
+            hasError: hookInfo.hasErrorHandling,
+            hasLoading: hookInfo.hasLoadingState
+          });
+        }
+      });
+      
+      // Create detailed hook view
+      mainContent.innerHTML = `
+        <div style="padding: 20px;">
+          <h2 style="margin-bottom: 20px;">🪝 Hook: ${hookName}</h2>
+          
+          <!-- Hook Overview -->
+          <div style="background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h3 style="color: #60a5fa; margin-bottom: 10px;">Hook Analysis</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+              <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;">
+                <div style="font-size: 24px; color: #3b82f6;">${hookUsage.length}</div>
+                <div style="color: #94a3b8; font-size: 12px;">Tables Using</div>
+              </div>
+              <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;">
+                <div style="font-size: 24px; color: #10b981;">
+                  ${hookUsage.reduce((acc, u) => acc + u.components.length, 0)}
+                </div>
+                <div style="color: #94a3b8; font-size: 12px;">Components</div>
+              </div>
+              <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;">
+                <div style="font-size: 24px; color: ${hookUsage.every(u => u.hasError) ? '#10b981' : '#ef4444'};">
+                  ${hookUsage.every(u => u.hasError) ? '✅' : '❌'}
+                </div>
+                <div style="color: #94a3b8; font-size: 12px;">Error Handling</div>
+              </div>
+              <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;">
+                <div style="font-size: 24px; color: ${hookUsage.every(u => u.hasLoading) ? '#10b981' : '#f59e0b'};">
+                  ${hookUsage.every(u => u.hasLoading) ? '✅' : '⚠️'}
+                </div>
+                <div style="color: #94a3b8; font-size: 12px;">Loading State</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Usage Details -->
+          <div style="background: #1e293b; padding: 15px; border-radius: 8px;">
+            <h3 style="color: #60a5fa; margin-bottom: 15px;">Usage Trace</h3>
+            ${hookUsage.map(usage => `
+              <div style="margin-bottom: 15px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <h4 style="color: #fbbf24; cursor: pointer;" onclick="selectTable('${usage.table}')">
+                    📊 ${usage.table} →
+                  </h4>
+                  <div style="display: flex; gap: 10px;">
+                    ${usage.hasError ? '<span style="color: #10b981;">✅ Error</span>' : '<span style="color: #ef4444;">❌ No Error</span>'}
+                    ${usage.hasLoading ? '<span style="color: #10b981;">✅ Loading</span>' : '<span style="color: #f59e0b;">⚠️ No Loading</span>'}
+                  </div>
+                </div>
+                
+                <!-- Operations -->
+                ${usage.operations.length > 0 ? `
+                  <div style="margin-bottom: 10px;">
+                    <span style="color: #94a3b8; font-size: 12px;">Operations:</span>
+                    <div style="display: flex; gap: 5px; margin-top: 5px;">
+                      ${usage.operations.map(op => `
+                        <span style="padding: 2px 8px; background: #374151; border-radius: 4px; font-size: 11px;">
+                          ${op}
+                        </span>
+                      `).join('')}
+                    </div>
+                  </div>
+                ` : ''}
+                
+                <!-- Components -->
+                ${usage.components.length > 0 ? `
+                  <div>
+                    <span style="color: #94a3b8; font-size: 12px;">Used in Components:</span>
+                    <div style="margin-top: 5px;">
+                      ${usage.components.map(comp => `
+                        <div style="padding: 5px 10px; background: #1f2937; border-radius: 4px; margin-top: 5px; cursor: pointer;"
+                             onclick="showComponentDetails('${comp}')">
+                          🎨 ${comp}
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                ` : '<div style="color: #64748b; font-size: 12px;">No components found using this hook</div>'}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      
+      // Clear query panel
+      queryContent.innerHTML = `
+        <div style="padding: 20px;">
+          <h3 style="color: #60a5fa; margin-bottom: 10px;">Hook Code Preview</h3>
+          <div style="background: #0f172a; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 12px;">
+            <div style="color: #94a3b8;">// Example usage of ${hookName}</div>
+            <div style="color: #e2e8f0; margin-top: 10px;">
+              const { data, error, isLoading } = ${hookName}();
+              <br><br>
+              if (isLoading) return &lt;Skeleton /&gt;;
+              <br>
+              if (error) return &lt;ErrorMessage /&gt;;
+              <br>
+              if (!data) return null;
+              <br><br>
+              return &lt;DataDisplay data={data} /&gt;;
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function showFlowDetails(flowName, tables) {
+      const mainContent = document.getElementById('mainContent');
+      const queryContent = document.getElementById('queryContent');
+      const tablesData = tableMapping?.tables || analysisData?.tables || {};
+      
+      // Build flow visualization
+      const flowSteps = [];
+      tables.forEach(tableName => {
+        const table = tablesData[tableName];
+        if (table) {
+          flowSteps.push({
+            name: tableName,
+            type: table.typeDefinition ? '✅' : '❌',
+            db: table.databaseQueries.length,
+            hooks: table.hooks.length,
+            components: table.components.length,
+            score: table.score
+          });
+        }
+      });
+      
+      mainContent.innerHTML = `
+        <div style="padding: 20px;">
+          <h2 style="margin-bottom: 20px;">🔄 Flow: ${flowName}</h2>
+          
+          <!-- Flow Overview -->
+          <div style="background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h3 style="color: #60a5fa; margin-bottom: 15px;">Flow Pipeline</h3>
+            
+            <!-- Visual Flow -->
+            <div style="overflow-x: auto;">
+              <div style="display: flex; gap: 20px; padding: 10px; min-width: fit-content;">
+                ${flowSteps.map((step, idx) => `
+                  <div style="text-align: center;">
+                    <div style="padding: 15px; background: ${step.score >= 80 ? '#14532d' : step.score >= 40 ? '#78350f' : '#7f1d1d'}; 
+                                border-radius: 8px; cursor: pointer; min-width: 120px;"
+                         onclick="selectTable('${step.name}')">
+                      <div style="font-weight: bold; margin-bottom: 10px;">${step.name}</div>
+                      <div style="font-size: 24px; margin-bottom: 5px;">${step.score}%</div>
+                      <div style="display: flex; justify-content: center; gap: 10px; font-size: 12px;">
+                        <span>${step.type} Type</span>
+                        <span>${step.hooks} 🪝</span>
+                        <span>${step.components} 🎨</span>
+                      </div>
+                    </div>
+                    ${idx < flowSteps.length - 1 ? '<div style="color: #64748b; font-size: 20px; margin-top: 10px;">↓</div>' : ''}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+          
+          <!-- Flow Health Analysis -->
+          <div style="background: #1e293b; padding: 15px; border-radius: 8px;">
+            <h3 style="color: #60a5fa; margin-bottom: 15px;">Health Analysis</h3>
+            
+            <!-- Bottlenecks -->
+            ${flowSteps.filter(s => s.score < 40).length > 0 ? `
+              <div style="background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 4px; margin-bottom: 10px;">
+                <h4 style="color: #fca5a5; margin-bottom: 10px;">❌ Critical Issues</h4>
+                ${flowSteps.filter(s => s.score < 40).map(step => `
+                  <div style="margin-bottom: 5px;">
+                    <span style="color: #ef4444;">• ${step.name}</span>: 
+                    ${step.hooks === 0 ? 'No hooks' : ''}
+                    ${step.components === 0 ? 'No UI components' : ''}
+                    ${step.db === 0 ? 'No DB queries' : ''}
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+            
+            <!-- Warnings -->
+            ${flowSteps.filter(s => s.score >= 40 && s.score < 80).length > 0 ? `
+              <div style="background: rgba(245, 158, 11, 0.1); padding: 10px; border-radius: 4px; margin-bottom: 10px;">
+                <h4 style="color: #fcd34d; margin-bottom: 10px;">⚠️ Warnings</h4>
+                ${flowSteps.filter(s => s.score >= 40 && s.score < 80).map(step => `
+                  <div style="margin-bottom: 5px;">
+                    <span style="color: #f59e0b;">• ${step.name}</span>: 
+                    Incomplete implementation (${step.score}% health)
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+            
+            <!-- Success -->
+            ${flowSteps.filter(s => s.score >= 80).length > 0 ? `
+              <div style="background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 4px;">
+                <h4 style="color: #86efac; margin-bottom: 10px;">✅ Healthy Tables</h4>
+                ${flowSteps.filter(s => s.score >= 80).map(step => `
+                  <div style="margin-bottom: 5px;">
+                    <span style="color: #10b981;">• ${step.name}</span>: 
+                    Fully implemented (${step.score}% health)
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+      
+      // Show flow diagram in query panel
+      queryContent.innerHTML = `
+        <div style="padding: 20px;">
+          <h3 style="color: #60a5fa; margin-bottom: 15px;">Flow Trace</h3>
+          <div style="background: #0f172a; padding: 15px; border-radius: 8px;">
+            <div style="font-family: monospace; font-size: 12px; color: #e2e8f0;">
+              ${flowSteps.map((step, idx) => `
+                <div style="margin-bottom: 10px;">
+                  <span style="color: #60a5fa;">${idx + 1}.</span> 
+                  <span style="color: #fbbf24;">${step.name}</span>
+                  <div style="padding-left: 20px; color: #94a3b8;">
+                    → ${step.db} queries → ${step.hooks} hooks → ${step.components} components
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function showComponentDetails(componentName) {
+      // This would show detailed component analysis
+      console.log('Show component details for:', componentName);
+      // TODO: Implement component detail view
+    }
+    
     function analyzeErrorHandling(query) {
       // Helper function to analyze error handling
       return {
