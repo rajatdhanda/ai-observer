@@ -413,6 +413,12 @@
       <span>Project: <strong id="projectName">loading...</strong></span>
       <span>Framework: <strong id="frameworkName">loading...</strong></span>
       <span>Tables: <strong id="tableCount">0</strong></span>
+      <select id="projectSelector" onchange="switchProject(this.value)" style="margin-left: 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 4px 8px; border-radius: 4px;">
+        <option value="">Select Project</option>
+        <option value="ai-observer">AI Observer</option>
+        <option value="streax">Streax</option>
+        <option value="docuchat">Docuchat</option>
+      </select>
     </div>
   </div>
 
@@ -507,6 +513,25 @@
     let tableMapping = {};
 
     // Initialize
+    async function switchProject(projectName) {
+      if (!projectName) return;
+      
+      // Clear current data
+      analysisData = {};
+      tableMapping = {};
+      
+      // Load new project data
+      try {
+        // Switch project on server
+        await fetch(`/api/set-project?path=${encodeURIComponent(projectName)}`);
+        
+        // Reload everything
+        await init();
+      } catch (error) {
+        console.error('Error switching project:', error);
+      }
+    }
+
     async function loadValidationScores() {
       try {
         const res = await fetch('/api/validate');
@@ -534,18 +559,36 @@
 
     async function init() {
       try {
-        // Load analysis data
+        // First try to get analysis data
         const analysisRes = await fetch('/api/analysis');
-        analysisData = await analysisRes.json();
+        if (analysisRes.ok) {
+          const data = await analysisRes.text();
+          if (data && data !== '{}') {
+            analysisData = JSON.parse(data);
+          }
+        }
         
-        // Load table mapping
+        // Load table mapping - this is the important one
         const mappingRes = await fetch('/api/table-mapping');
-        tableMapping = await mappingRes.json();
+        if (mappingRes.ok) {
+          tableMapping = await mappingRes.json();
+        }
         
-        // Update header
-        document.getElementById('projectName').textContent = analysisData.projectName || 'Unknown';
-        document.getElementById('frameworkName').textContent = analysisData.framework?.name || 'Unknown';
-        document.getElementById('tableCount').textContent = Object.keys(tableMapping.tables || {}).length;
+        // If no analysis data, try to analyze first
+        if (!analysisData || Object.keys(analysisData).length === 0) {
+          const analyzeRes = await fetch('/api/analyze?project=ai-observer');
+          if (analyzeRes.ok) {
+            analysisData = await analyzeRes.json();
+          }
+        }
+        
+        // Update header with available data
+        document.getElementById('projectName').textContent = 
+          analysisData?.projectName || tableMapping?.projectInfo?.name || 'AI Observer';
+        document.getElementById('frameworkName').textContent = 
+          analysisData?.framework?.name || tableMapping?.projectInfo?.framework || 'TypeScript';
+        document.getElementById('tableCount').textContent = 
+          Object.keys(tableMapping?.tables || analysisData?.tables || {}).length;
         
         // Load sidebar
         loadSidebar();
@@ -561,10 +604,19 @@
     }
 
     function loadSidebar() {
-      const tables = Object.entries(tableMapping.tables || {});
+      // Try to get tables from multiple sources
+      const tablesData = tableMapping?.tables || analysisData?.tables || {};
+      const tables = Object.entries(tablesData);
       const tablesList = document.getElementById('tablesList');
       
-      tablesList.innerHTML = tables.map(([name, table]) => {
+      if (tables.length === 0) {
+        tablesList.innerHTML = `
+          <div style="color: #64748b; padding: 10px; font-size: 12px;">
+            No tables found. Try analyzing a project with database tables.
+          </div>
+        `;
+      } else {
+        tablesList.innerHTML = tables.map(([name, table]) => {
         const healthClass = table.score >= 80 ? 'health-good' : 
                            table.score >= 40 ? 'health-warning' : 'health-error';
         return `
@@ -577,6 +629,7 @@
           </div>
         `;
       }).join('');
+      }
       
       document.getElementById('tableListCount').textContent = tables.length;
       
@@ -595,8 +648,12 @@
 
     function selectTable(tableName) {
       currentTable = tableName;
-      const table = tableMapping.tables[tableName];
-      if (!table) return;
+      const tablesData = tableMapping?.tables || analysisData?.tables || {};
+      const table = tablesData[tableName];
+      if (!table) {
+        console.warn('Table not found:', tableName);
+        return;
+      }
       
       // Update active state
       document.querySelectorAll('.entity-item').forEach(el => {
