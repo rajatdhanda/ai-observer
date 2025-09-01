@@ -775,34 +775,80 @@
       `;
     }
 
+    function analyzeErrorHandling(query) {
+      // Helper function to analyze error handling
+      return {
+        hasTryCatch: query.hasTryCatch || false,
+        hasErrorState: query.hasErrorState || false,
+        hasValidation: query.hasValidation || false
+      };
+    }
+    
     function loadTableQueries(name, table) {
       const queryContent = document.getElementById('queryContent');
       
-      // Get sample queries
+      // Get comprehensive query and flow data
       const queries = [];
+      const errorChains = [];
+      const dataFlows = [];
       
-      // From database queries
+      // Analyze database queries with error tracking
       if (table.databaseQueries.length > 0) {
-        queries.push({
-          title: `get${name}ById`,
-          type: 'select',
-          query: `SELECT * FROM ${name}s WHERE id = $1`,
-          file: table.databaseQueries[0].file
+        table.databaseQueries.forEach(dbQuery => {
+          queries.push({
+            title: `${dbQuery.type || 'SELECT'} ${name}`,
+            type: 'database',
+            query: dbQuery.query || `SELECT * FROM ${name}s WHERE id = $1`,
+            file: dbQuery.file,
+            line: dbQuery.line,
+            hasValidation: dbQuery.hasValidation || false,
+            errorHandling: analyzeErrorHandling(dbQuery)
+          });
         });
       }
       
-      // From hooks
+      // Analyze hooks with full error chain
       table.hooks.forEach(hook => {
-        if (hook.operations.includes('fetch')) {
-          queries.push({
-            title: hook.hookName,
-            type: 'hook',
-            query: `const { data, error } = await supabase\n  .from('${name}s')\n  .select('*')`,
-            file: hook.file,
-            hasError: !hook.hasErrorHandling,
-            hasLoading: hook.hasLoadingState
+        const errorChain = {
+          hook: hook.hookName,
+          hasErrorState: hook.hasErrorHandling,
+          hasLoadingState: hook.hasLoadingState,
+          hasCacheInvalidation: hook.operations.includes('invalidate'),
+          components: hook.usedInComponents || [],
+          propagation: []
+        };
+        
+        // Track error propagation
+        if (!hook.hasErrorHandling) {
+          errorChain.propagation.push({
+            level: 'hook',
+            issue: 'No error handling in hook',
+            impact: 'Component will crash on error',
+            fix: 'Add try-catch or error state'
           });
         }
+        
+        if (!hook.hasLoadingState) {
+          errorChain.propagation.push({
+            level: 'hook',
+            issue: 'No loading state',
+            impact: 'UI freezes during fetch',
+            fix: 'Add isLoading state'
+          });
+        }
+        
+        errorChains.push(errorChain);
+        
+        // Add hook query
+        queries.push({
+          title: hook.hookName,
+          type: 'hook',
+          query: `const { data, error, isLoading } = ${hook.hookName}();\n\n// Used in: ${hook.usedInComponents?.join(', ') || 'Unknown'}`,
+          file: hook.file,
+          hasError: !hook.hasErrorHandling,
+          hasLoading: hook.hasLoadingState,
+          errorChain: errorChain
+        });
       });
       
       // From mutations
@@ -848,7 +894,7 @@
                 <span>Loading state</span>
               </div>
             ` : ''}
-            ${q.hasCache === false ? `
+            ${q.hasCache === false && q.type === 'mutation' ? `
               <div class="meta-item status-warning">
                 <span>⚠️</span>
                 <span>No cache invalidation</span>
@@ -857,6 +903,64 @@
           </div>
         </div>
       `).join('') || '<div style="color: #64748b; padding: 20px;">No queries found for this table</div>';
+      
+      // Enhanced view with error chains and data flow
+      if (queries.length > 0 || errorChains.length > 0) {
+        let enhancedHtml = `
+          <div style="padding: 20px;">
+            <h3 style="margin-bottom: 20px; color: #e2e8f0;">Query Inspector - ${name}</h3>
+            
+            <!-- Data Flow Health Check -->
+            <div style="background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+              <h4 style="color: #60a5fa; margin-bottom: 10px;">📊 Data Flow Pipeline</h4>
+              <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow-x: auto;">
+                <div style="text-align: center; min-width: 80px;">
+                  <div style="padding: 8px; background: ${table.typeDefinition ? '#1e40af' : '#7f1d1d'}; border-radius: 4px;">Type</div>
+                  <div style="font-size: 20px; margin-top: 5px;">${table.typeDefinition ? '✅' : '❌'}</div>
+                </div>
+                <div style="color: #64748b;">→</div>
+                <div style="text-align: center; min-width: 80px;">
+                  <div style="padding: 8px; background: ${table.databaseQueries.length > 0 ? '#7c3aed' : '#7f1d1d'}; border-radius: 4px;">DB</div>
+                  <div style="font-size: 20px; margin-top: 5px;">${table.databaseQueries.length > 0 ? '✅' : '❌'}</div>
+                </div>
+                <div style="color: #64748b;">→</div>
+                <div style="text-align: center; min-width: 80px;">
+                  <div style="padding: 8px; background: ${table.hooks.length > 0 ? '#0891b2' : '#7f1d1d'}; border-radius: 4px;">Hooks</div>
+                  <div style="font-size: 20px; margin-top: 5px;">${table.hooks.length} 🪝</div>
+                </div>
+                <div style="color: #64748b;">→</div>
+                <div style="text-align: center; min-width: 80px;">
+                  <div style="padding: 8px; background: ${table.components.length > 0 ? '#059669' : '#7f1d1d'}; border-radius: 4px;">UI</div>
+                  <div style="font-size: 20px; margin-top: 5px;">${table.components.length} 🎨</div>
+                </div>
+              </div>
+              
+              <!-- Error Chain Warnings -->
+              ${errorChains.filter(c => c.propagation.length > 0).length > 0 ? `
+                <div style="margin-top: 15px; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 4px;">
+                  <div style="color: #fca5a5; font-weight: bold; margin-bottom: 8px;">
+                    ⚠️ ${errorChains.filter(c => c.propagation.length > 0).length} Error Chains Detected
+                  </div>
+                  ${errorChains.filter(c => c.propagation.length > 0).slice(0, 3).map(chain => `
+                    <div style="margin-bottom: 5px; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 4px;">
+                      <span style="color: #fbbf24;">${chain.hook}:</span>
+                      <span style="color: #ef4444; font-size: 12px;">
+                        ${chain.propagation[0].issue}
+                      </span>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
+            </div>
+            
+            <!-- Query List -->
+            <div style="max-height: 400px; overflow-y: auto;">
+              ${queryContent.innerHTML}
+            </div>
+          </div>
+        `;
+        queryContent.innerHTML = enhancedHtml;
+      }
     }
 
     function loadOverview() {
