@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Observer - Database Explorer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f0f0f;
+      color: #e2e8f0;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+    
+    .project-info {
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    /* Tabs */
+    .tabs {
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      padding: 0 20px;
+    }
+    
+    .tab {
+      padding: 12px 24px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+    
+    .tab:hover {
+      background: #252525;
+    }
+    
+    .tab.active {
+      border-bottom-color: #667eea;
+      background: #252525;
+    }
+    
+    /* Main Layout */
+    .main-container {
+      display: flex;
+      height: calc(100vh - 120px);
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: #1a1a1a;
+      border-right: 1px solid #333;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    
+    .sidebar h3 {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+    
+    .entity-list {
+      margin-bottom: 24px;
+    }
+    
+    .entity-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    
+    .entity-item:hover {
+      background: #252525;
+    }
+    
+    .entity-item.active {
+      background: #667eea20;
+      color: #667eea;
+    }
+    
+    .entity-meta {
+      font-size: 11px;
+      color: #64748b;
+    }
+    
+    .health-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    
+    .health-good { background: #10b981; }
+    .health-warning { background: #f59e0b; }
+    .health-error { background: #ef4444; }
+    
+    /* Content Area */
+    .content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    
+    /* Detail Panel */
+    .detail-panel {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+      background: #0a0a0a;
+    }
+    
+    .detail-header {
+      margin-bottom: 30px;
+    }
+    
+    .detail-title {
+      font-size: 28px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .type-badge {
+      font-size: 12px;
+      padding: 4px 12px;
+      background: #667eea20;
+      color: #667eea;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    
+    /* Properties Section */
+    .section {
+      margin-bottom: 32px;
+      background: #1a1a1a;
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid #333;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      margin-bottom: 16px;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .properties-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    
+    .property-item {
+      padding: 8px 12px;
+      background: #0f0f0f;
+      border-radius: 6px;
+      border: 1px solid #252525;
+      font-size: 13px;
+    }
+    
+    .property-name {
+      color: #94a3b8;
+      margin-bottom: 2px;
+    }
+    
+    .property-type {
+      color: #667eea;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 12px;
+    }
+    
+    .required {
+      color: #ef4444;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+    
+    /* Relationships */
+    .relationship-item {
+      padding: 12px;
+      background: #0f0f0f;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #252525;
+    }
+    
+    .relationship-arrow {
+      color: #64748b;
+    }
+    
+    .relationship-target {
+      color: #667eea;
+      font-weight: 500;
+    }
+    
+    /* Query Panel */
+    .query-panel {
+      width: 450px;
+      background: #1a1a1a;
+      border-left: 1px solid #333;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    
+    .query-box {
+      background: #0f0f0f;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .query-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #e2e8f0;
+    }
+    
+    .query-code {
+      background: #000;
+      border: 1px solid #252525;
+      border-radius: 4px;
+      padding: 12px;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 12px;
+      color: #64d86b;
+      margin-bottom: 12px;
+      overflow-x: auto;
+    }
+    
+    .response-preview {
+      background: #000;
+      border: 1px solid #252525;
+      border-radius: 4px;
+      padding: 12px;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 11px;
+      color: #94a3b8;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .query-meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #64748b;
+    }
+    
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .status-success { color: #10b981; }
+    .status-error { color: #ef4444; }
+    .status-warning { color: #f59e0b; }
+    
+    /* Flow Visualization */
+    .flow-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: #0f0f0f;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    
+    .flow-step {
+      padding: 8px 16px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    
+    .flow-step.active {
+      background: #667eea20;
+      border-color: #667eea;
+      color: #667eea;
+    }
+    
+    .flow-arrow {
+      color: #64748b;
+    }
+    
+    /* Usage Stats */
+    .usage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+    
+    .usage-stat {
+      background: #0f0f0f;
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+      border: 1px solid #252525;
+    }
+    
+    .usage-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 4px;
+    }
+    
+    .usage-label {
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+    
+    /* Health Score */
+    .health-score {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: #0f0f0f;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .score-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    
+    .score-high { background: #10b98120; color: #10b981; border: 2px solid #10b981; }
+    .score-medium { background: #f59e0b20; color: #f59e0b; border: 2px solid #f59e0b; }
+    .score-low { background: #ef444420; color: #ef4444; border: 2px solid #ef4444; }
+    
+    .score-details {
+      flex: 1;
+    }
+    
+    .score-title {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+    
+    .score-items {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .check-item {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #252525;
+    }
+    
+    .check-pass { color: #10b981; }
+    .check-fail { color: #ef4444; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <h1>🔍 AI Observer - Database Explorer</h1>
+    <div class="project-info">
+      <span>Project: <strong id="projectName">loading...</strong></span>
+      <span>Framework: <strong id="frameworkName">loading...</strong></span>
+      <span>Tables: <strong id="tableCount">0</strong></span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('overview')">Overview</div>
+    <div class="tab" onclick="switchTab('entities')">Entities</div>
+    <div class="tab" onclick="switchTab('dataflow')">Data Flow</div>
+    <div class="tab" onclick="switchTab('queries')">Queries</div>
+    <div class="tab" onclick="switchTab('validation')">Validation</div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Search -->
+      <input type="text" placeholder="Search tables..." style="width: 100%; padding: 8px; background: #0f0f0f; border: 1px solid #333; border-radius: 6px; color: #e2e8f0; margin-bottom: 20px;">
+      
+      <!-- Tables List -->
+      <div class="entity-list">
+        <h3>Tables (<span id="tableListCount">0</span>)</h3>
+        <div id="tablesList"></div>
+      </div>
+      
+      <!-- Hooks List -->
+      <div class="entity-list">
+        <h3>Hooks (<span id="hookCount">0</span>)</h3>
+        <div id="hooksList"></div>
+      </div>
+      
+      <!-- Flows -->
+      <div class="entity-list">
+        <h3>Flows</h3>
+        <div id="flowsList">
+          <div class="entity-item">
+            <span>Authentication</span>
+            <span class="health-indicator health-good"></span>
+          </div>
+          <div class="entity-item">
+            <span>Order Processing</span>
+            <span class="health-indicator health-warning"></span>
+          </div>
+          <div class="entity-item">
+            <span>User Registration</span>
+            <span class="health-indicator health-error"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+      <!-- Detail Panel -->
+      <div class="detail-panel">
+        <div id="mainContent">
+          <!-- Content will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Query Panel (Postman-style) -->
+      <div class="query-panel">
+        <h3 style="font-size: 16px; margin-bottom: 20px;">🔬 Query Inspector</h3>
+        
+        <div id="queryContent">
+          <!-- Query details will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentTab = 'overview';
+    let currentTable = null;
+    let analysisData = {};
+    let tableMapping = {};
+
+    // Initialize
+    async function init() {
+      try {
+        // Load analysis data
+        const analysisRes = await fetch('/api/analysis');
+        analysisData = await analysisRes.json();
+        
+        // Load table mapping
+        const mappingRes = await fetch('/api/table-mapping');
+        tableMapping = await mappingRes.json();
+        
+        // Update header
+        document.getElementById('projectName').textContent = analysisData.projectName || 'Unknown';
+        document.getElementById('frameworkName').textContent = analysisData.framework?.name || 'Unknown';
+        document.getElementById('tableCount').textContent = Object.keys(tableMapping.tables || {}).length;
+        
+        // Load sidebar
+        loadSidebar();
+        
+        // Load initial content
+        loadOverview();
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      }
+    }
+
+    function loadSidebar() {
+      const tables = Object.entries(tableMapping.tables || {});
+      const tablesList = document.getElementById('tablesList');
+      
+      tablesList.innerHTML = tables.map(([name, table]) => {
+        const healthClass = table.score >= 80 ? 'health-good' : 
+                           table.score >= 40 ? 'health-warning' : 'health-error';
+        return `
+          <div class="entity-item" onclick="selectTable('${name}')">
+            <span>${name}</span>
+            <div>
+              <span class="entity-meta">${table.score}%</span>
+              <span class="health-indicator ${healthClass}"></span>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      document.getElementById('tableListCount').textContent = tables.length;
+      
+      // Load hooks
+      const hooks = tables.flatMap(([_, table]) => table.hooks || []);
+      const uniqueHooks = [...new Set(hooks.map(h => h.hookName))];
+      document.getElementById('hookCount').textContent = uniqueHooks.length;
+      
+      const hooksList = document.getElementById('hooksList');
+      hooksList.innerHTML = uniqueHooks.slice(0, 5).map(hook => `
+        <div class="entity-item">
+          <span>${hook}</span>
+        </div>
+      `).join('');
+    }
+
+    function selectTable(tableName) {
+      currentTable = tableName;
+      const table = tableMapping.tables[tableName];
+      if (!table) return;
+      
+      // Update active state
+      document.querySelectorAll('.entity-item').forEach(el => {
+        el.classList.remove('active');
+        if (el.textContent.includes(tableName)) {
+          el.classList.add('active');
+        }
+      });
+      
+      // Load table details
+      loadTableDetails(tableName, table);
+      
+      // Load queries
+      loadTableQueries(tableName, table);
+    }
+
+    function loadTableDetails(name, table) {
+      const entity = analysisData.entities?.find(e => 
+        e.name.toLowerCase() === name.toLowerCase()
+      ) || {};
+      
+      const scoreClass = table.score >= 80 ? 'score-high' : 
+                        table.score >= 40 ? 'score-medium' : 'score-low';
+      
+      const mainContent = document.getElementById('mainContent');
+      mainContent.innerHTML = `
+        <!-- Header -->
+        <div class="detail-header">
+          <div class="detail-title">
+            ${name}
+            <span class="type-badge">${entity.type || 'table'}</span>
+          </div>
+          <div style="color: #64748b; font-size: 14px;">
+            ${table.typeDefinition?.file || 'No type definition'}
+          </div>
+        </div>
+
+        <!-- Health Score -->
+        <div class="health-score">
+          <div class="score-circle ${scoreClass}">${table.score}%</div>
+          <div class="score-details">
+            <div class="score-title">Health Score</div>
+            <div class="score-items">
+              ${table.typeDefinition ? '<span class="check-item check-pass">✓ Type</span>' : '<span class="check-item check-fail">✗ Type</span>'}
+              ${table.typeDefinition?.hasZodSchema ? '<span class="check-item check-pass">✓ Validation</span>' : '<span class="check-item check-fail">✗ Validation</span>'}
+              ${table.hooks.length > 0 ? '<span class="check-item check-pass">✓ Hooks</span>' : '<span class="check-item check-fail">✗ Hooks</span>'}
+              ${table.components.length > 0 ? '<span class="check-item check-pass">✓ UI</span>' : '<span class="check-item check-fail">✗ UI</span>'}
+              ${table.apiEndpoints.length > 0 ? '<span class="check-item check-pass">✓ API</span>' : '<span class="check-item check-fail">✗ API</span>'}
+            </div>
+          </div>
+        </div>
+
+        <!-- Properties -->
+        <div class="section">
+          <div class="section-title">📝 Properties (${entity.properties?.length || 0})</div>
+          <div class="properties-grid">
+            ${(entity.properties || []).slice(0, 12).map(prop => `
+              <div class="property-item">
+                <div class="property-name">
+                  ${prop.name}
+                  ${prop.required ? '<span class="required">*</span>' : ''}
+                </div>
+                <div class="property-type">${prop.type}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Relationships -->
+        <div class="section">
+          <div class="section-title">🔗 Relationships (${entity.relationships?.length || 0})</div>
+          ${(entity.relationships || []).map(rel => `
+            <div class="relationship-item">
+              <span>${name}</span>
+              <span class="relationship-arrow">→</span>
+              <span class="relationship-target">${rel.type} ${rel.target}</span>
+            </div>
+          `).join('') || '<div style="color: #64748b;">No relationships defined</div>'}
+        </div>
+
+        <!-- Data Flow -->
+        <div class="section">
+          <div class="section-title">🔄 Data Flow</div>
+          <div class="flow-container">
+            <div class="flow-step ${table.typeDefinition ? 'active' : ''}">Type</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step ${table.databaseQueries.length > 0 ? 'active' : ''}">Database</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step ${table.hooks.length > 0 ? 'active' : ''}">Hooks</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step ${table.components.length > 0 ? 'active' : ''}">Components</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step ${table.apiEndpoints.length > 0 ? 'active' : ''}">API</div>
+          </div>
+        </div>
+
+        <!-- Usage Stats -->
+        <div class="section">
+          <div class="section-title">📊 Usage Statistics</div>
+          <div class="usage-grid">
+            <div class="usage-stat">
+              <div class="usage-number">${table.hooks.length}</div>
+              <div class="usage-label">Hooks</div>
+            </div>
+            <div class="usage-stat">
+              <div class="usage-number">${table.components.length}</div>
+              <div class="usage-label">Components</div>
+            </div>
+            <div class="usage-stat">
+              <div class="usage-number">${table.apiEndpoints.length}</div>
+              <div class="usage-label">API Routes</div>
+            </div>
+            <div class="usage-stat">
+              <div class="usage-number">${table.mutations.length}</div>
+              <div class="usage-label">Mutations</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function loadTableQueries(name, table) {
+      const queryContent = document.getElementById('queryContent');
+      
+      // Get sample queries
+      const queries = [];
+      
+      // From database queries
+      if (table.databaseQueries.length > 0) {
+        queries.push({
+          title: `get${name}ById`,
+          type: 'select',
+          query: `SELECT * FROM ${name}s WHERE id = $1`,
+          file: table.databaseQueries[0].file
+        });
+      }
+      
+      // From hooks
+      table.hooks.forEach(hook => {
+        if (hook.operations.includes('fetch')) {
+          queries.push({
+            title: hook.hookName,
+            type: 'hook',
+            query: `const { data, error } = await supabase\n  .from('${name}s')\n  .select('*')`,
+            file: hook.file,
+            hasError: !hook.hasErrorHandling,
+            hasLoading: hook.hasLoadingState
+          });
+        }
+      });
+      
+      // From mutations
+      table.mutations.forEach(mutation => {
+        queries.push({
+          title: mutation.mutationName,
+          type: 'mutation',
+          query: `const { data, error } = await supabase\n  .from('${name}s')\n  .insert(values)`,
+          file: mutation.file,
+          hasCache: mutation.hasCacheInvalidation
+        });
+      });
+      
+      queryContent.innerHTML = queries.map(q => `
+        <div class="query-box">
+          <div class="query-title">${q.title}</div>
+          <div class="query-code">${q.query}</div>
+          
+          ${q.type === 'select' ? `
+            <div class="response-preview">
+{
+  "id": "123",
+  "created_at": "2024-01-01T00:00:00Z",
+  "updated_at": "2024-01-01T00:00:00Z",
+  ...
+}</div>
+          ` : ''}
+          
+          <div class="query-meta">
+            <div class="meta-item">
+              <span>📁</span>
+              <span>${q.file?.split('/').pop() || 'unknown'}</span>
+            </div>
+            ${q.hasError === false ? `
+              <div class="meta-item status-error">
+                <span>❌</span>
+                <span>No error handling</span>
+              </div>
+            ` : ''}
+            ${q.hasLoading === true ? `
+              <div class="meta-item status-success">
+                <span>✅</span>
+                <span>Loading state</span>
+              </div>
+            ` : ''}
+            ${q.hasCache === false ? `
+              <div class="meta-item status-warning">
+                <span>⚠️</span>
+                <span>No cache invalidation</span>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `).join('') || '<div style="color: #64748b; padding: 20px;">No queries found for this table</div>';
+    }
+
+    function loadOverview() {
+      const mainContent = document.getElementById('mainContent');
+      mainContent.innerHTML = `
+        <h2 style="margin-bottom: 20px;">Project Overview</h2>
+        
+        <div class="section">
+          <div class="section-title">📊 Summary</div>
+          <div class="usage-grid">
+            <div class="usage-stat">
+              <div class="usage-number">${Object.keys(tableMapping.tables || {}).length}</div>
+              <div class="usage-label">Tables</div>
+            </div>
+            <div class="usage-stat">
+              <div class="usage-number">${tableMapping.summary?.fullyMapped || 0}</div>
+              <div class="usage-label">Fully Mapped</div>
+            </div>
+            <div class="usage-stat">
+              <div class="usage-number">${tableMapping.summary?.partiallyMapped || 0}</div>
+              <div class="usage-label">Partial</div>
+            </div>
+            <div class="usage-stat">
+              <div class="usage-number">${tableMapping.summary?.unmapped || 0}</div>
+              <div class="usage-label">Unmapped</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="section">
+          <div class="section-title">🚨 Critical Issues</div>
+          ${(tableMapping.issues || []).filter(i => i.type === 'critical').slice(0, 5).map(issue => `
+            <div class="relationship-item">
+              <span style="color: #ef4444;">❌</span>
+              <span>${issue.table}: ${issue.issue}</span>
+            </div>
+          `).join('') || '<div style="color: #64748b;">No critical issues found</div>'}
+        </div>
+      `;
+      
+      // Clear query panel
+      document.getElementById('queryContent').innerHTML = `
+        <div style="color: #64748b; padding: 20px; text-align: center;">
+          Select a table to inspect its queries
+        </div>
+      `;
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Load appropriate content
+      switch(tab) {
+        case 'overview':
+          loadOverview();
+          break;
+        case 'entities':
+          if (currentTable) {
+            selectTable(currentTable);
+          }
+          break;
+        // Add other tabs as needed
+      }
+    }
+
+    // Initialize on load
+    init();
+  </script>
+</body>
+</html>

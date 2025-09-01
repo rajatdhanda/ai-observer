@@ -1,0 +1,1797 @@
+{
+  "nodes": [
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/card.tsx:Card:17",
+      "name": "Card",
+      "type": "component",
+      "complexity": 5,
+      "latency": 10,
+      "errors": 0,
+      "file": "card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/appointment-card.tsx:AppointmentCard:12",
+      "name": "AppointmentCard",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "appointment-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/avatar.tsx:Avatar:18",
+      "name": "Avatar",
+      "type": "component",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "avatar.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/avatar.tsx:anonymous:54",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "avatar.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/badge.tsx:Badge:15",
+      "name": "Badge",
+      "type": "component",
+      "complexity": 6,
+      "latency": 12,
+      "errors": 0,
+      "file": "badge.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/bottom-nav.tsx:BottomNav:49",
+      "name": "BottomNav",
+      "type": "component",
+      "complexity": 4,
+      "latency": 8,
+      "errors": 0,
+      "file": "bottom-nav.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/bottom-nav.tsx:anonymous:55",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 4,
+      "latency": 8,
+      "errors": 0,
+      "file": "bottom-nav.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/button.tsx:Button:14",
+      "name": "Button",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "button.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/category-card.tsx:CategoryCard:13",
+      "name": "CategoryCard",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "category-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:ClientCard:17",
+      "name": "ClientCard",
+      "type": "component",
+      "complexity": 4,
+      "latency": 8,
+      "errors": 0,
+      "file": "client-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:getDaysAgo:24",
+      "name": "getDaysAgo",
+      "type": "component",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "client-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:getLoyaltyColor:30",
+      "name": "getLoyaltyColor",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "client-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:anonymous:76",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "client-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:anonymous:81",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "client-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:anonymous:91",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "client-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:anonymous:101",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "client-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:anonymous:111",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "client-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:CourseCard:18",
+      "name": "CourseCard",
+      "type": "component",
+      "complexity": 8,
+      "latency": 16,
+      "errors": 0,
+      "file": "course-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:formatDuration:26",
+      "name": "formatDuration",
+      "type": "component",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "course-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:getDifficultyColor:35",
+      "name": "getDifficultyColor",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "course-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/input.tsx:Input:16",
+      "name": "Input",
+      "type": "component",
+      "complexity": 10,
+      "latency": 20,
+      "errors": 0,
+      "file": "input.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/live-session-banner.tsx:LiveSessionBanner:14",
+      "name": "LiveSessionBanner",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "live-session-banner.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/navbar.tsx:NavBar:25",
+      "name": "NavBar",
+      "type": "component",
+      "complexity": 5,
+      "latency": 10,
+      "errors": 0,
+      "file": "navbar.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/navbar.tsx:anonymous:48",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 4,
+      "latency": 8,
+      "errors": 0,
+      "file": "navbar.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/navbar.tsx:anonymous:53",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "navbar.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/page-header.tsx:PageHeader:16",
+      "name": "PageHeader",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page-header.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/post-card.tsx:PostCard:17",
+      "name": "PostCard",
+      "type": "component",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "post-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/post-card.tsx:getTimeAgo:25",
+      "name": "getTimeAgo",
+      "type": "component",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "post-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/post-card.tsx:anonymous:68",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "post-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/post-composer.tsx:PostComposer:16",
+      "name": "PostComposer",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "post-composer.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/product-card.tsx:ProductCard:17",
+      "name": "ProductCard",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "product-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/search-bar.tsx:SearchBar:13",
+      "name": "SearchBar",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "search-bar.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/search-bar.tsx:anonymous:26",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "search-bar.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/service-card.tsx:ServiceCard:13",
+      "name": "ServiceCard",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "service-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/sheet.tsx:Sheet:17",
+      "name": "Sheet",
+      "type": "component",
+      "complexity": 4,
+      "latency": 8,
+      "errors": 0,
+      "file": "sheet.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/sheet.tsx:anonymous:29",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "sheet.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/sheet.tsx:anonymous:35",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "sheet.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/skeleton.tsx:Skeleton:15",
+      "name": "Skeleton",
+      "type": "component",
+      "complexity": 6,
+      "latency": 12,
+      "errors": 0,
+      "file": "skeleton.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/skeleton.tsx:anonymous:28",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "skeleton.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/stats-card.tsx:StatsCard:12",
+      "name": "StatsCard",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "stats-card.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/tabs.tsx:Tabs:18",
+      "name": "Tabs",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "tabs.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/tabs.tsx:anonymous:22",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "tabs.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/tabs.tsx:anonymous:30",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "tabs.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/list.tsx:List:21",
+      "name": "List",
+      "type": "component",
+      "complexity": 12,
+      "latency": 24,
+      "errors": 0,
+      "file": "list.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/list.tsx:anonymous:54",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "list.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/list.tsx:handleScroll:71",
+      "name": "handleScroll",
+      "type": "component",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "list.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/list.tsx:anonymous:94",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "list.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/image.tsx:Image:17",
+      "name": "Image",
+      "type": "component",
+      "complexity": 7,
+      "latency": 14,
+      "errors": 0,
+      "file": "image.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/image.tsx:anonymous:34",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 4,
+      "latency": 8,
+      "errors": 0,
+      "file": "image.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/image.tsx:anonymous:38",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "image.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/image.tsx:anonymous:51",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "image.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/image.tsx:handleLoad:62",
+      "name": "handleLoad",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "image.tsx"
+    },
+    {
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/image.tsx:handleError:67",
+      "name": "handleError",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "image.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/mocks/data.ts:getMockPostById:317",
+      "name": "getMockPostById",
+      "type": "function",
+      "complexity": 1,
+      "latency": 52,
+      "errors": 0,
+      "file": "data.ts"
+    },
+    {
+      "id": "test-projects/streax/src/mocks/data.ts:anonymous:317",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "data.ts"
+    },
+    {
+      "id": "test-projects/streax/src/mocks/data.ts:getMockProductById:318",
+      "name": "getMockProductById",
+      "type": "function",
+      "complexity": 1,
+      "latency": 52,
+      "errors": 0,
+      "file": "data.ts"
+    },
+    {
+      "id": "test-projects/streax/src/mocks/data.ts:anonymous:318",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "data.ts"
+    },
+    {
+      "id": "test-projects/streax/src/mocks/data.ts:getMockClientById:319",
+      "name": "getMockClientById",
+      "type": "function",
+      "complexity": 1,
+      "latency": 52,
+      "errors": 0,
+      "file": "data.ts"
+    },
+    {
+      "id": "test-projects/streax/src/mocks/data.ts:anonymous:319",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "data.ts"
+    },
+    {
+      "id": "test-projects/streax/src/mocks/data.ts:getMockCourseById:320",
+      "name": "getMockCourseById",
+      "type": "function",
+      "complexity": 1,
+      "latency": 52,
+      "errors": 0,
+      "file": "data.ts"
+    },
+    {
+      "id": "test-projects/streax/src/mocks/data.ts:anonymous:320",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "data.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useAuth.ts:useAuth:6",
+      "name": "useAuth",
+      "type": "function",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "useAuth.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useAuth.ts:anonymous:10",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "useAuth.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useAuth.ts:anonymous:12",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "useAuth.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useAuth.ts:login:22",
+      "name": "login",
+      "type": "function",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "useAuth.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useAuth.ts:logout:31",
+      "name": "logout",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useAuth.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useClients.ts:useClients:6",
+      "name": "useClients",
+      "type": "function",
+      "complexity": 4,
+      "latency": 108,
+      "errors": 0,
+      "file": "useClients.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:11",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 3,
+      "latency": 106,
+      "errors": 0,
+      "file": "useClients.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useClients.ts:fetchClients:12",
+      "name": "fetchClients",
+      "type": "function",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "useClients.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:16",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useClients.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:18",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useClients.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useClients.ts:addClient:34",
+      "name": "addClient",
+      "type": "function",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "useClients.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:49",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useClients.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:57",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useClients.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:61",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useClients.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useFeed.ts:useFeed:6",
+      "name": "useFeed",
+      "type": "function",
+      "complexity": 7,
+      "latency": 164,
+      "errors": 1,
+      "file": "useFeed.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useFeed.ts:anonymous:12",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 3,
+      "latency": 156,
+      "errors": 1,
+      "file": "useFeed.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useFeed.ts:fetchFeed:13",
+      "name": "fetchFeed",
+      "type": "function",
+      "complexity": 3,
+      "latency": 56,
+      "errors": 1,
+      "file": "useFeed.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useFeed.ts:anonymous:19",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useFeed.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useFeed.ts:anonymous:21",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useFeed.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useFeed.ts:likePost:39",
+      "name": "likePost",
+      "type": "function",
+      "complexity": 4,
+      "latency": 8,
+      "errors": 0,
+      "file": "useFeed.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useFeed.ts:anonymous:41",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "useFeed.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useFeed.ts:createPost:51",
+      "name": "createPost",
+      "type": "function",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "useFeed.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useFeed.ts:anonymous:65",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useFeed.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useInsurance.ts:useInsurance:6",
+      "name": "useInsurance",
+      "type": "function",
+      "complexity": 3,
+      "latency": 106,
+      "errors": 0,
+      "file": "useInsurance.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useInsurance.ts:anonymous:11",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 2,
+      "latency": 104,
+      "errors": 0,
+      "file": "useInsurance.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useInsurance.ts:fetchInsurance:12",
+      "name": "fetchInsurance",
+      "type": "function",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "useInsurance.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useInsurance.ts:anonymous:16",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useInsurance.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useInsurance.ts:submitClaim:29",
+      "name": "submitClaim",
+      "type": "function",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "useInsurance.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useInsurance.ts:anonymous:42",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useInsurance.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useLearning.ts:useLearning:6",
+      "name": "useLearning",
+      "type": "function",
+      "complexity": 3,
+      "latency": 106,
+      "errors": 0,
+      "file": "useLearning.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useLearning.ts:anonymous:11",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 3,
+      "latency": 106,
+      "errors": 0,
+      "file": "useLearning.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useLearning.ts:fetchCourses:12",
+      "name": "fetchCourses",
+      "type": "function",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "useLearning.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useLearning.ts:anonymous:16",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useLearning.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useLearning.ts:anonymous:19",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useLearning.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useLearning.ts:enrollCourse:31",
+      "name": "enrollCourse",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useLearning.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:useProducts:6",
+      "name": "useProducts",
+      "type": "function",
+      "complexity": 5,
+      "latency": 160,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:12",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 3,
+      "latency": 106,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:fetchProducts:13",
+      "name": "fetchProducts",
+      "type": "function",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:17",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:20",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "name": "addToCart",
+      "type": "function",
+      "complexity": 3,
+      "latency": 56,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:33",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 3,
+      "latency": 56,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:34",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:36",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
+      "name": "removeFromCart",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:52",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:55",
+      "name": "anonymous",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "useProducts.ts"
+    },
+    {
+      "id": "test-projects/streax/src/lib/utils.ts:cn:3",
+      "name": "cn",
+      "type": "function",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "utils.ts"
+    },
+    {
+      "id": "test-projects/streax/src/app/layout.tsx:RootLayout:19",
+      "name": "RootLayout",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "layout.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/page.tsx:Home:2",
+      "name": "Home",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:CRMPage:60",
+      "name": "CRMPage",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:105",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:108",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:154",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:160",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:173",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:194",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:FeedPage:102",
+      "name": "FeedPage",
+      "type": "component",
+      "complexity": 1,
+      "latency": 52,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:getProfessionalForPost:106",
+      "name": "getProfessionalForPost",
+      "type": "component",
+      "complexity": 1,
+      "latency": 52,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:107",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:120",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:121",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:122",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:123",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:124",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:132",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:139",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:144",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:145",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:146",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:147",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:155",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:178",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:194",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:214",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/insurance/page.tsx:InsurancePage:40",
+      "name": "InsurancePage",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:117",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:123",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:129",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:135",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
+      "name": "LearningPage",
+      "type": "component",
+      "complexity": 12,
+      "latency": 174,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:getEnrollmentForCourse:146",
+      "name": "getEnrollmentForCourse",
+      "type": "component",
+      "complexity": 1,
+      "latency": 52,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:147",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:getDifficultyColor:150",
+      "name": "getDifficultyColor",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:formatDuration:159",
+      "name": "formatDuration",
+      "type": "component",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:216",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:226",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:237",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:242",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:292",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:337",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 2,
+      "latency": 54,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:338",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:380",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 2,
+      "latency": 54,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:381",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "name": "OrdersPage",
+      "type": "component",
+      "complexity": 3,
+      "latency": 6,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:addToCart:119",
+      "name": "addToCart",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:120",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:removeFromCart:128",
+      "name": "removeFromCart",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:129",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:getCartCount:141",
+      "name": "getCartCount",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:143",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:192",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 2,
+      "latency": 4,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:195",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:222",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:223",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:224",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:235",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:241",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 2,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/test/page.tsx:TestPage:5",
+      "name": "TestPage",
+      "type": "component",
+      "complexity": 1,
+      "latency": 102,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/test/page.tsx:anonymous:8",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 1,
+      "latency": 102,
+      "errors": 0,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/test/page.tsx:TestComponentImports:110",
+      "name": "TestComponentImports",
+      "type": "component",
+      "complexity": 4,
+      "latency": 8,
+      "errors": 3,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/test/page.tsx:anonymous:113",
+      "name": "anonymous",
+      "type": "component",
+      "complexity": 4,
+      "latency": 8,
+      "errors": 3,
+      "file": "page.tsx"
+    },
+    {
+      "id": "test-projects/streax/src/app/test/page.tsx:testImports:114",
+      "name": "testImports",
+      "type": "component",
+      "complexity": 4,
+      "latency": 8,
+      "errors": 3,
+      "file": "page.tsx"
+    }
+  ],
+  "links": [
+    {
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:ClientCard:17",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:getLoyaltyColor:30",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:ClientCard:17",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/client-card.tsx:getDaysAgo:24",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:CourseCard:18",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:formatDuration:26",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:CourseCard:18",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:getDifficultyColor:35",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:CourseCard:18",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:formatDuration:26",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/post-card.tsx:PostCard:17",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/post-card.tsx:getTimeAgo:25",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/hooks/useClients.ts:useClients:6",
+      "target": "test-projects/streax/src/hooks/useClients.ts:fetchClients:12",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/hooks/useClients.ts:anonymous:11",
+      "target": "test-projects/streax/src/hooks/useClients.ts:fetchClients:12",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/hooks/useFeed.ts:useFeed:6",
+      "target": "test-projects/streax/src/hooks/useFeed.ts:fetchFeed:13",
+      "type": "sync",
+      "hasErrors": true
+    },
+    {
+      "source": "test-projects/streax/src/hooks/useFeed.ts:anonymous:12",
+      "target": "test-projects/streax/src/hooks/useFeed.ts:fetchFeed:13",
+      "type": "sync",
+      "hasErrors": true
+    },
+    {
+      "source": "test-projects/streax/src/hooks/useInsurance.ts:useInsurance:6",
+      "target": "test-projects/streax/src/hooks/useInsurance.ts:fetchInsurance:12",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/hooks/useInsurance.ts:anonymous:11",
+      "target": "test-projects/streax/src/hooks/useInsurance.ts:fetchInsurance:12",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/hooks/useLearning.ts:useLearning:6",
+      "target": "test-projects/streax/src/hooks/useLearning.ts:fetchCourses:12",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/hooks/useLearning.ts:anonymous:11",
+      "target": "test-projects/streax/src/hooks/useLearning.ts:fetchCourses:12",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/hooks/useProducts.ts:useProducts:6",
+      "target": "test-projects/streax/src/hooks/useProducts.ts:fetchProducts:13",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/hooks/useProducts.ts:anonymous:12",
+      "target": "test-projects/streax/src/hooks/useProducts.ts:fetchProducts:13",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/feed/page.tsx:FeedPage:102",
+      "target": "test-projects/streax/src/app/(main)/feed/page.tsx:getProfessionalForPost:106",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:139",
+      "target": "test-projects/streax/src/app/(main)/feed/page.tsx:getProfessionalForPost:106",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:formatDuration:26",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:getDifficultyColor:35",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:formatDuration:26",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:292",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:getDifficultyColor:35",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:292",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:formatDuration:26",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "target": "test-projects/streax/src/app/(main)/orders/page.tsx:getCartCount:141",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "target": "test-projects/streax/src/app/(main)/orders/page.tsx:getCartCount:141",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "target": "test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
+      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
+      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
+      "target": "test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:222",
+      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:223",
+      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:224",
+      "target": "test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
+      "type": "sync",
+      "hasErrors": false
+    },
+    {
+      "source": "test-projects/streax/src/app/test/page.tsx:TestComponentImports:110",
+      "target": "test-projects/streax/src/app/test/page.tsx:testImports:114",
+      "type": "sync",
+      "hasErrors": true
+    },
+    {
+      "source": "test-projects/streax/src/app/test/page.tsx:anonymous:113",
+      "target": "test-projects/streax/src/app/test/page.tsx:testImports:114",
+      "type": "sync",
+      "hasErrors": true
+    }
+  ]
+}
