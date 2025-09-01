@@ -423,6 +423,7 @@
     <div class="tab" onclick="switchTab('dataflow')">Data Flow</div>
     <div class="tab" onclick="switchTab('queries')">Queries</div>
     <div class="tab" onclick="switchTab('validation')">Validation</div>
+    <div class="tab" onclick="switchTab('registry')">Registry</div>
   </div>
 
   <!-- Main Container -->
@@ -442,6 +443,21 @@
       <div class="entity-list">
         <h3>Hooks (<span id="hookCount">0</span>)</h3>
         <div id="hooksList"></div>
+      </div>
+      
+      <!-- Validation Status -->
+      <div class="entity-list">
+        <h3>Validation Health</h3>
+        <div id="validationStatus">
+          <div class="entity-item" onclick="switchTab('validation')">
+            <span>80-20 Checks</span>
+            <span id="validationScore" class="badge" style="background: #667eea;">-</span>
+          </div>
+          <div class="entity-item" onclick="switchTab('registry')">
+            <span>Registry Score</span>
+            <span id="registryScore" class="badge" style="background: #667eea;">-</span>
+          </div>
+        </div>
       </div>
       
       <!-- Flows -->
@@ -491,6 +507,31 @@
     let tableMapping = {};
 
     // Initialize
+    async function loadValidationScores() {
+      try {
+        const res = await fetch('/api/validate');
+        const validation = await res.json();
+        
+        // Update validation score
+        const validationScore = document.getElementById('validationScore');
+        if (validationScore && validation.score !== undefined) {
+          validationScore.textContent = validation.score + '%';
+          validationScore.style.background = validation.score >= 80 ? '#10b981' : 
+                                           validation.score >= 50 ? '#f59e0b' : '#ef4444';
+        }
+        
+        // Update registry score
+        const registryScore = document.getElementById('registryScore');
+        if (registryScore && validation.registryValidation && validation.registryValidation.score !== undefined) {
+          registryScore.textContent = validation.registryValidation.score + '%';
+          registryScore.style.background = validation.registryValidation.score >= 80 ? '#10b981' : 
+                                          validation.registryValidation.score >= 50 ? '#f59e0b' : '#ef4444';
+        }
+      } catch (error) {
+        console.error('Error loading validation scores:', error);
+      }
+    }
+
     async function init() {
       try {
         // Load analysis data
@@ -508,6 +549,9 @@
         
         // Load sidebar
         loadSidebar();
+        
+        // Load validation scores
+        loadValidationScores();
         
         // Load initial content
         loadOverview();
@@ -804,6 +848,74 @@
       `;
     }
 
+    async function loadDataFlow() {
+      const mainContent = document.getElementById('mainContent');
+      mainContent.innerHTML = '<div style="padding: 20px;">Loading data flow analysis...</div>';
+      
+      try {
+        const res = await fetch('/api/table-flow-view');
+        const html = await res.text();
+        mainContent.innerHTML = html;
+      } catch (error) {
+        mainContent.innerHTML = '<div style="color: #ef4444; padding: 20px;">Error loading data flow</div>';
+      }
+    }
+
+    async function loadQueries() {
+      const mainContent = document.getElementById('mainContent');
+      mainContent.innerHTML = `
+        <h2 style="margin-bottom: 20px;">Query Inspector</h2>
+        <div style="color: #64748b; padding: 20px;">
+          Select a table from the sidebar to inspect its queries in Postman-style format
+        </div>
+      `;
+    }
+
+    async function loadValidation() {
+      const mainContent = document.getElementById('mainContent');
+      mainContent.innerHTML = '<div style="padding: 20px;">Running validation checks...</div>';
+      
+      try {
+        // First run validation
+        await fetch('/api/validate');
+        
+        // Then get the validation view
+        const res = await fetch('/api/validation-view');
+        const html = await res.text();
+        
+        mainContent.innerHTML = `
+          <div style="padding: 20px;">
+            <h2 style="margin-bottom: 30px;">🔍 80-20 Validation Results</h2>
+            ${html}
+          </div>
+        `;
+      } catch (error) {
+        mainContent.innerHTML = '<div style="color: #ef4444; padding: 20px;">Error loading validation</div>';
+      }
+    }
+
+    async function loadRegistry() {
+      const mainContent = document.getElementById('mainContent');
+      mainContent.innerHTML = '<div style="padding: 20px;">Checking registry usage...</div>';
+      
+      try {
+        // Make sure validation has run
+        await fetch('/api/validate');
+        
+        // Get registry view
+        const res = await fetch('/api/registry-view');
+        const html = await res.text();
+        
+        mainContent.innerHTML = `
+          <div style="padding: 20px;">
+            ${html}
+          </div>
+        `;
+      } catch (error) {
+        mainContent.innerHTML = '<div style="color: #ef4444; padding: 20px;">Error loading registry validation</div>';
+      }
+    }
+
     function switchTab(tab) {
       currentTab = tab;
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -819,7 +931,18 @@
             selectTable(currentTable);
           }
           break;
-        // Add other tabs as needed
+        case 'dataflow':
+          loadDataFlow();
+          break;
+        case 'queries':
+          loadQueries();
+          break;
+        case 'validation':
+          loadValidation();
+          break;
+        case 'registry':
+          loadRegistry();
+          break;
       }
     }
 
