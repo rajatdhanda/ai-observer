@@ -655,36 +655,36 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Search -->
-      <input type="text" id="sidebarSearch" placeholder="Search..." oninput="filterSidebar(this.value)" style="width: 100%; padding: 8px; background: #0f0f0f; border: 1px solid #333; border-radius: 6px; color: #e2e8f0; margin-bottom: 20px;">
+      <input type="text" placeholder="Search tables..." style="width: 100%; padding: 8px; background: #0f0f0f; border: 1px solid #333; border-radius: 6px; color: #e2e8f0; margin-bottom: 20px;">
       
       <!-- Tables List -->
       <div class="entity-list">
-        <h3>📊 Tables (<span id="tableListCount">0</span>)</h3>
-        <div id="tablesList" class="collapsible-list"></div>
+        <h3>Tables (<span id="tableListCount">0</span>)</h3>
+        <div id="tablesList"></div>
       </div>
       
       <!-- Hooks List -->
       <div class="entity-list">
-        <h3>🔗 Hooks (<span id="hookListCount">0</span>)</h3>
-        <div id="hooksList" class="collapsible-list"></div>
+        <h3>🔗 Hooks (<span id="hookCount">0</span>)</h3>
+        <div id="hooksList"></div>
       </div>
       
       <!-- Components List -->
       <div class="entity-list">
-        <h3>🧩 Components (<span id="componentListCount">0</span>)</h3>
-        <div id="componentsList" class="collapsible-list"></div>
+        <h3>🧩 Components (<span id="componentCount">0</span>)</h3>
+        <div id="componentsList"></div>
       </div>
       
       <!-- API Routes List -->
       <div class="entity-list">
-        <h3>🌐 API Routes (<span id="apiListCount">0</span>)</h3>
-        <div id="apisList" class="collapsible-list"></div>
+        <h3>🌐 API Routes (<span id="apiCount">0</span>)</h3>
+        <div id="apisList"></div>
       </div>
       
       <!-- Pages List -->
       <div class="entity-list">
-        <h3>📄 Pages (<span id="pageListCount">0</span>)</h3>
-        <div id="pagesList" class="collapsible-list"></div>
+        <h3>📄 Pages (<span id="pageCount">0</span>)</h3>
+        <div id="pagesList"></div>
       </div>
       
       <!-- Validation Status -->
@@ -1042,498 +1042,221 @@
       }
     }
 
-    async function loadSidebar() {
-      try {
-        // Get all architectural elements from various sources
-        const [nineRulesRes, contractsRes, analysisRes] = await Promise.all([
-          fetch('/api/nine-rules').catch(() => ({ ok: false })),
-          fetch('/api/contracts').catch(() => ({ ok: false })),
-          fetch('/api/analysis').catch(() => ({ ok: false }))
-        ]);
-        
-        const nineRules = nineRulesRes.ok ? await nineRulesRes.json() : null;
-        const contracts = contractsRes.ok ? await contractsRes.json() : null;
-        const analysis = analysisRes.ok ? await analysisRes.json() : null;
-        
-        // 1. Tables (from existing sources)
-        const tablesData = tableMapping?.tables || analysisData?.tables || {};
-        const tables = Object.entries(tablesData);
-        const tablesList = document.getElementById('tablesList');
-        
-        if (tables.length === 0) {
-          tablesList.innerHTML = `<div style="color: #64748b; padding: 10px; font-size: 12px;">No tables found</div>`;
-        } else {
-          tablesList.innerHTML = tables.map(([name, table]) => {
-            const healthClass = table.score >= 80 ? 'health-good' : 
-                               table.score >= 40 ? 'health-warning' : 'health-error';
-            return `
-              <div class="entity-item" onclick="selectItem('table', '${name}')">
-                <span>${name}</span>
-                <div>
-                  <span class="entity-meta">${table.score}%</span>
-                  <span class="health-indicator ${healthClass}"></span>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
-        document.getElementById('tableListCount').textContent = tables.length;
-        
-        // 2. Hooks (dynamically discovered from files)
-        const hooks = discoverHooks(nineRules, contracts, analysis);
-        console.log('Discovered hooks:', hooks);
-        const hooksList = document.getElementById('hooksList');
-        hooksList.innerHTML = renderEntityList(hooks, 'hook');
-        document.getElementById('hookListCount').textContent = hooks.length;
-        
-        // 3. Components (dynamically discovered)
-        const components = discoverComponents(nineRules, contracts, analysis);
-        const componentsList = document.getElementById('componentsList');
-        componentsList.innerHTML = renderEntityList(components, 'component');
-        document.getElementById('componentListCount').textContent = components.length;
-        
-        // 4. API Routes (with nested structure)
-        const apiRoutes = discoverAPIRoutes(nineRules, contracts, analysis);
-        const apisList = document.getElementById('apisList');
-        apisList.innerHTML = renderNestedEntityList(apiRoutes, 'api');
-        document.getElementById('apiListCount').textContent = countNestedItems(apiRoutes);
-        
-        // 5. Pages (with nested structure)
-        const pages = discoverPages(nineRules, contracts, analysis);
-        const pagesList = document.getElementById('pagesList');
-        pagesList.innerHTML = renderNestedEntityList(pages, 'page');
-        document.getElementById('pageListCount').textContent = countNestedItems(pages);
-        
-      } catch (error) {
-        console.error('Failed to load sidebar:', error);
-      }
-    }
-    
-    // Helper functions for discovery
-    function discoverHooks(nineRules, contracts, analysis) {
-      const hooks = new Map();
+    function loadSidebar() {
+      // Try to get tables from multiple sources
+      const tablesData = tableMapping?.tables || analysisData?.tables || {};
+      const tables = Object.entries(tablesData);
+      const tablesList = document.getElementById('tablesList');
       
-      // From nine rules violations
-      if (nineRules?.results) {
-        nineRules.results.forEach(result => {
-          result.issues.forEach(issue => {
-            if (issue.file && (issue.file.includes('/hooks/') || issue.file.match(/use[A-Z]/))) {
-              const parts = issue.file.split('/');
-              let hookName = parts[parts.length - 1].replace(/\.(ts|tsx|js|jsx)$/, '');
-              
-              // Also check for hooks in the filename itself
-              const hookMatch = issue.file.match(/use[A-Z]\w+/);
-              if (hookMatch) {
-                hookName = hookMatch[0];
-              }
-              
-              if (hookName && !hooks.has(hookName)) {
-                hooks.set(hookName, { 
-                  name: hookName, 
-                  issues: 0, 
-                  score: 100,
-                  file: issue.file 
-                });
-              }
-              if (hookName) {
-                hooks.get(hookName).issues++;
-                hooks.get(hookName).score = Math.max(0, 100 - hooks.get(hookName).issues * 10);
-              }
-            }
-          });
-        });
-      }
-      
-      // From contracts
-      if (contracts?.violations) {
-        contracts.violations.forEach(v => {
-          if (v.hook) {
-            if (!hooks.has(v.hook)) {
-              hooks.set(v.hook, { name: v.hook, issues: 0, score: 100 });
-            }
-            hooks.get(v.hook).issues++;
-            hooks.get(v.hook).score = Math.max(0, 100 - hooks.get(v.hook).issues * 10);
-          }
-        });
-      }
-      
-      return Array.from(hooks.values());
-    }
-    
-    function discoverComponents(nineRules, contracts, analysis) {
-      const components = new Map();
-      
-      // Similar discovery logic for components
-      if (nineRules?.results) {
-        nineRules.results.forEach(result => {
-          result.issues.forEach(issue => {
-            if (issue.file && (issue.file.includes('/components/') || issue.file.includes('Component'))) {
-              const componentName = issue.component || issue.file.split('/').pop().replace(/\.(ts|tsx|js|jsx)$/, '');
-              if (!components.has(componentName)) {
-                components.set(componentName, { 
-                  name: componentName, 
-                  issues: 0, 
-                  score: 100,
-                  file: issue.file 
-                });
-              }
-              components.get(componentName).issues++;
-              components.get(componentName).score = Math.max(0, 100 - components.get(componentName).issues * 5);
-            }
-          });
-        });
-      }
-      
-      return Array.from(components.values());
-    }
-    
-    function discoverAPIRoutes(nineRules, contracts, analysis) {
-      const routes = {};
-      
-      // Discover from violations
-      if (nineRules?.results) {
-        nineRules.results.forEach(result => {
-          result.issues.forEach(issue => {
-            if (issue.file && (issue.file.includes('/api/') || issue.file.includes('/routes/'))) {
-              const parts = issue.file.split('/');
-              const apiIndex = parts.findIndex(p => p === 'api' || p === 'routes');
-              if (apiIndex >= 0) {
-                const pathParts = parts.slice(apiIndex + 1);
-                let current = routes;
-                
-                pathParts.forEach((part, idx) => {
-                  const cleanPart = idx === pathParts.length - 1 
-                    ? part.replace(/\.(ts|tsx|js|jsx)$/, '')
-                    : part;
-                  
-                  if (!current[cleanPart]) {
-                    current[cleanPart] = {
-                      name: cleanPart,
-                      children: {},
-                      issues: 0,
-                      score: 100
-                    };
-                  }
-                  if (idx === pathParts.length - 1) {
-                    current[cleanPart].issues++;
-                    current[cleanPart].score = Math.max(0, 100 - current[cleanPart].issues * 10);
-                  }
-                  current = current[cleanPart].children;
-                });
-              }
-            }
-          });
-        });
-      }
-      
-      return routes;
-    }
-    
-    function discoverPages(nineRules, contracts, analysis) {
-      const pages = {};
-      
-      // Similar nested discovery for pages
-      if (nineRules?.results) {
-        nineRules.results.forEach(result => {
-          result.issues.forEach(issue => {
-            if (issue.file && (issue.file.includes('/app/') || issue.file.includes('/pages/'))) {
-              const parts = issue.file.split('/');
-              const appIndex = parts.findIndex(p => p === 'app' || p === 'pages');
-              if (appIndex >= 0) {
-                const pathParts = parts.slice(appIndex + 1)
-                  .filter(p => !p.startsWith('api')); // Exclude API routes
-                  
-                let current = pages;
-                
-                pathParts.forEach((part, idx) => {
-                  const cleanPart = idx === pathParts.length - 1 
-                    ? part.replace(/\.(ts|tsx|js|jsx)$/, '')
-                    : part;
-                  
-                  if (!current[cleanPart]) {
-                    current[cleanPart] = {
-                      name: cleanPart,
-                      children: {},
-                      issues: 0,
-                      score: 100
-                    };
-                  }
-                  if (idx === pathParts.length - 1) {
-                    current[cleanPart].issues++;
-                    current[cleanPart].score = Math.max(0, 100 - current[cleanPart].issues * 10);
-                  }
-                  current = current[cleanPart].children;
-                });
-              }
-            }
-          });
-        });
-      }
-      
-      return pages;
-    }
-    
-    function renderEntityList(entities, type) {
-      if (!entities || entities.length === 0) {
-        return `<div style="color: #64748b; padding: 10px; font-size: 12px;">No ${type}s found</div>`;
-      }
-      
-      return entities.map(entity => {
-        const healthClass = entity.score >= 80 ? 'health-good' : 
-                           entity.score >= 40 ? 'health-warning' : 'health-error';
+      if (tables.length === 0) {
+        tablesList.innerHTML = `
+          <div style="color: #64748b; padding: 10px; font-size: 12px;">
+            No tables found. Try analyzing a project with database tables.
+          </div>
+        `;
+      } else {
+        tablesList.innerHTML = tables.map(([name, table]) => {
+        const healthClass = table.score >= 80 ? 'health-good' : 
+                           table.score >= 40 ? 'health-warning' : 'health-error';
         return `
-          <div class="entity-item" onclick="selectItem('${type}', '${entity.name}')">
-            <span>${entity.name}</span>
+          <div class="entity-item" onclick="selectTable('${name}')">
+            <span>${name}</span>
             <div>
-              <span class="entity-meta">${entity.score}%</span>
+              <span class="entity-meta">${table.score}%</span>
               <span class="health-indicator ${healthClass}"></span>
             </div>
           </div>
         `;
       }).join('');
-    }
-    
-    function renderNestedEntityList(items, type, level = 0) {
-      if (!items || Object.keys(items).length === 0) {
-        return level === 0 ? `<div style="color: #64748b; padding: 10px; font-size: 12px;">No ${type}s found</div>` : '';
       }
       
-      return Object.entries(items).map(([key, item]) => {
-        const hasChildren = item.children && Object.keys(item.children).length > 0;
-        const healthClass = item.score >= 80 ? 'health-good' : 
-                           item.score >= 40 ? 'health-warning' : 'health-error';
-        const isFolder = hasChildren || key.startsWith('(') && key.endsWith(')');
+      document.getElementById('tableListCount').textContent = tables.length;
+      
+      // Load hooks from tables
+      const hooks = tables.flatMap(([_, table]) => table.hooks || []);
+      const uniqueHooks = [...new Set(hooks.map(h => h.hookName))];
+      document.getElementById('hookCount').textContent = uniqueHooks.length;
+      
+      // Populate architecture counts from existing components
+      populateArchitectureCounts();
+      
+      const hooksList = document.getElementById('hooksList');
+      hooksList.innerHTML = uniqueHooks.slice(0, 10).map(hook => {
+        // Find which tables use this hook
+        const tablesUsingHook = tables.filter(([_, table]) => 
+          table.hooks?.some(h => h.hookName === hook)
+        ).map(([name]) => name);
         
         return `
-          <div style="margin-left: ${level * 15}px;">
-            <div class="entity-item" onclick="${hasChildren ? `toggleFolder('${type}-${key}')` : `selectItem('${type}', '${key}')`}">
-              <span>${isFolder ? '📁' : '📄'} ${key}</span>
-              <div>
-                ${item.issues > 0 ? `<span class="entity-meta" style="color: #ef4444;">${item.issues}</span>` : ''}
-                <span class="health-indicator ${healthClass}"></span>
-              </div>
-            </div>
-            ${hasChildren ? `
-              <div id="${type}-${key}" style="display: none;">
-                ${renderNestedEntityList(item.children, type, level + 1)}
-              </div>
-            ` : ''}
+          <div class="entity-item" onclick="showHookDetails('${hook}')" style="cursor: pointer;">
+            <span>${hook}</span>
+            <span class="entity-meta" style="font-size: 10px;">${tablesUsingHook.length} tables</span>
           </div>
         `;
       }).join('');
-    }
-    
-    function countNestedItems(items) {
-      let count = 0;
-      Object.values(items).forEach(item => {
-        count++;
-        if (item.children) {
-          count += countNestedItems(item.children);
-        }
-      });
-      return count;
-    }
-    
-    function toggleFolder(id) {
-      const element = document.getElementById(id);
-      if (element) {
-        element.style.display = element.style.display === 'none' ? 'block' : 'none';
-      }
-    }
-    
-    function filterSidebar(query) {
-      const q = query.toLowerCase();
-      document.querySelectorAll('.entity-item').forEach(item => {
-        const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(q) ? 'flex' : 'none';
-      });
-    }
-    
-    // Unified item selection function
-    async function selectItem(type, name) {
-      currentTable = null; // Reset table selection
-      const mainContent = document.getElementById('mainContent');
-      const queryContent = document.getElementById('queryContent');
       
-      // Show loading
-      mainContent.innerHTML = `<div style="padding: 20px;">Loading ${type}: ${name}...</div>`;
-      
+      // Load flows dynamically
+      loadDataFlows(tables);
+    }
+    
+    async function populateArchitectureCounts() {
+      // Use proper server-side API with same logic as working dashboard tabs
       try {
-        // Fetch all validation data for this item
-        const [nineRulesRes, contractsRes] = await Promise.all([
-          fetch('/api/nine-rules'),
-          fetch('/api/contracts')
+        // Get data from server using same validation logic as tabs
+        const [hooksRes, componentsRes, apisRes, pagesRes] = await Promise.all([
+          fetch('/api/architecture-data?type=hook'),
+          fetch('/api/architecture-data?type=component'),
+          fetch('/api/architecture-data?type=api'),
+          fetch('/api/architecture-data?type=page')
         ]);
         
-        const nineRules = await nineRulesRes.json();
-        const contracts = await contractsRes.json();
+        const [hooks, components, apis, pages] = await Promise.all([
+          hooksRes.json(),
+          componentsRes.json(),
+          apisRes.json(),
+          pagesRes.json()
+        ]);
         
-        // Filter issues for this specific item
-        const itemIssues = {
-          codeQuality: [],
-          contracts: [],
-          dataFlow: []
-        };
+        // Update counts
+        document.getElementById('hookCount').textContent = hooks.length;
+        document.getElementById('componentCount').textContent = components.length;
+        document.getElementById('apiCount').textContent = apis.length;
+        document.getElementById('pageCount').textContent = pages.length;
         
-        // Collect code quality issues
-        if (nineRules?.results) {
-          nineRules.results.forEach(result => {
-            result.issues.forEach(issue => {
-              if (matchesItem(issue, type, name)) {
-                itemIssues.codeQuality.push({
-                  ...issue,
-                  rule: result.rule,
-                  ruleNumber: result.ruleNumber
-                });
-              }
-            });
-          });
-        }
-        
-        // Collect contract violations
-        if (contracts?.violations) {
-          contracts.violations.forEach(violation => {
-            if (matchesItem(violation, type, name)) {
-              itemIssues.contracts.push(violation);
-            }
-          });
-        }
-        
-        // Render unified diagnostic view
-        mainContent.innerHTML = renderUnifiedDiagnostics(type, name, itemIssues);
-        
-        // Update query panel with data flow
-        if (queryContent) {
-          queryContent.innerHTML = renderDataFlow(type, name);
-        }
+        // Populate lists with clickable items using correct data
+        populateArchitectureList('hooksList', hooks, 'hook');
+        populateArchitectureList('componentsList', components, 'component');
+        populateArchitectureList('apisList', apis, 'api');
+        populateArchitectureList('pagesList', pages, 'page');
         
       } catch (error) {
-        mainContent.innerHTML = `<div style="color: #ef4444; padding: 20px;">Error loading ${type}: ${error.message}</div>`;
+        console.error('Error getting architecture counts:', error);
+        // Fallback to show error counts are empty
+        document.getElementById('hookCount').textContent = '0';
+        document.getElementById('componentCount').textContent = '0';
+        document.getElementById('apiCount').textContent = '0';
+        document.getElementById('pageCount').textContent = '0';
       }
     }
-    
-    function matchesItem(issue, type, name) {
-      switch(type) {
-        case 'table':
-          return issue.table === name || issue.entity === name;
-        case 'hook':
-          return issue.hook === name || 
-                 (issue.file && issue.file.includes(`/${name}.`));
-        case 'component':
-          return issue.component === name || 
-                 (issue.file && issue.file.includes(`/${name}.`));
-        case 'api':
-          return issue.file && issue.file.includes(`/api/`) && 
-                 issue.file.includes(name);
-        case 'page':
-          return issue.file && issue.file.includes(`/app/`) && 
-                 !issue.file.includes('/api/') &&
-                 issue.file.includes(name);
-        default:
-          return false;
-      }
-    }
-    
-    function renderUnifiedDiagnostics(type, name, issues) {
-      const totalIssues = issues.codeQuality.length + issues.contracts.length;
-      const score = Math.max(0, 100 - totalIssues * 5);
-      const healthClass = score >= 80 ? 'score-high' : 
-                          score >= 50 ? 'score-medium' : 'score-low';
+
+
+    function populateArchitectureList(listId, items, itemType) {
+      const listElement = document.getElementById(listId);
+      if (!listElement) return;
       
-      return `
-        <div style="padding: 20px;">
-          <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px;">
-            <h2>${type === 'api' ? '🌐' : type === 'page' ? '📄' : type === 'hook' ? '🔗' : type === 'component' ? '🧩' : '📊'} ${name}</h2>
-            <div class="score-circle ${healthClass}">${score}%</div>
+      if (items.length === 0) {
+        listElement.innerHTML = `
+          <div style="color: #64748b; padding: 10px; font-size: 12px; text-align: center;">
+            No ${itemType}s found
           </div>
-          
-          <!-- Summary Stats -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
-            <div style="background: rgba(30, 30, 40, 0.8); padding: 15px; border-radius: 8px;">
-              <div style="font-size: 24px; font-weight: bold; color: #ef4444;">${issues.codeQuality.length}</div>
-              <div style="font-size: 12px; color: #94a3b8;">Code Quality Issues</div>
-            </div>
-            <div style="background: rgba(30, 30, 40, 0.8); padding: 15px; border-radius: 8px;">
-              <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">${issues.contracts.length}</div>
-              <div style="font-size: 12px; color: #94a3b8;">Contract Violations</div>
+        `;
+        return;
+      }
+      
+      listElement.innerHTML = items.slice(0, 10).map(item => {
+        const healthClass = item.healthScore >= 80 ? 'health-good' : 
+                           item.healthScore >= 40 ? 'health-warning' : 'health-error';
+        
+        return `
+          <div class="entity-item" onclick="selectArchitectureItem('${item.name}', '${itemType}', '${item.file}')" style="cursor: pointer;">
+            <span>${item.name}</span>
+            <div>
+              <span class="entity-meta">${item.healthScore}%</span>
+              <span class="health-indicator ${healthClass}"></span>
             </div>
           </div>
-          
-          <!-- Code Quality Issues -->
-          ${issues.codeQuality.length > 0 ? `
-            <div style="margin-bottom: 30px;">
-              <h3 style="margin-bottom: 15px;">✅ Code Quality Issues</h3>
-              ${issues.codeQuality.map(issue => `
-                <div style="background: rgba(30, 30, 40, 0.6); border-left: 3px solid #ef4444; padding: 12px; margin-bottom: 8px; border-radius: 4px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong>Rule ${issue.ruleNumber}: ${issue.rule}</strong>
-                    ${issue.severity ? `<span style="color: ${issue.severity === 'critical' ? '#ef4444' : '#f59e0b'};">${issue.severity}</span>` : ''}
-                  </div>
-                  <div style="margin-top: 8px; color: #e2e8f0;">${issue.message}</div>
-                  ${issue.file ? `
-                    <div style="margin-top: 8px; font-family: monospace; font-size: 11px; color: #60a5fa;">
-                      📍 ${issue.file}${issue.line ? ':' + issue.line : ''}
-                    </div>
-                  ` : ''}
-                </div>
-              `).join('')}
-            </div>
-          ` : ''}
-          
-          <!-- Contract Violations -->
-          ${issues.contracts.length > 0 ? `
-            <div style="margin-bottom: 30px;">
-              <h3 style="margin-bottom: 15px;">📋 Contract Violations</h3>
-              ${issues.contracts.map(violation => `
-                <div style="background: rgba(30, 30, 40, 0.6); border-left: 3px solid #f59e0b; padding: 12px; margin-bottom: 8px; border-radius: 4px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong>${violation.rule || 'Contract Violation'}</strong>
-                    ${violation.field ? `<span style="font-family: monospace; font-size: 12px; color: #60a5fa;">${violation.field}</span>` : ''}
-                  </div>
-                  <div style="margin-top: 8px; color: #e2e8f0;">${violation.message}</div>
-                  ${violation.location ? `
-                    <div style="margin-top: 8px; font-family: monospace; font-size: 11px; color: #60a5fa;">
-                      📍 ${violation.location}
-                    </div>
-                  ` : ''}
-                </div>
-              `).join('')}
-            </div>
-          ` : ''}
-          
-          ${totalIssues === 0 ? `
-            <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 8px; color: #10b981;">
-              ✅ No issues found for this ${type}!
-            </div>
-          ` : ''}
-        </div>
-      `;
+        `;
+      }).join('');
+      
+      if (items.length > 10) {
+        listElement.innerHTML += `
+          <div style="color: #64748b; padding: 10px; font-size: 11px; text-align: center;">
+            ... and ${items.length - 10} more
+          </div>
+        `;
+      }
     }
     
-    function renderDataFlow(type, name) {
-      // This would show the data flow visualization
-      // For now, returning a placeholder
-      return `
-        <div style="padding: 20px;">
-          <h3>🔄 Data Flow</h3>
-          <div style="margin-top: 20px; color: #94a3b8;">
-            <p>Data flow visualization for ${type}: ${name}</p>
-            <p style="margin-top: 10px;">Coming soon: Interactive flow diagram showing:</p>
-            <ul style="margin-left: 20px; margin-top: 10px;">
-              <li>Upstream dependencies</li>
-              <li>Downstream consumers</li>
-              <li>Data transformations</li>
-              <li>Cache points</li>
-            </ul>
+    
+    function loadDataFlows(tables) {
+      const flowsList = document.getElementById('flowsList');
+      
+      // Identify common flows based on table relationships
+      const flows = [];
+      
+      // Authentication flow
+      if (tables.some(([name]) => name.toLowerCase().includes('user') || name.toLowerCase().includes('auth'))) {
+        flows.push({
+          name: 'Authentication',
+          tables: tables.filter(([name]) => 
+            name.toLowerCase().includes('user') || 
+            name.toLowerCase().includes('auth') || 
+            name.toLowerCase().includes('session')
+          ).map(([name]) => name),
+          health: 'good'
+        });
+      }
+      
+      // Content flow
+      if (tables.some(([name]) => name.toLowerCase().includes('post') || name.toLowerCase().includes('comment'))) {
+        flows.push({
+          name: 'Content Management',
+          tables: tables.filter(([name]) => 
+            name.toLowerCase().includes('post') || 
+            name.toLowerCase().includes('comment') || 
+            name.toLowerCase().includes('engagement')
+          ).map(([name]) => name),
+          health: 'warning'
+        });
+      }
+      
+      // Professional/Profile flow
+      if (tables.some(([name]) => name.toLowerCase().includes('professional') || name.toLowerCase().includes('profile'))) {
+        flows.push({
+          name: 'User Profiles',
+          tables: tables.filter(([name]) => 
+            name.toLowerCase().includes('professional') || 
+            name.toLowerCase().includes('profile') ||
+            name.toLowerCase().includes('skill')
+          ).map(([name]) => name),
+          health: 'good'
+        });
+      }
+      
+      // Live session flow
+      if (tables.some(([name]) => name.toLowerCase().includes('live') || name.toLowerCase().includes('session'))) {
+        flows.push({
+          name: 'Live Sessions',
+          tables: tables.filter(([name]) => 
+            name.toLowerCase().includes('live') || 
+            name.toLowerCase().includes('session') ||
+            name.toLowerCase().includes('stream')
+          ).map(([name]) => name),
+          health: 'warning'
+        });
+      }
+      
+      flowsList.innerHTML = flows.map(flow => {
+        const healthClass = `health-${flow.health}`;
+        return `
+          <div class="entity-item" onclick="showFlowDetails('${flow.name}', ${JSON.stringify(flow.tables).replace(/"/g, '&quot;')})" style="cursor: pointer;">
+            <span>${flow.name}</span>
+            <div>
+              <span class="entity-meta" style="font-size: 10px;">${flow.tables.length} tables</span>
+              <span class="health-indicator ${healthClass}"></span>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }).join('') || '<div style="color: #64748b; padding: 10px; font-size: 12px;">No flows detected</div>';
     }
 
     function selectTable(tableName) {
-      // Redirect to unified selectItem
-      selectItem('table', tableName);
-      return;
+      currentTable = tableName;
+      const tablesData = tableMapping?.tables || analysisData?.tables || {};
+      const table = tablesData[tableName];
+      if (!table) {
+        console.warn('Table not found:', tableName);
+        return;
       }
       
       // Update active state
@@ -1927,6 +1650,180 @@
       console.log('Show component details for:', componentName);
       // TODO: Implement component detail view
     }
+
+    // Unified function to show all validation results for any architectural element
+    async function selectArchitectureItem(itemName, itemType, filePath = null) {
+      try {
+        // Update active state in sidebar
+        document.querySelectorAll('.entity-item').forEach(el => {
+          el.classList.remove('active');
+          if (el.textContent.includes(itemName)) {
+            el.classList.add('active');
+          }
+        });
+
+        // Show main content panel
+        const mainContent = document.getElementById('mainContent');
+        mainContent.innerHTML = '<div style="padding: 20px;">Loading comprehensive analysis...</div>';
+
+        // Fetch validation data for this specific file
+        const [nineRulesRes, contractsRes] = await Promise.all([
+          fetch('/api/nine-rules'),
+          fetch('/api/contracts')
+        ]);
+
+        const [nineRulesData, contractsData] = await Promise.all([
+          nineRulesRes.json(),
+          contractsRes.json()
+        ]);
+
+        // Filter issues for this specific file
+        const contractViolations = contractsData.violations?.filter(v => 
+          v.location?.includes(filePath)
+        ) || [];
+
+        const codeQualityIssues = [];
+        if (nineRulesData?.results) {
+          nineRulesData.results.forEach(rule => {
+            rule.issues?.forEach(issue => {
+              if (issue.file === filePath) {
+                codeQualityIssues.push({
+                  rule: rule.rule,
+                  ruleNumber: rule.ruleNumber,
+                  ...issue
+                });
+              }
+            });
+          });
+        }
+        
+        // Generate diagnostic HTML
+        const diagnosticHtml = generateItemDiagnostic(itemName, itemType, contractViolations, codeQualityIssues);
+        mainContent.innerHTML = diagnosticHtml;
+
+      } catch (error) {
+        console.error('Error loading architecture item details:', error);
+        document.getElementById('mainContent').innerHTML = 
+          '<div style="padding: 20px; color: #ef4444;">Error loading details. Please try again.</div>';
+      }
+    }
+
+    function generateItemDiagnostic(itemName, itemType, contractViolations, codeQualityIssues) {
+      const totalIssues = contractViolations.length + codeQualityIssues.length;
+      const healthScore = totalIssues === 0 ? 100 : Math.max(10, 100 - (totalIssues * 15));
+      const healthClass = healthScore >= 80 ? 'health-good' : healthScore >= 40 ? 'health-warning' : 'health-error';
+      const critical = codeQualityIssues.filter(i => i.severity === 'critical').length;
+      const warnings = codeQualityIssues.filter(i => i.severity === 'warning').length;
+
+      return `
+        <div style="padding: 20px;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 30px;">
+            <div style="font-size: 24px;">${getItemIcon(itemType)}</div>
+            <div>
+              <h2 style="margin: 0; color: #f8fafc;">${itemName}</h2>
+              <p style="margin: 4px 0 0 0; color: #94a3b8; text-transform: capitalize;">${itemType}</p>
+            </div>
+            <div style="margin-left: auto; text-align: right;">
+              <div style="color: #ef4444; font-size: 14px; margin-bottom: 4px;">
+                ${contractViolations.length} contract errors, ${codeQualityIssues.length} quality issues
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: #94a3b8;">Health Score:</span>
+                <span class="health-indicator ${healthClass}" style="margin-right: 8px;"></span>
+                <span style="color: #f8fafc; font-weight: bold;">${healthScore}%</span>
+              </div>
+            </div>
+          </div>
+
+          ${totalIssues === 0 ? 
+            '<div style="text-align: center; padding: 40px; color: #10b981; font-size: 18px;">✅ No issues found</div>' :
+            `
+            <!-- Summary Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 30px;">
+              <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; border-left: 4px solid ${codeQualityIssues.length > 0 ? (critical > 0 ? '#ef4444' : '#f59e0b') : '#10b981'};">
+                <div style="color: #94a3b8; font-size: 12px; margin-bottom: 4px;">Code Quality</div>
+                <div style="color: #f8fafc; font-size: 20px; font-weight: bold;">${codeQualityIssues.length}</div>
+                <div style="color: #94a3b8; font-size: 11px;">${critical} critical, ${warnings} warnings</div>
+              </div>
+              <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; border-left: 4px solid ${contractViolations.length > 0 ? '#f59e0b' : '#10b981'};">
+                <div style="color: #94a3b8; font-size: 12px; margin-bottom: 4px;">Contracts</div>
+                <div style="color: #f8fafc; font-size: 20px; font-weight: bold;">${contractViolations.length}</div>
+                <div style="color: #94a3b8; font-size: 11px;">Type safety violations</div>
+              </div>
+            </div>
+
+            ${renderCodeQualityIssues(codeQualityIssues)}
+            ${renderContractViolations(contractViolations)}
+            `
+          }
+        </div>
+      `;
+    }
+
+    function renderCodeQualityIssues(issues) {
+      if (issues.length === 0) return '';
+      
+      return `
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #f8fafc; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+            <span>🔍</span> Code Quality Issues
+          </h3>
+          ${issues.map(issue => `
+            <div style="background: #1a1a1a; padding: 16px; margin-bottom: 12px; border-radius: 8px; border-left: 4px solid ${issue.severity === 'critical' ? '#ef4444' : '#f59e0b'};">
+              <div style="display: flex; align-items: start; justify-content: space-between; margin-bottom: 8px;">
+                <div>
+                  <span style="color: #64748b; font-size: 12px;">Rule ${issue.ruleNumber}:</span>
+                  <span style="color: #f8fafc; font-weight: bold; margin-left: 8px;">${issue.rule}</span>
+                </div>
+                <span style="background: ${issue.severity === 'critical' ? '#ef4444' : '#f59e0b'}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; text-transform: uppercase;">
+                  ${issue.severity}
+                </span>
+              </div>
+              <div style="color: #e2e8f0; margin-bottom: 8px; font-size: 14px;">${issue.message}</div>
+              ${issue.line ? `<div style="color: #64748b; font-size: 12px; font-family: monospace; margin-bottom: 8px;">Line ${issue.line}</div>` : ''}
+              ${issue.suggestion ? `<div style="color: #10b981; font-size: 13px; margin-top: 8px;">💡 ${issue.suggestion}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderContractViolations(violations) {
+      if (violations.length === 0) return '';
+      
+      return `
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #f8fafc; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+            <span>📋</span> Contract Violations
+          </h3>
+          ${violations.map(violation => `
+            <div style="background: #1a1a1a; padding: 16px; margin-bottom: 12px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+              <div style="display: flex; align-items: start; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: #f8fafc; font-weight: bold;">${violation.entity || 'Contract'}</span>
+                <span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px;">CONTRACT</span>
+              </div>
+              <div style="color: #e2e8f0; margin-bottom: 8px; font-size: 14px;">${violation.message}</div>
+              ${violation.location ? `<div style="color: #64748b; font-size: 12px; font-family: monospace; margin-bottom: 8px;">${violation.location}</div>` : ''}
+              ${violation.expected ? `<div style="background: #0a0a0a; padding: 8px; border-radius: 4px; margin-bottom: 4px;"><span style="color: #64748b; font-size: 11px;">Expected:</span> <span style="color: #10b981; font-family: monospace;">${violation.expected}</span></div>` : ''}
+              ${violation.actual ? `<div style="background: #0a0a0a; padding: 8px; border-radius: 4px;"><span style="color: #64748b; font-size: 11px;">Actual:</span> <span style="color: #ef4444; font-family: monospace;">${violation.actual}</span></div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function getItemIcon(itemType) {
+      const icons = {
+        hook: '🔗',
+        component: '🧩', 
+        api: '🌐',
+        page: '📄',
+        table: '📊'
+      };
+      return icons[itemType] || '📁';
+    }
+
+
     
     // Helper function to escape HTML and preserve Unicode
     function escapeHtml(str) {

@@ -245,7 +245,9 @@ export class ContractValidator {
       if (reportedLines.has(lineKey)) continue;
       
       for (const wrong of wrongVariations) {
-        if (line.includes(wrong) && !line.includes(correctField)) {
+        // Use word boundary regex to avoid substring matches
+        const wordBoundaryPattern = new RegExp(`\\b${wrong}\\b`);
+        if (wordBoundaryPattern.test(line) && !line.includes(correctField)) {
           // Make sure it's actually for this entity
           if (line.toLowerCase().includes(entityName.toLowerCase()) ||
               lines[Math.max(0, i-5)].toLowerCase().includes(entityName.toLowerCase()) ||

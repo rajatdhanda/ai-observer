@@ -1,0 +1,353 @@
+[
+  {
+    "name": "useProfessionals Hook",
+    "file": "src/hooks/useProfessionals.ts",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [],
+    "passed": true
+  },
+  {
+    "name": "No False Positives (substring matching)",
+    "file": "Various files",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [],
+    "passed": true
+  },
+  {
+    "name": "Rule 2: Hook-Database Pattern",
+    "file": "src/hooks/*",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": []
+  },
+  {
+    "name": "Rule 5: Loading States",
+    "file": "src/hooks/*",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": []
+  },
+  {
+    "name": "Table: professional",
+    "file": "Table mapping for professional",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: post",
+    "file": "Table mapping for post",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: postengagement",
+    "file": "Table mapping for postengagement",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "No hooks for data fetching",
+      "No components using this data"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: comment",
+    "file": "Table mapping for comment",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: livesession",
+    "file": "Table mapping for livesession",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: product",
+    "file": "Table mapping for product",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "Hooks missing error handling"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: order",
+    "file": "Table mapping for order",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: orderitem",
+    "file": "Table mapping for orderitem",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "No hooks for data fetching",
+      "No components using this data"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: insurancepolicy",
+    "file": "Table mapping for insurancepolicy",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "Hooks missing error handling",
+      "No components using this data"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: insuranceclaim",
+    "file": "Table mapping for insuranceclaim",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "Hooks missing error handling",
+      "No components using this data"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: client",
+    "file": "Table mapping for client",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "Hooks missing error handling"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: appointment",
+    "file": "Table mapping for appointment",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "Hooks missing error handling"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: serviceitem",
+    "file": "Table mapping for serviceitem",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "No hooks for data fetching",
+      "No components using this data"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: course",
+    "file": "Table mapping for course",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "Hooks missing error handling"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: courseenrollment",
+    "file": "Table mapping for courseenrollment",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "No hooks for data fetching"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: address",
+    "file": "Table mapping for address",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "No hooks for data fetching",
+      "No components using this data"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: notification",
+    "file": "Table mapping for notification",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "No hooks for data fetching"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: analytics",
+    "file": "Table mapping for analytics",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "No hooks for data fetching",
+      "No components using this data"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: user",
+    "file": "Table mapping for user",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: cartitem",
+    "file": "Table mapping for cartitem",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "Hooks missing error handling",
+      "No components using this data"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: courseprogress",
+    "file": "Table mapping for courseprogress",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "Hooks missing error handling",
+      "No components using this data"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: navitem",
+    "file": "Table mapping for navitem",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "No hooks for data fetching"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: sortorder",
+    "file": "Table mapping for sortorder",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "No hooks for data fetching",
+      "No components using this data"
+    ],
+    "passed": true
+  },
+  {
+    "name": "Table: daterange",
+    "file": "Table mapping for daterange",
+    "expectedErrors": [],
+    "expectedWarnings": [],
+    "actualErrors": [],
+    "actualWarnings": [
+      "Missing Zod schema for validation",
+      "No database queries found",
+      "No hooks for data fetching",
+      "No components using this data"
+    ],
+    "passed": true
+  }
+]

@@ -172,6 +172,18 @@ class Dashboard {
         const results = await this.runNineRulesValidation();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(results));
+      } else if (req.url?.startsWith('/api/discover-files')) {
+        const url = new URL(req.url, `http://localhost:${PORT}`);
+        const type = url.searchParams.get('type') || 'all';
+        const files = await this.discoverProjectFiles(type);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ files }));
+      } else if (req.url?.startsWith('/api/architecture-data')) {
+        const url = new URL(req.url, `http://localhost:${PORT}`);
+        const type = url.searchParams.get('type') as 'hook' | 'component' | 'api' | 'page';
+        const data = await this.getArchitectureData(type);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(data));
       } else if (req.url === '/api/nine-rules-view') {
         const html = renderNineRulesView(this.nineRulesResults);
         res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -237,8 +249,11 @@ class Dashboard {
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(html);
       } else if (req.url === '/') {
+        // Serve enhanced dashboard by default
+        const enhancedPath = path.join(__dirname, 'enhanced.html');
+        const html = fs.readFileSync(enhancedPath, 'utf-8');
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(this.getHTML());
+        res.end(html);
       } else {
         res.writeHead(404);
         res.end();
@@ -362,6 +377,238 @@ Available projects: ${this.availableProjects.length}
     this.nineRulesValidator = new NineRulesValidator(this.projectPath);
     this.nineRulesResults = await this.nineRulesValidator.validateAll();
     return this.nineRulesResults;
+  }
+
+  private async discoverProjectFiles(type: string = 'all'): Promise<string[]> {
+    const files: string[] = [];
+    
+    const walkDir = (dir: string) => {
+      if (!fs.existsSync(dir)) return;
+      
+      const items = fs.readdirSync(dir, { withFileTypes: true });
+      
+      for (const item of items) {
+        const fullPath = path.join(dir, item.name);
+        const relativePath = path.relative(this.projectPath, fullPath);
+        
+        if (item.isDirectory()) {
+          // Skip non-source directories
+          const skipDirs = [
+            'node_modules', '.git', '.next', 'dist', 'build', 
+            'contracts', // Skip contract schemas
+            'tests', '__tests__', '.turbo', 'coverage',
+            'public', 'static'
+          ];
+          
+          if (skipDirs.includes(item.name)) {
+            continue;
+          }
+          
+          // Also skip hidden directories
+          if (item.name.startsWith('.')) {
+            continue;
+          }
+          
+          walkDir(fullPath);
+        } else if (item.isFile()) {
+          const ext = path.extname(item.name);
+          
+          // Skip test files, config files, and non-source files
+          if (item.name.includes('.test.') || 
+              item.name.includes('.spec.') ||
+              item.name.includes('.config.') ||
+              item.name.includes('.schema.') ||
+              item.name === 'package.json' ||
+              item.name === 'tsconfig.json') {
+            continue;
+          }
+          
+          if (['.ts', '.tsx', '.js', '.jsx'].includes(ext)) {
+            // Only include files from src directory
+            if (!relativePath.startsWith('src/')) {
+              continue;
+            }
+            
+            // Filter by type if specified
+            switch (type) {
+              case 'hooks':
+                if (relativePath.includes('/hooks/') || /^use[A-Z]/.test(item.name)) {
+                  files.push(fullPath);
+                }
+                break;
+              case 'components':
+                if (relativePath.includes('/components/')) {
+                  files.push(fullPath);
+                }
+                break;
+              case 'api':
+                if (relativePath.includes('/api/')) {
+                  files.push(fullPath);
+                }
+                break;
+              case 'pages':
+                if (relativePath.includes('/app/') && !relativePath.includes('/api/') && 
+                    (item.name === 'page.tsx' || item.name === 'page.ts')) {
+                  files.push(fullPath);
+                }
+                break;
+              case 'all':
+              default:
+                // For 'all', still apply the src filter
+                files.push(fullPath);
+                break;
+            }
+          }
+        }
+      }
+    };
+    
+    // Start walking from src directory if it exists
+    const srcPath = path.join(this.projectPath, 'src');
+    if (fs.existsSync(srcPath)) {
+      walkDir(srcPath);
+    } else {
+      walkDir(this.projectPath);
+    }
+    
+    return files;
+  }
+
+  private async getArchitectureData(type: 'hook' | 'component' | 'api' | 'page'): Promise<any[]> {
+    try {
+      // Get validation results (same logic as working tabs)
+      const nineRulesData = this.nineRulesResults || await this.runNineRulesValidation();
+      const contractsData = this.contractResults || await this.runContractValidation();
+      
+      // Get all files for this type - fix plural mismatch
+      const typeMap = {
+        'hook': 'hooks',
+        'component': 'components', 
+        'api': 'api',
+        'page': 'pages'
+      };
+      const allFiles = await this.discoverProjectFiles(typeMap[type]);
+      
+      // Process each file using same logic as working tabs
+      const items = allFiles.map((filePath: string) => {
+        const item = this.createArchitectureItem(filePath, type);
+        
+        // Count contract violations - separate errors and warnings
+        const fileContractViolations = contractsData.violations?.filter((violation: any) => 
+          violation.location?.includes(filePath)
+        ) || [];
+        const contractErrors = fileContractViolations.filter((v: any) => v.type === 'error').length;
+        const contractWarnings = fileContractViolations.filter((v: any) => v.type === 'warning').length;
+
+        // Count nine-rules issues - separate critical and warnings
+        const fileCQIssues = this.getNineRulesIssuesForFile(nineRulesData, filePath);
+        const codeQualityErrors = fileCQIssues.filter((i: any) => i.severity === 'critical').length;
+        const codeQualityWarnings = fileCQIssues.filter((i: any) => i.severity === 'warning').length;
+
+        const totalErrors = contractErrors + codeQualityErrors;
+        const totalWarnings = contractWarnings + codeQualityWarnings;
+        const totalIssues = totalErrors + totalWarnings;
+        
+        return {
+          ...item,
+          errorCount: totalErrors,
+          warningCount: totalWarnings,
+          contractErrors,
+          contractWarnings,
+          codeQualityErrors,
+          codeQualityWarnings,
+          contractViolations: contractErrors + contractWarnings,
+          codeQualityIssues: codeQualityErrors + codeQualityWarnings,
+          issueCount: totalIssues,
+          healthScore: this.calculateHealthScore(totalErrors, totalWarnings)
+        };
+      });
+
+      return items.sort((a, b) => a.name.localeCompare(b.name));
+      
+    } catch (error) {
+      console.error('Error getting architecture data:', error);
+      return [];
+    }
+  }
+
+  private createArchitectureItem(filePath: string, type: string): any {
+    let name: string;
+    
+    switch (type) {
+      case 'hook':
+        name = filePath.match(/use[A-Z]\w+/)?.[0] || 
+               filePath.split('/').pop()?.replace(/\.(ts|tsx|js|jsx)$/, '') || 'Unknown Hook';
+        break;
+      case 'component':
+        name = filePath.split('/').pop()?.replace(/\.(ts|tsx|js|jsx)$/, '') || 'Unknown Component';
+        break;
+      case 'api':
+        name = filePath.replace(/.*\/api/, '/api');
+        break;
+      case 'page':
+        const pagePath = filePath.replace(/.*\/app/, '').replace(/\/page\.(ts|tsx|js|jsx)$/, '') || '/';
+        name = pagePath === '/' ? 'Home' : pagePath.split('/').filter(Boolean).join(' > ');
+        break;
+      default:
+        name = 'Unknown';
+    }
+
+    return {
+      name,
+      file: filePath,
+      type: type,
+      healthScore: 100,
+      issueCount: 0,
+      errorCount: 0,
+      warningCount: 0,
+      contractErrors: 0,
+      contractWarnings: 0,
+      codeQualityErrors: 0,
+      codeQualityWarnings: 0,
+      contractViolations: 0,
+      codeQualityIssues: 0
+    };
+  }
+
+  private getNineRulesIssuesForFile(nineRulesData: any, filePath: string): any[] {
+    if (!nineRulesData?.results) return [];
+    
+    const issues: any[] = [];
+    nineRulesData.results.forEach((rule: any) => {
+      rule.issues?.forEach((issue: any) => {
+        if (issue.file === filePath) {
+          issues.push({
+            rule: rule.rule,
+            ruleNumber: rule.ruleNumber,
+            ...issue
+          });
+        }
+      });
+    });
+    
+    return issues;
+  }
+  
+  private countNineRulesIssuesForFile(nineRulesData: any, filePath: string): number {
+    if (!nineRulesData?.results) return 0;
+    
+    return nineRulesData.results.reduce((count: number, rule: any) => {
+      const fileIssues = rule.issues?.filter((issue: any) => issue.file === filePath).length || 0;
+      return count + fileIssues;
+    }, 0);
+  }
+
+  private calculateHealthScore(errors: number, warnings: number): number {
+    if (errors === 0 && warnings === 0) return 100;
+    
+    // Objective scoring:
+    // - Critical errors: 20 points each (max 80 points deduction)
+    // - Warnings: 5 points each (max 20 points deduction)
+    const errorDeduction = Math.min(errors * 20, 80);
+    const warningDeduction = Math.min(warnings * 5, 20);
+    
+    return Math.max(0, 100 - errorDeduction - warningDeduction);
   }
 
   private async runContractValidation() {
