@@ -594,20 +594,23 @@
   </div>
 
   <!-- Quick Actions Bar -->
-  <div class="mode-bar" style="padding: 8px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid #252525;">
-    <div class="quick-actions" style="display: flex; gap: 10px; align-items: center;">
-      <button class="action-btn" onclick="runAllValidations()" style="padding: 6px 12px; font-size: 13px;">
-        <span>🚀</span> Run All
+  <div class="mode-bar">
+    <div class="quick-actions">
+      <button class="action-btn" onclick="runFullAnalysis()">
+        <span>🎯</span> Full Health Check
       </button>
-      <button class="action-btn" onclick="exportReport()" style="padding: 6px 12px; font-size: 13px;">
-        <span>📊</span> Export
+      <button class="action-btn" onclick="switchTab('validation')">
+        <span>✅</span> Quick Validation
       </button>
-      <button class="action-btn" onclick="viewChanges()" style="padding: 6px 12px; font-size: 13px;">
-        <span>📝</span> Changes
+      <button class="action-btn" onclick="switchTab('9rules')">
+        <span>📋</span> Core Rules
       </button>
-      <div style="margin-left: auto; color: #64748b; font-size: 12px;">
-        <span id="lastRunStatus">Last run: Never</span>
-      </div>
+      <button class="action-btn" onclick="switchTab('business-logic')">
+        <span>🧠</span> Business Logic
+      </button>
+    </div>
+    <div class="mode-description" id="mode-description">
+      Daily workflow: Start with 🏠 Overview → Run ✅ Health Check → Focus on specific areas below
     </div>
   </div>
 
@@ -638,13 +641,40 @@
 
   <!-- Tabs -->
   <div class="tabs" style="overflow-x: auto; white-space: nowrap; padding: 0 20px;">
-    <!-- Main Views -->
+    <!-- Core Analysis (Daily Start Here) -->
     <div class="tab-group">
       <div class="tab active" onclick="switchTab('overview')">🏠 Overview</div>
-      <div class="tab" onclick="switchTab('code-quality')">✅ Code Quality</div>
-      <div class="tab" onclick="switchTab('contracts')">📋 Contracts</div>
+      <div class="tab" onclick="switchTab('validation')">✅ Health Check</div>
+      <div class="tab" onclick="switchTab('nine-rules')">📋 Core Rules</div>
+    </div>
+    <div class="tab-divider"></div>
+    
+    <!-- Architecture & Structure -->
+    <div class="tab-group">
+      <div class="tab" onclick="switchTab('entities')">🏗️ Data Model</div>
+      <div class="tab" onclick="switchTab('dataflow')">🔄 Data Flow</div>
+      <div class="tab" onclick="switchTab('boundaries')">🎯 Boundaries</div>
+    </div>
+    <div class="tab-divider"></div>
+    
+    <!-- Business Logic -->
+    <div class="tab-group">
       <div class="tab" onclick="switchTab('business')">🧠 Business Logic</div>
+      <div class="tab" onclick="switchTab('contracts')">📋 Contracts</div>
+    </div>
+    <div class="tab-divider"></div>
+    
+    <!-- Development Tools -->
+    <div class="tab-group">
+      <div class="tab" onclick="switchTab('queries')">🔍 Queries</div>
+      <div class="tab" onclick="switchTab('registry')">📚 Registry</div>
+    </div>
+    <div class="tab-divider"></div>
+    
+    <!-- Quality & Design -->
+    <div class="tab-group">
       <div class="tab" onclick="switchTab('design')">🎨 Design System</div>
+      <div class="tab" onclick="switchTab('versions')">🔄 Versions</div>
     </div>
   </div>
 
@@ -835,19 +865,19 @@
       try {
         // Run all analyses based on current tab
         switch(currentTab) {
-          case 'code-quality':
-            await loadCodeQuality();
+          case 'validation':
+            await loadValidation();
+            break;
+          case 'dataflow':
+            await runDataFlowAnalysis();
+            await loadDataFlow();
             break;
           case 'contracts':
             await loadContracts();
             break;
-          case 'business':
-            await loadBusiness();
+          case 'nine-rules':
+            await loadNineRules();
             break;
-          case 'design':
-            await loadDesignSystem();
-            break;
-          case 'overview':
           default:
             // Run general analysis
             await fetch('/api/validate');
@@ -1821,30 +1851,8 @@
       }
     }
 
-    function loadOverview(showDataFlow = false) {
+    function loadOverview() {
       const mainContent = document.getElementById('mainContent');
-      const sidebar = document.getElementById('sidebar');
-      
-      // Update sidebar to show tables/hooks/components
-      if (sidebar) {
-        sidebar.innerHTML = `
-          <div style="padding: 20px;">
-            <h3 style="margin-bottom: 15px;">📦 Project Structure</h3>
-            <button onclick="loadOverview(false)" style="width: 100%; padding: 10px; margin-bottom: 10px; background: ${!showDataFlow ? '#3b82f6' : '#1a1a1a'}; border: none; border-radius: 6px; color: white; cursor: pointer;">
-              📊 Overview
-            </button>
-            <button onclick="loadOverview(true)" style="width: 100%; padding: 10px; background: ${showDataFlow ? '#3b82f6' : '#1a1a1a'}; border: none; border-radius: 6px; color: white; cursor: pointer;">
-              🔄 Data Flow
-            </button>
-          </div>
-        `;
-      }
-      
-      if (showDataFlow) {
-        loadDataFlow();
-        return;
-      }
-      
       mainContent.innerHTML = `
         <h2 style="margin-bottom: 20px;">Project Overview</h2>
         
@@ -2058,30 +2066,11 @@
       }
     }
 
-    async function loadContracts(groupBy = 'table', runValidation = true, view = 'contracts') {
+    async function loadContracts(groupBy = 'table', runValidation = true) {
       const mainContent = document.getElementById('mainContent');
       const queryContent = document.getElementById('queryContent');
-      const sidebar = document.getElementById('sidebar');
       
       if (queryContent) queryContent.innerHTML = '';
-      
-      // Update sidebar with contract sub-views
-      if (sidebar) {
-        sidebar.innerHTML = `
-          <div style="padding: 20px;">
-            <h3 style="margin-bottom: 15px;">📋 Contract Views</h3>
-            <button onclick="loadContracts('table', false, 'contracts')" style="width: 100%; padding: 10px; margin-bottom: 10px; background: ${view === 'contracts' ? '#3b82f6' : '#1a1a1a'}; border: none; border-radius: 6px; color: white; cursor: pointer;">
-              📋 Contracts
-            </button>
-            <button onclick="loadContracts('table', false, 'boundaries')" style="width: 100%; padding: 10px; margin-bottom: 10px; background: ${view === 'boundaries' ? '#3b82f6' : '#1a1a1a'}; border: none; border-radius: 6px; color: white; cursor: pointer;">
-              🎯 Boundaries
-            </button>
-            <button onclick="loadContracts('table', false, 'versions')" style="width: 100%; padding: 10px; background: ${view === 'versions' ? '#3b82f6' : '#1a1a1a'}; border: none; border-radius: 6px; color: white; cursor: pointer;">
-              🔄 Versions
-            </button>
-          </div>
-        `;
-      }
       
       // Save scroll position before updating
       const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
@@ -2096,15 +2085,6 @@
       }
       
       try {
-        if (view === 'boundaries') {
-          await loadBoundaries();
-          return;
-        } else if (view === 'versions') {
-          await loadVersions();
-          return;
-        }
-        
-        // Default contracts view
         // Fetch the pre-rendered HTML from our component
         const res = await fetch(`/api/contracts-html?groupBy=${groupBy}`);
         const html = await res.text();
@@ -2123,52 +2103,6 @@
       } catch (error) {
         console.error('Error loading contracts:', error);
         mainContent.innerHTML = '<div style="color: #ef4444; padding: 20px;">Error loading contract validation</div>';
-      }
-    }
-    
-    async function loadCodeQuality(groupBy = 'rule', runValidation = true) {
-      // This consolidates: 9 Rules, Health Check, Registry (which is Rule #6)
-      const mainContent = document.getElementById('mainContent');
-      const queryPanel = document.getElementById('queryContent');
-      
-      // Hide query panel for this view
-      if (queryPanel) queryPanel.style.display = 'none';
-      
-      // Save scroll position before updating
-      const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
-      
-      // Make function available globally for the component
-      window.loadCodeQuality = loadCodeQuality;
-      
-      try {
-        // Only run validation on first load
-        if (runValidation) {
-          mainContent.innerHTML = '<div style="padding: 20px;">Running code quality analysis...</div>';
-          await fetch('/api/nine-rules'); // This includes all rules including registry
-        } else {
-          // Don't show loading message for quick updates
-        }
-        
-        // Get the enhanced rendered view with grouping
-        const res = await fetch(`/api/nine-rules-enhanced?groupBy=${groupBy}`);
-        const html = await res.text();
-        
-        // Update the title in the HTML to reflect consolidated view
-        const updatedHtml = html.replace('9 Core Rules Validation', 'Code Quality Analysis');
-        
-        mainContent.innerHTML = updatedHtml;
-        
-        // Restore scroll position after content loads
-        if (!runValidation) {
-          requestAnimationFrame(() => {
-            window.scrollTo({
-              top: scrollPos,
-              behavior: 'instant'
-            });
-          });
-        }
-      } catch (error) {
-        mainContent.innerHTML = '<div style="color: #ef4444; padding: 20px;">Error loading code quality analysis</div>';
       }
     }
     
@@ -2693,20 +2627,30 @@
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       event.target.classList.add('active');
       
-      // Show/hide query panel based on tab
-      const queryPanel = document.getElementById('queryContent');
-      if (queryPanel) {
-        // Only show query panel in overview when viewing table details
-        queryPanel.style.display = (tab === 'overview' && currentTable) ? 'block' : 'none';
-      }
-      
       // Load appropriate content
       switch(tab) {
         case 'overview':
           loadOverview();
           break;
-        case 'code-quality':
-          loadCodeQuality();
+        case 'entities':
+          if (currentTable) {
+            selectTable(currentTable);
+          }
+          break;
+        case 'dataflow':
+          loadDataFlow();
+          break;
+        case 'queries':
+          loadQueries();
+          break;
+        case 'validation':
+          loadValidation();
+          break;
+        case 'registry':
+          loadRegistry();
+          break;
+        case 'nine-rules':
+          loadNineRules();
           break;
         case 'contracts':
           loadContracts();
@@ -2714,92 +2658,18 @@
         case 'business':
           loadBusiness();
           break;
+        case 'boundaries':
+          loadBoundaries();
+          break;
+        case 'versions':
+          loadVersions();
+          break;
         case 'design':
           loadDesignSystem();
           break;
       }
     }
 
-    // Quick Action Functions
-    async function runAllValidations() {
-      updateStatus('running', 'Running all validations...');
-      try {
-        await fetch('/api/validate');
-        await fetch('/api/nine-rules');
-        await fetch('/api/contracts');
-        
-        // Reload current tab with fresh data
-        switchTab(currentTab);
-        
-        updateStatus('success', 'All validations complete');
-        document.getElementById('lastRunStatus').textContent = `Last run: ${new Date().toLocaleTimeString()}`;
-      } catch (error) {
-        updateStatus('error', 'Validation failed');
-      }
-    }
-    
-    function exportReport() {
-      // Gather all validation results
-      const report = {
-        timestamp: new Date().toISOString(),
-        project: projectPath,
-        codeQuality: {
-          score: nineRulesResults?.overallScore,
-          issues: nineRulesResults?.results
-        },
-        contracts: contractResults,
-        business: businessData
-      };
-      
-      // Download as JSON
-      const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `validation-report-${Date.now()}.json`;
-      a.click();
-    }
-    
-    function viewChanges() {
-      // Show recent file changes
-      const mainContent = document.getElementById('mainContent');
-      mainContent.innerHTML = `
-        <div style="padding: 20px;">
-          <h2>📝 Recent File Changes</h2>
-          <div style="margin-top: 20px; color: #64748b;">
-            <p>Checking for recent changes...</p>
-          </div>
-        </div>
-      `;
-      
-      fetch('/api/file-changes').then(res => res.json()).then(data => {
-        if (data.changes && data.changes.length > 0) {
-          mainContent.innerHTML = `
-            <div style="padding: 20px;">
-              <h2>📝 Recent File Changes</h2>
-              <div style="margin-top: 20px;">
-                ${data.changes.map(change => `
-                  <div style="padding: 10px; background: rgba(30,30,40,0.6); margin-bottom: 10px; border-radius: 6px;">
-                    <strong>${change.file}</strong>
-                    <span style="color: #64748b; margin-left: 10px;">${change.type}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          `;
-        } else {
-          mainContent.innerHTML = `
-            <div style="padding: 20px;">
-              <h2>📝 Recent File Changes</h2>
-              <div style="margin-top: 20px; color: #64748b;">
-                <p>No recent changes detected.</p>
-              </div>
-            </div>
-          `;
-        }
-      });
-    }
-    
     // Initialize on load
     init();
     // Initialize dashboard
@@ -2825,12 +2695,8 @@
     }
     
     function reloadNineRulesView(groupBy) {
-      // Updated to use loadCodeQuality for consolidated view
-      if (window.loadCodeQuality) {
-        window.loadCodeQuality(groupBy, false); // false = don't run validation, just reload view
-      } else if (window.loadNineRules) {
-        // Fallback for compatibility
-        window.loadNineRules(groupBy, false);
+      if (window.loadNineRules) {
+        window.loadNineRules(groupBy, false); // false = don't run validation, just reload view
       }
     }
     

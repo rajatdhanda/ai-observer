@@ -199,38 +199,21 @@ export function renderContractView(result: ContractValidationResult | null, grou
   
   return `
     <div style="padding: 20px;">
-      <h2 style="margin-bottom: 30px;">📋 Contract Validation Results</h2>
-      
-      <!-- Summary Card -->
-      <div style="
-        background: linear-gradient(135deg, 
-          ${successRate >= 80 ? '#059669' : successRate >= 50 ? '#d97706' : '#dc2626'} 0%, 
-          ${successRate >= 80 ? '#10b981' : successRate >= 50 ? '#f59e0b' : '#ef4444'} 100%);
-        padding: 24px;
-        border-radius: 12px;
-        margin-bottom: 24px;
-      ">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <h3 style="font-size: 20px; margin-bottom: 8px;">Contract Compliance</h3>
-            <div style="font-size: 36px; font-weight: bold;">${successRate}%</div>
+      <!-- Compact Score Bar -->
+      <div style="background: rgba(30, 30, 40, 0.8); padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <h3 style="margin: 0; font-size: 16px;">📋 Contracts</h3>
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <span style="font-size: 20px; font-weight: bold; color: ${successRate >= 80 ? '#10b981' : successRate >= 50 ? '#f59e0b' : '#ef4444'};">
+              ${successRate}%
+            </span>
+            <span style="font-size: 14px; color: #64748b;">compliance</span>
           </div>
-          <div style="text-align: right;">
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-              <div>
-                <div style="font-size: 20px; font-weight: bold;">✅ ${result.passed}</div>
-                <div style="opacity: 0.9; font-size: 12px;">Passed</div>
-              </div>
-              <div>
-                <div style="font-size: 20px; font-weight: bold;">❌ ${result.failed}</div>
-                <div style="opacity: 0.9; font-size: 12px;">Failed</div>
-              </div>
-              <div>
-                <div style="font-size: 20px; font-weight: bold;">📊 ${result.totalChecked}</div>
-                <div style="opacity: 0.9; font-size: 12px;">Total</div>
-              </div>
-            </div>
-          </div>
+        </div>
+        <div style="display: flex; gap: 20px; font-size: 14px;">
+          <span>✅ ${result.passed} passed</span>
+          <span style="color: #ef4444;">❌ ${result.failed} failed</span>
+          <span>📊 ${result.totalChecked} total</span>
         </div>
       </div>
       
