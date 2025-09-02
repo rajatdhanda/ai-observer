@@ -20,6 +20,7 @@ import { ContractValidator } from '../validator/contract-validator';
 import { FileWatcher } from '../utils/file-watcher';
 import { BoundaryValidator } from '../validator/boundary-validator';
 import { VersionValidator } from '../validator/version-validator';
+import { DesignSystemValidator } from '../validator/design-system-validator';
 
 const PORT = 3001;
 
@@ -201,6 +202,10 @@ class Dashboard {
         const versionResults = this.runVersionValidation();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(versionResults));
+      } else if (req.url === '/api/design-system') {
+        const designResults = this.runDesignSystemValidation();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(designResults));
       } else if (req.url === '/enhanced') {
         const enhancedPath = path.join(__dirname, 'enhanced.html');
         const html = fs.readFileSync(enhancedPath, 'utf-8');
@@ -398,6 +403,11 @@ Available projects: ${this.availableProjects.length}
   
   private runVersionValidation() {
     const validator = new VersionValidator(this.projectPath);
+    return validator.validate();
+  }
+  
+  private runDesignSystemValidation() {
+    const validator = new DesignSystemValidator(this.projectPath);
     return validator.validate();
   }
   
