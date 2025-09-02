@@ -10,6 +10,8 @@ import { renderValidationView } from './components/validation-view';
 import { TableMapper } from '../validator/table-mapper';
 import { renderTableFlowView } from './components/table-flow-view';
 import { renderRegistryView } from './components/registry-view';
+import { NineRulesValidator } from '../validator/nine-rules-validator';
+import { renderNineRulesView } from './components/nine-rules-view';
 
 const PORT = 3001;
 
@@ -27,10 +29,13 @@ class Dashboard {
   private validationResults: any = null;
   private tableMapper: TableMapper | null = null;
   private tableMappingResults: any = null;
+  private nineRulesValidator: NineRulesValidator | null = null;
+  private nineRulesResults: any = null;
 
   constructor() {
     // Get project path from environment or command line
-    this.projectPath = process.argv[2] || process.env.OBSERVER_PROJECT_PATH || process.cwd();
+    // Default to test-projects/streax for testing
+    this.projectPath = process.argv[2] || process.env.OBSERVER_PROJECT_PATH || path.join(process.cwd(), 'test-projects', 'streax');
     this.scanForProjects();
   }
 
@@ -59,6 +64,12 @@ class Dashboard {
     if (fs.existsSync(analysisPath)) {
       this.analysisData = JSON.parse(fs.readFileSync(analysisPath, 'utf-8'));
     }
+    
+    // Also load table mapping if exists
+    const mappingPath = path.join(this.projectPath, '.observer', 'table-mapping.json');
+    if (fs.existsSync(mappingPath)) {
+      this.tableMappingResults = JSON.parse(fs.readFileSync(mappingPath, 'utf-8'));
+    }
 
     const server = http.createServer(async (req, res) => {
       res.setHeader('Access-Control-Allow-Origin', '*');
@@ -77,11 +88,20 @@ class Dashboard {
           this.analysisData = null;
           this.businessData = null;
           this.dataFlowResults = null;
+          this.validationResults = null;
+          this.tableMappingResults = null;
+          this.nineRulesResults = null;
           
           // Reload analysis for new project
           const analysisPath = path.join(this.projectPath, '.observer', 'analysis.json');
           if (fs.existsSync(analysisPath)) {
             this.analysisData = JSON.parse(fs.readFileSync(analysisPath, 'utf-8'));
+          }
+          
+          // Also reload table mapping if exists
+          const mappingPath = path.join(this.projectPath, '.observer', 'table-mapping.json');
+          if (fs.existsSync(mappingPath)) {
+            this.tableMappingResults = JSON.parse(fs.readFileSync(mappingPath, 'utf-8'));
           }
           
           res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -125,6 +145,14 @@ class Dashboard {
       } else if (req.url === '/api/registry-view') {
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(renderRegistryView(this.validationResults));
+      } else if (req.url === '/api/nine-rules') {
+        const results = await this.runNineRulesValidation();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(results));
+      } else if (req.url === '/api/nine-rules-view') {
+        const html = renderNineRulesView(this.nineRulesResults);
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
       } else if (req.url === '/enhanced') {
         const enhancedPath = path.join(__dirname, 'enhanced.html');
         const html = fs.readFileSync(enhancedPath, 'utf-8');
@@ -250,6 +278,12 @@ Available projects: ${this.availableProjects.length}
       tables: Object.fromEntries(results.tables)
     };
     return this.tableMappingResults;
+  }
+
+  private async runNineRulesValidation() {
+    this.nineRulesValidator = new NineRulesValidator(this.projectPath);
+    this.nineRulesResults = await this.nineRulesValidator.validateAll();
+    return this.nineRulesResults;
   }
 
   private getHTML(): string {

@@ -37,6 +37,7 @@ export interface TableUsage {
     operations: string[]; // fetch, create, update, delete
     hasErrorHandling: boolean;
     hasLoadingState: boolean;
+    usedInComponents?: string[]; // Components that use this hook
   }[];
   components: {
     file: string;
@@ -297,6 +298,33 @@ export class TableMapper {
     }
   }
 
+  private findComponentsUsingHook(hookName: string): string[] {
+    const components: string[] = [];
+    const componentsPath = path.join(this.projectPath, 'src', 'components');
+    const appPath = path.join(this.projectPath, 'app');
+    
+    const searchPaths = [componentsPath, appPath].filter(fs.existsSync);
+    
+    for (const searchPath of searchPaths) {
+      const files = this.getFiles(searchPath, '.tsx');
+      for (const file of files) {
+        try {
+          const source = fs.readFileSync(file, 'utf-8');
+          // Check if this component imports/uses the hook
+          const hookPattern = new RegExp(`\\b${hookName}\\b`, 'g');
+          if (hookPattern.test(source)) {
+            const componentName = path.basename(file, '.tsx');
+            components.push(componentName);
+          }
+        } catch (error) {
+          // Skip files we can't read
+        }
+      }
+    }
+    
+    return components;
+  }
+  
   private async mapHooks() {
     const hooksPaths = [
       path.join(this.projectPath, 'src', 'hooks'),
@@ -325,12 +353,16 @@ export class TableMapper {
             const hasErrorHandling = /error|Error|catch|\.catch\(|onError/i.test(source);
             const hasLoadingState = /loading|Loading|isLoading|pending|isPending/i.test(source);
             
+            // Find components that use this hook
+            const usedInComponents = this.findComponentsUsingHook(hookName);
+            
             table.hooks.push({
               file,
               hookName,
               operations,
               hasErrorHandling,
-              hasLoadingState
+              hasLoadingState,
+              usedInComponents
             });
             
             if (!hasErrorHandling) {

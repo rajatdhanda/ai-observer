@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Observer - Database Explorer</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -430,6 +432,7 @@
     <div class="tab" onclick="switchTab('queries')">Queries</div>
     <div class="tab" onclick="switchTab('validation')">Validation</div>
     <div class="tab" onclick="switchTab('registry')">Registry</div>
+    <div class="tab" onclick="switchTab('nine-rules')">9 Rules</div>
   </div>
 
   <!-- Main Container -->
@@ -765,9 +768,21 @@
     }
 
     function loadTableDetails(name, table) {
+      // Try multiple matching strategies
       const entity = analysisData.entities?.find(e => 
-        e.name.toLowerCase() === name.toLowerCase()
+        e.name.toLowerCase() === name.toLowerCase() ||
+        e.name.toLowerCase() === name.toLowerCase() + 's' || // Try plural
+        e.name.toLowerCase() + 's' === name.toLowerCase() || // Try singular
+        e.type?.toLowerCase() === name.toLowerCase()
       ) || {};
+      
+      // If still no match, try to find by capitalizing first letter
+      const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+      const fallbackEntity = analysisData.entities?.find(e => 
+        e.name === capitalizedName
+      ) || entity;
+      
+      const finalEntity = fallbackEntity.name ? fallbackEntity : entity;
       
       const scoreClass = table.score >= 80 ? 'score-high' : 
                         table.score >= 40 ? 'score-medium' : 'score-low';
@@ -778,7 +793,7 @@
         <div class="detail-header">
           <div class="detail-title">
             ${name}
-            <span class="type-badge">${entity.type || 'table'}</span>
+            <span class="type-badge">${finalEntity.type || 'table'}</span>
           </div>
           <div style="color: #64748b; font-size: 14px;">
             ${table.typeDefinition?.file || 'No type definition'}
@@ -802,9 +817,9 @@
 
         <!-- Properties -->
         <div class="section">
-          <div class="section-title">📝 Properties (${entity.properties?.length || 0})</div>
+          <div class="section-title">📝 Properties (${finalEntity.properties?.length || 0})</div>
           <div class="properties-grid">
-            ${(entity.properties || []).slice(0, 12).map(prop => `
+            ${(finalEntity.properties || []).slice(0, 12).map(prop => `
               <div class="property-item">
                 <div class="property-name">
                   ${prop.name}
@@ -818,12 +833,12 @@
 
         <!-- Relationships -->
         <div class="section">
-          <div class="section-title">🔗 Relationships (${entity.relationships?.length || 0})</div>
-          ${(entity.relationships || []).map(rel => `
+          <div class="section-title">🔗 Relationships (${finalEntity.relationships?.length || 0})</div>
+          ${(finalEntity.relationships || []).map(rel => `
             <div class="relationship-item">
               <span>${name}</span>
               <span class="relationship-arrow">→</span>
-              <span class="relationship-target">${rel.type} ${rel.target}</span>
+              <span class="relationship-target">${rel.type} ${rel.target || rel.entity}</span>
             </div>
           `).join('') || '<div style="color: #64748b;">No relationships defined</div>'}
         </div>
@@ -1123,6 +1138,23 @@
       // TODO: Implement component detail view
     }
     
+    // Helper function to escape HTML and preserve Unicode
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+    
+    // Helper to ensure proper text encoding
+    function safeText(text) {
+      if (!text) return '';
+      return String(text);
+    }
+    
     function analyzeErrorHandling(query) {
       // Helper function to analyze error handling
       return {
@@ -1254,60 +1286,133 @@
       
       // Enhanced view with error chains and data flow
       if (queries.length > 0 || errorChains.length > 0) {
-        let enhancedHtml = `
-          <div style="padding: 20px;">
-            <h3 style="margin-bottom: 20px; color: #e2e8f0;">Query Inspector - ${name}</h3>
+        // Build HTML using DOM to avoid encoding issues
+        const container = document.createElement('div');
+        container.style.padding = '20px';
+        
+        const title = document.createElement('h3');
+        title.style.marginBottom = '20px';
+        title.style.color = '#e2e8f0';
+        title.textContent = `Query Inspector - ${name}`;
+        container.appendChild(title);
+        
+        // Data Flow section
+        const flowSection = document.createElement('div');
+        flowSection.style.background = '#1e293b';
+        flowSection.style.padding = '15px';
+        flowSection.style.borderRadius = '8px';
+        flowSection.style.marginBottom = '20px';
+        
+        const flowTitle = document.createElement('h4');
+        flowTitle.style.color = '#60a5fa';
+        flowTitle.style.marginBottom = '10px';
+        flowTitle.textContent = '📊 Data Flow Pipeline';
+        flowSection.appendChild(flowTitle);
+        
+        // Pipeline container
+        const pipeline = document.createElement('div');
+        pipeline.style.display = 'flex';
+        pipeline.style.alignItems = 'center';
+        pipeline.style.gap = '10px';
+        pipeline.style.padding = '10px';
+        pipeline.style.background = 'rgba(0,0,0,0.3)';
+        pipeline.style.borderRadius = '4px';
+        pipeline.style.overflowX = 'auto';
+        
+        // Add pipeline stages
+        const stages = [
+          { name: 'Type', check: table.typeDefinition, color: table.typeDefinition ? '#1e40af' : '#7f1d1d' },
+          { name: 'DB', check: table.databaseQueries.length > 0, color: table.databaseQueries.length > 0 ? '#7c3aed' : '#7f1d1d' },
+          { name: 'Hooks', count: table.hooks.length, color: table.hooks.length > 0 ? '#0891b2' : '#7f1d1d', emoji: '🪝' },
+          { name: 'UI', count: table.components.length, color: table.components.length > 0 ? '#059669' : '#7f1d1d', emoji: '🎨' }
+        ];
+        
+        stages.forEach((stage, idx) => {
+          const stageDiv = document.createElement('div');
+          stageDiv.style.textAlign = 'center';
+          stageDiv.style.minWidth = '80px';
+          
+          const stageLabel = document.createElement('div');
+          stageLabel.style.padding = '8px';
+          stageLabel.style.background = stage.color;
+          stageLabel.style.borderRadius = '4px';
+          stageLabel.textContent = stage.name;
+          stageDiv.appendChild(stageLabel);
+          
+          const stageStatus = document.createElement('div');
+          stageStatus.style.fontSize = '20px';
+          stageStatus.style.marginTop = '5px';
+          if (stage.count !== undefined) {
+            stageStatus.textContent = stage.count + ' ' + (stage.emoji || '');
+          } else {
+            stageStatus.textContent = stage.check ? '✅' : '❌';
+          }
+          stageDiv.appendChild(stageStatus);
+          
+          pipeline.appendChild(stageDiv);
+          
+          if (idx < stages.length - 1) {
+            const arrow = document.createElement('div');
+            arrow.style.color = '#64748b';
+            arrow.textContent = '→';
+            pipeline.appendChild(arrow);
+          }
+        });
+        
+        flowSection.appendChild(pipeline);
+        
+        // Add error chain warnings if any
+        const errorChainsWithIssues = errorChains.filter(c => c.propagation.length > 0);
+        if (errorChainsWithIssues.length > 0) {
+          const errorDiv = document.createElement('div');
+          errorDiv.style.marginTop = '15px';
+          errorDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+          errorDiv.style.padding = '10px';
+          errorDiv.style.borderRadius = '4px';
+          
+          const errorTitle = document.createElement('div');
+          errorTitle.style.color = '#fca5a5';
+          errorTitle.style.fontWeight = 'bold';
+          errorTitle.style.marginBottom = '8px';
+          errorTitle.textContent = `⚠️ ${errorChainsWithIssues.length} Error Chains Detected`;
+          errorDiv.appendChild(errorTitle);
+          
+          errorChainsWithIssues.slice(0, 3).forEach(chain => {
+            const chainDiv = document.createElement('div');
+            chainDiv.style.marginBottom = '5px';
+            chainDiv.style.padding = '5px';
+            chainDiv.style.background = 'rgba(0,0,0,0.2)';
+            chainDiv.style.borderRadius = '4px';
             
-            <!-- Data Flow Health Check -->
-            <div style="background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-              <h4 style="color: #60a5fa; margin-bottom: 10px;">📊 Data Flow Pipeline</h4>
-              <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow-x: auto;">
-                <div style="text-align: center; min-width: 80px;">
-                  <div style="padding: 8px; background: ${table.typeDefinition ? '#1e40af' : '#7f1d1d'}; border-radius: 4px;">Type</div>
-                  <div style="font-size: 20px; margin-top: 5px;">${table.typeDefinition ? '✅' : '❌'}</div>
-                </div>
-                <div style="color: #64748b;">→</div>
-                <div style="text-align: center; min-width: 80px;">
-                  <div style="padding: 8px; background: ${table.databaseQueries.length > 0 ? '#7c3aed' : '#7f1d1d'}; border-radius: 4px;">DB</div>
-                  <div style="font-size: 20px; margin-top: 5px;">${table.databaseQueries.length > 0 ? '✅' : '❌'}</div>
-                </div>
-                <div style="color: #64748b;">→</div>
-                <div style="text-align: center; min-width: 80px;">
-                  <div style="padding: 8px; background: ${table.hooks.length > 0 ? '#0891b2' : '#7f1d1d'}; border-radius: 4px;">Hooks</div>
-                  <div style="font-size: 20px; margin-top: 5px;">${table.hooks.length} 🪝</div>
-                </div>
-                <div style="color: #64748b;">→</div>
-                <div style="text-align: center; min-width: 80px;">
-                  <div style="padding: 8px; background: ${table.components.length > 0 ? '#059669' : '#7f1d1d'}; border-radius: 4px;">UI</div>
-                  <div style="font-size: 20px; margin-top: 5px;">${table.components.length} 🎨</div>
-                </div>
-              </div>
-              
-              <!-- Error Chain Warnings -->
-              ${errorChains.filter(c => c.propagation.length > 0).length > 0 ? `
-                <div style="margin-top: 15px; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 4px;">
-                  <div style="color: #fca5a5; font-weight: bold; margin-bottom: 8px;">
-                    ⚠️ ${errorChains.filter(c => c.propagation.length > 0).length} Error Chains Detected
-                  </div>
-                  ${errorChains.filter(c => c.propagation.length > 0).slice(0, 3).map(chain => `
-                    <div style="margin-bottom: 5px; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 4px;">
-                      <span style="color: #fbbf24;">${chain.hook}:</span>
-                      <span style="color: #ef4444; font-size: 12px;">
-                        ${chain.propagation[0].issue}
-                      </span>
-                    </div>
-                  `).join('')}
-                </div>
-              ` : ''}
-            </div>
+            const hookSpan = document.createElement('span');
+            hookSpan.style.color = '#fbbf24';
+            hookSpan.textContent = chain.hook + ': ';
+            chainDiv.appendChild(hookSpan);
             
-            <!-- Query List -->
-            <div style="max-height: 400px; overflow-y: auto;">
-              ${queryContent.innerHTML}
-            </div>
-          </div>
-        `;
-        queryContent.innerHTML = enhancedHtml;
+            const issueSpan = document.createElement('span');
+            issueSpan.style.color = '#ef4444';
+            issueSpan.style.fontSize = '12px';
+            issueSpan.textContent = chain.propagation[0].issue;
+            chainDiv.appendChild(issueSpan);
+            
+            errorDiv.appendChild(chainDiv);
+          });
+          
+          flowSection.appendChild(errorDiv);
+        }
+        
+        container.appendChild(flowSection);
+        
+        // Add query list section
+        const queryListDiv = document.createElement('div');
+        queryListDiv.style.maxHeight = '400px';
+        queryListDiv.style.overflowY = 'auto';
+        queryListDiv.innerHTML = queryContent.innerHTML;
+        container.appendChild(queryListDiv);
+        
+        // Set the enhanced content
+        queryContent.innerHTML = '';
+        queryContent.appendChild(container);
       }
     }
 
@@ -1425,6 +1530,24 @@
       }
     }
 
+    async function loadNineRules() {
+      const mainContent = document.getElementById('mainContent');
+      mainContent.innerHTML = '<div style="padding: 20px;">Running 9 Core Rules validation...</div>';
+      
+      try {
+        // Run 9-rules validation
+        await fetch('/api/nine-rules');
+        
+        // Get the rendered view
+        const res = await fetch('/api/nine-rules-view');
+        const html = await res.text();
+        
+        mainContent.innerHTML = html;
+      } catch (error) {
+        mainContent.innerHTML = '<div style="color: #ef4444; padding: 20px;">Error running 9-rules validation</div>';
+      }
+    }
+
     function switchTab(tab) {
       currentTab = tab;
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1451,6 +1574,9 @@
           break;
         case 'registry':
           loadRegistry();
+          break;
+        case 'nine-rules':
+          loadNineRules();
           break;
       }
     }

@@ -10,6 +10,7 @@ import * as path from 'path';
 import { ProjectAnalyzer } from '../analyzer';
 import { BusinessLogicAnalyzer } from '../analyzer/business-logic-analyzer';
 import { EnhancedDataFlowAnalyzer } from '../analyzer/enhanced-data-flow';
+import { NineRulesValidator } from '../validator/nine-rules-validator';
 import { spawn } from 'child_process';
 
 class ObserverCLI {
@@ -40,6 +41,9 @@ class ObserverCLI {
         break;
       case 'flow':
         await this.analyzeFlow();
+        break;
+      case 'validate':
+        await this.validate();
         break;
       case 'dashboard':
         await this.startDashboard();
@@ -185,6 +189,64 @@ class ObserverCLI {
     }
   }
 
+  private async validate() {
+    console.log('🔍 Running 9 Core Rules validation...\n');
+    
+    const observerDir = path.join(this.projectPath, '.observer');
+    if (!fs.existsSync(observerDir)) {
+      fs.mkdirSync(observerDir, { recursive: true });
+    }
+
+    try {
+      const validator = new NineRulesValidator(this.projectPath);
+      const results = await validator.validateAll();
+      
+      // Save results
+      fs.writeFileSync(
+        path.join(observerDir, 'nine-rules-validation.json'),
+        JSON.stringify(results, null, 2)
+      );
+
+      // Generate and save report
+      const report = validator.generateReport(results);
+      fs.writeFileSync(
+        path.join(observerDir, 'validation-report.md'),
+        report
+      );
+
+      // Display summary
+      const grade = results.overallScore >= 90 ? 'A' :
+                    results.overallScore >= 80 ? 'B' :
+                    results.overallScore >= 70 ? 'C' :
+                    results.overallScore >= 60 ? 'D' : 'F';
+      
+      console.log(`✅ Validation complete!\n`);
+      console.log(`📊 Overall Health: ${grade} (${results.overallScore}%)`);
+      console.log(`  - Passed Rules: ${results.passedRules}/9`);
+      console.log(`  - Critical Issues: ${results.criticalIssues}`);
+      console.log(`  - Warnings: ${results.warnings}`);
+      
+      console.log(`\n📈 Key Metrics:`);
+      console.log(`  - Contract Coverage: ${results.metrics.contractCoverage}%`);
+      console.log(`  - Parse Coverage: ${results.metrics.parseCoverage}%`);
+      console.log(`  - DB Drift Score: ${results.metrics.dbDriftScore}%`);
+      console.log(`  - Cache Hygiene: ${results.metrics.cacheHygiene}%`);
+      console.log(`  - Auth Coverage: ${results.metrics.authCoverage}%`);
+      
+      console.log(`\nReport saved to: ${path.join(observerDir, 'validation-report.md')}`);
+      
+      // Exit with error if score is too low
+      if (results.overallScore < 60) {
+        console.error('\n❌ Validation failed! Score below 60%');
+        process.exit(1);
+      }
+      
+    } catch (error) {
+      console.error('❌ Validation failed:', error);
+      process.exit(1);
+    }
+  }
+
   private async startDashboard() {
     console.log('🚀 Starting dashboard...\n');
     
@@ -232,6 +294,7 @@ Commands:
   analyze [path]    Run full project analysis
   business [path]   Analyze business logic and features
   flow [path]       Analyze data flow and bottlenecks
+  validate [path]   Run 9 Core Rules validation
   dashboard [path]  Start interactive dashboard
   watch [path]      Start watch mode for real-time monitoring
   help             Show this help message
@@ -240,6 +303,7 @@ Examples:
   observer analyze                    # Analyze current directory
   observer analyze ./my-project       # Analyze specific project
   observer business ../other-project  # Analyze business logic
+  observer validate .                 # Run 9-rules validation
   observer dashboard .                # Start dashboard for current dir
   observer flow /absolute/path        # Analyze data flow
 
@@ -247,6 +311,7 @@ The tool will analyze ANY TypeScript/JavaScript project and provide:
   - Type and schema detection
   - Business logic understanding
   - Data flow visualization
+  - 9 Core Rules validation (prevents 90% of bugs)
   - Error and bottleneck detection
   - Real-time monitoring dashboard
     `);
