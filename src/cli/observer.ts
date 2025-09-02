@@ -11,6 +11,7 @@ import { ProjectAnalyzer } from '../analyzer';
 import { BusinessLogicAnalyzer } from '../analyzer/business-logic-analyzer';
 import { EnhancedDataFlowAnalyzer } from '../analyzer/enhanced-data-flow';
 import { NineRulesValidator } from '../validator/nine-rules-validator';
+import { DataFlowTracer } from '../validator/data-flow-tracer';
 import { spawn } from 'child_process';
 
 class ObserverCLI {
@@ -44,6 +45,9 @@ class ObserverCLI {
         break;
       case 'validate':
         await this.validate();
+        break;
+      case 'trace':
+        await this.traceDataFlow();
         break;
       case 'dashboard':
         await this.startDashboard();
@@ -189,6 +193,71 @@ class ObserverCLI {
     }
   }
 
+  private async traceDataFlow() {
+    console.log('🔄 Tracing data flow through application...\n');
+    
+    const observerDir = path.join(this.projectPath, '.observer');
+    if (!fs.existsSync(observerDir)) {
+      fs.mkdirSync(observerDir, { recursive: true });
+    }
+
+    try {
+      const tracer = new DataFlowTracer(this.projectPath);
+      const graph = await tracer.analyze();
+      
+      // Save results
+      const graphData = {
+        nodes: Array.from(graph.nodes.values()),
+        edges: graph.edges,
+        issues: graph.issues
+      };
+      
+      fs.writeFileSync(
+        path.join(observerDir, 'data-flow-graph.json'),
+        JSON.stringify(graphData, null, 2)
+      );
+      
+      // Generate and save report
+      const report = tracer.generateReport();
+      fs.writeFileSync(
+        path.join(observerDir, 'data-flow-report.md'),
+        report
+      );
+      
+      // Display summary
+      console.log('✅ Data flow analysis complete!\n');
+      console.log(`📊 Results:`);
+      console.log(`  - Nodes analyzed: ${graph.nodes.size}`);
+      console.log(`  - Data flows traced: ${graph.edges.length}`);
+      console.log(`  - Issues found: ${graph.issues.length}`);
+      
+      if (graph.issues.length > 0) {
+        const errors = graph.issues.filter(i => i.severity === 'error');
+        const warnings = graph.issues.filter(i => i.severity === 'warning');
+        
+        if (errors.length > 0) {
+          console.log(`\n❌ Critical Issues:`);
+          errors.slice(0, 5).forEach(issue => {
+            console.log(`  - ${issue.message}`);
+          });
+        }
+        
+        if (warnings.length > 0) {
+          console.log(`\n⚠️ Warnings:`);
+          warnings.slice(0, 3).forEach(issue => {
+            console.log(`  - ${issue.message}`);
+          });
+        }
+      }
+      
+      console.log(`\nReport saved to: ${path.join(observerDir, 'data-flow-report.md')}`);
+      
+    } catch (error) {
+      console.error('❌ Data flow analysis failed:', error);
+      process.exit(1);
+    }
+  }
+
   private async validate() {
     console.log('🔍 Running 9 Core Rules validation...\n');
     
@@ -295,6 +364,7 @@ Commands:
   business [path]   Analyze business logic and features
   flow [path]       Analyze data flow and bottlenecks
   validate [path]   Run 9 Core Rules validation
+  trace [path]      Trace data flow and detect type mismatches
   dashboard [path]  Start interactive dashboard
   watch [path]      Start watch mode for real-time monitoring
   help             Show this help message
