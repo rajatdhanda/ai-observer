@@ -90,6 +90,7 @@ export class NineRulesValidator {
   /**
    * Rule 1: Type-Database Alignment (30% of bugs)
    * Two-way checking: Zod ↔ DB
+   * Enhanced with runtime validation detection
    */
   private async rule1_TypeDatabaseAlignment(): Promise<void> {
     const result: ValidationResult = {
@@ -101,9 +102,9 @@ export class NineRulesValidator {
       coverage: { checked: 0, passed: 0, total: 0 }
     };
 
-    // Find all Zod schemas
-    const schemaFiles = this.findFiles('**/*.schema.ts', '**/*.contract.ts');
-    const dbFiles = this.findFiles('**/db/**/*.ts', '**/database/**/*.ts');
+    // Find all Zod schemas and type definitions
+    const schemaFiles = this.findFiles('**/*.schema.ts', '**/*.contract.ts', '**/*.types.ts');
+    const dbFiles = this.findFiles('**/db/**/*.ts', '**/database/**/*.ts', '**/supabase/**/*.ts', '**/prisma/**/*.ts');
     
     for (const schemaFile of schemaFiles) {
       result.coverage.total++;
@@ -145,12 +146,15 @@ export class NineRulesValidator {
     for (const dbFile of dbFiles) {
       const dbContent = fs.readFileSync(dbFile, 'utf-8');
       
-      // Pattern for DB queries without parse
+      // Enhanced patterns for DB queries without parse
       const queryPatterns = [
         /from\(['"`](\w+)['"`]\)(?![\s\S]*\.parse)/g,
         /\.select\(\)(?![\s\S]*\.parse)/g,
         /\.insert\([^)]+\)(?![\s\S]*\.parse)/g,
       ];
+      
+      // Check for two-way validation
+      const hasTwoWayValidation = this.checkTwoWayValidation(dbContent);
       
       for (const pattern of queryPatterns) {
         const matches = dbContent.match(pattern);
@@ -164,6 +168,39 @@ export class NineRulesValidator {
           });
         }
       }
+      
+      // Check for response validation
+      if (!hasTwoWayValidation) {
+        const hasInputValidation = /\.parse\(.*(?:req|request|input|data)/gi.test(dbContent);
+        const hasOutputValidation = /\.parse\(.*(?:result|response|output|rows)/gi.test(dbContent);
+        
+        if (hasInputValidation && !hasOutputValidation) {
+          result.issues.push({
+            severity: 'warning',
+            file: dbFile,
+            message: 'One-way validation detected: Input validated but not output',
+            suggestion: 'Add ResponseSchema.parse(result) to validate DB responses'
+          });
+        } else if (!hasInputValidation && hasOutputValidation) {
+          result.issues.push({
+            severity: 'warning',
+            file: dbFile,
+            message: 'One-way validation detected: Output validated but not input',
+            suggestion: 'Add InputSchema.parse(data) before DB operations'
+          });
+        }
+      }
+      
+      // Check for runtime type assertions
+      const hasRuntimeAssertion = /as\s+\w+(?:\[\])?(?:\s|;|$)/g.test(dbContent);
+      if (hasRuntimeAssertion) {
+        result.issues.push({
+          severity: 'warning',
+          file: dbFile,
+          message: 'Type assertion detected - runtime validation preferred',
+          suggestion: 'Replace "as Type" with Schema.parse() for runtime safety'
+        });
+      }
     }
 
     result.score = this.calculateScore(result.coverage);
@@ -174,6 +211,7 @@ export class NineRulesValidator {
   /**
    * Rule 2: Hook-Database Pattern (25% of bugs)
    * Component → Hook → DB (never direct)
+   * Enhanced with cross-layer type checking
    */
   private async rule2_HookDatabasePattern(): Promise<void> {
     const result: ValidationResult = {
@@ -186,7 +224,7 @@ export class NineRulesValidator {
     };
 
     const componentFiles = this.findFiles('**/components/**/*.tsx', '**/app/**/*.tsx');
-    const hookFiles = this.findFiles('**/hooks/**/*.ts', '**/hooks/**/*.tsx');
+    const hookFiles = this.findFiles('**/hooks/**/*.ts', '**/hooks/**/*.tsx', '**/use*.ts');
     
     // Check components for direct DB access
     for (const componentFile of componentFiles) {
@@ -218,7 +256,7 @@ export class NineRulesValidator {
       }
     }
 
-    // Check if hooks properly wrap DB calls
+    // Check if hooks properly wrap DB calls with type safety
     for (const hookFile of hookFiles) {
       const content = fs.readFileSync(hookFile, 'utf-8');
       
@@ -232,6 +270,43 @@ export class NineRulesValidator {
           file: hookFile,
           message: 'DB access not properly wrapped in a hook',
           suggestion: 'Export a hook function starting with "use"'
+        });
+      }
+      
+      // Enhanced: Check for generic type usage in hooks
+      const hasGenericType = /<\w+(?:,\s*\w+)*>/.test(content);
+      const usesUseQuery = /useQuery|useMutation|useSWR/.test(content);
+      
+      if (usesUseQuery && !hasGenericType) {
+        result.issues.push({
+          severity: 'warning',
+          file: hookFile,
+          message: 'Hook using untyped query - missing generic type',
+          suggestion: 'Add generic type: useQuery<YourType>() for type safety'
+        });
+      }
+      
+      // Check for any type usage
+      const hasAnyType = /:\s*any(?:\s|;|\)|,)/g.test(content);
+      if (hasAnyType) {
+        result.issues.push({
+          severity: 'critical',
+          file: hookFile,
+          message: 'Hook using "any" type - breaks type safety',
+          suggestion: 'Replace "any" with specific type or unknown'
+        });
+      }
+      
+      // Check if hook return type is explicitly defined
+      const hasReturnType = /\):\s*\{[\s\S]*?\}|return\s+{[\s\S]*?}/.test(content);
+      const functionDeclaration = /export\s+(?:const|function)\s+use\w+/.test(content);
+      
+      if (functionDeclaration && !hasReturnType && !hasGenericType) {
+        result.issues.push({
+          severity: 'warning',
+          file: hookFile,
+          message: 'Hook missing explicit return type',
+          suggestion: 'Define return type for better type inference'
         });
       }
     }
@@ -701,6 +776,13 @@ export class NineRulesValidator {
   /**
    * Helper Methods
    */
+  private checkTwoWayValidation(content: string): boolean {
+    // Check if both input and output are validated
+    const hasInputValidation = /\.parse\(.*(?:req|request|input|data|body)/gi.test(content);
+    const hasOutputValidation = /\.parse\(.*(?:result|response|output|rows|data)\)/gi.test(content);
+    return hasInputValidation && hasOutputValidation;
+  }
+  
   private findFiles(...patterns: string[]): string[] {
     const files: string[] = [];
     const searchDirs = ['src', 'app', 'pages', 'components', 'lib', 'hooks', 'api'];
