@@ -533,19 +533,32 @@ export class NineRulesValidator {
       if (file.includes('node_modules') || file.includes('.next')) continue;
       
       const content = fs.readFileSync(file, 'utf-8');
+      const lines = content.split('\n');
       
       // Check for raw route strings
       const rawRoutes = content.match(/['"`]\/(?!\/)[a-zA-Z][^'"`]*['"`]/g);
       if (rawRoutes) {
-        result.coverage.total += rawRoutes.length;
-        result.coverage.checked += rawRoutes.length;
+        // Deduplicate routes
+        const uniqueRoutes = [...new Set(rawRoutes)];
+        result.coverage.total += uniqueRoutes.length;
+        result.coverage.checked += uniqueRoutes.length;
         
-        rawRoutes.forEach(route => {
+        uniqueRoutes.forEach(route => {
           // Skip imports and certain patterns
           if (!route.includes('import') && !route.includes('require')) {
+            // Find line number
+            let lineNum = 0;
+            for (let i = 0; i < lines.length; i++) {
+              if (lines[i].includes(route)) {
+                lineNum = i + 1;
+                break;
+              }
+            }
+            
             result.issues.push({
               severity: 'warning',
               file,
+              line: lineNum,
               message: `Raw route string found: ${route}`,
               suggestion: 'Use Routes.routeName from constants/registry',
               codeSnippet: route
@@ -559,13 +572,25 @@ export class NineRulesValidator {
       // Check for raw query keys
       const rawQueryKeys = content.match(/\[['"`]\w+['"`]\]/g);
       if (rawQueryKeys) {
-        result.coverage.total += rawQueryKeys.length;
-        result.coverage.checked += rawQueryKeys.length;
+        // Deduplicate keys
+        const uniqueKeys = [...new Set(rawQueryKeys)];
+        result.coverage.total += uniqueKeys.length;
+        result.coverage.checked += uniqueKeys.length;
         
-        rawQueryKeys.forEach(key => {
+        uniqueKeys.forEach(key => {
+          // Find line number
+          let lineNum = 0;
+          for (let i = 0; i < lines.length; i++) {
+            if (lines[i].includes(key)) {
+              lineNum = i + 1;
+              break;
+            }
+          }
+          
           result.issues.push({
             severity: 'warning',
             file,
+            line: lineNum,
             message: `Raw query key found: ${key}`,
             suggestion: 'Use QueryKeys.keyName() from constants/registry',
             codeSnippet: key
