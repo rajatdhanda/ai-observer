@@ -23,6 +23,8 @@ import { FileWatcher } from '../utils/file-watcher';
 import { BoundaryValidator } from '../validator/boundary-validator';
 import { VersionValidator } from '../validator/version-validator';
 import { DesignSystemValidator } from '../validator/design-system-validator';
+import { TableContractValidator } from '../validator/table-contract-validator';
+import { ContractTestRunner } from '../validator/contract-test-runner';
 
 const PORT = 3001;
 
@@ -184,6 +186,16 @@ class Dashboard {
         const data = await this.getArchitectureData(type);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(data));
+      } else if (req.url === '/api/table-contract-validation') {
+        const validator = new TableContractValidator(this.projectPath);
+        const results = await validator.validate();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(results));
+      } else if (req.url === '/api/run-tests') {
+        const runner = new ContractTestRunner(this.projectPath);
+        const results = await runner.runAll();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(results));
       } else if (req.url === '/api/nine-rules-view') {
         const html = renderNineRulesView(this.nineRulesResults);
         res.writeHead(200, { 'Content-Type': 'text/html' });
