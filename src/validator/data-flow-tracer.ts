@@ -351,37 +351,104 @@ export class DataFlowTracer {
    * Step 6: Connect the data flow graph
    */
   private async connectDataFlow() {
-    // This step creates edges between nodes based on imports and usage
+    // Connect Types to Hooks/Components that use them
     for (const [nodeId, node] of this.graph.nodes) {
       if (node.type === 'component' || node.type === 'hook') {
         const content = fs.readFileSync(node.file, 'utf-8');
         
-        // Find imports
-        const importPattern = /import\s+.*?from\s+['"]([^'"]+)['"]/g;
+        // Method 1: Direct imports
+        const importPattern = /import\s+(?:{[^}]*}|\*\s+as\s+\w+|\w+)\s+from\s+['"]([^'"]+)['"]/g;
         let match;
         
         while ((match = importPattern.exec(content)) !== null) {
           const importPath = match[1];
+          const importText = match[0];
           
-          // Find nodes from this import path
-          const importedNodes = Array.from(this.graph.nodes.values())
-            .filter(n => n.file.includes(importPath));
-          
-          importedNodes.forEach(imported => {
-            if (!node.sources.includes(imported.id)) {
-              node.sources.push(imported.id);
-              imported.consumers.push(nodeId);
-              
-              this.graph.edges.push({
-                from: imported.id,
-                to: nodeId,
-                dataType: imported.dataType,
-                isValid: true // Will be validated in next step
-              });
+          // Find imported types
+          const typePattern = /(?:type\s+)?(\w+)(?:\s+as\s+\w+)?/g;
+          let typeMatch;
+          while ((typeMatch = typePattern.exec(importText)) !== null) {
+            const typeName = typeMatch[1];
+            
+            // Find the type node
+            const typeNode = Array.from(this.graph.nodes.values())
+              .find(n => n.type === 'type' && n.name === typeName);
+            
+            if (typeNode) {
+              this.createConnection(typeNode.id, nodeId, typeName);
             }
-          });
+          }
+        }
+        
+        // Method 2: Hook usage in components
+        if (node.type === 'component') {
+          // Find hooks used in this component
+          const hookPattern = /use[A-Z]\w+/g;
+          let hookMatch;
+          
+          while ((hookMatch = hookPattern.exec(content)) !== null) {
+            const hookName = hookMatch[0];
+            const hookNode = Array.from(this.graph.nodes.values())
+              .find(n => n.type === 'hook' && n.name === hookName);
+            
+            if (hookNode) {
+              this.createConnection(hookNode.id, nodeId, 'hook');
+            }
+          }
+        }
+        
+        // Method 3: Table references in hooks
+        if (node.type === 'hook' && node.tableName) {
+          // Connect to types that match the table
+          const typeNode = Array.from(this.graph.nodes.values())
+            .find(n => n.type === 'type' && 
+                  (n.name.toLowerCase() === node.tableName?.toLowerCase() ||
+                   n.name.toLowerCase() === node.tableName?.slice(0, -1).toLowerCase()));
+          
+          if (typeNode) {
+            this.createConnection(typeNode.id, nodeId, 'table-type');
+          }
         }
       }
+    }
+    
+    // Connect APIs to hooks/components
+    for (const [nodeId, node] of this.graph.nodes) {
+      if (node.type === 'api') {
+        // Find components/hooks that might call this API
+        const endpoint = node.name;
+        
+        for (const [otherId, otherNode] of this.graph.nodes) {
+          if (otherNode.type === 'component' || otherNode.type === 'hook') {
+            const content = fs.readFileSync(otherNode.file, 'utf-8');
+            
+            // Check if this component/hook calls the API
+            if (content.includes(endpoint) || content.includes(`'${endpoint}'`) || content.includes(`"${endpoint}"`)) {
+              this.createConnection(otherId, nodeId, 'api-call');
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  private createConnection(fromId: string, toId: string, dataType: string) {
+    const fromNode = this.graph.nodes.get(fromId);
+    const toNode = this.graph.nodes.get(toId);
+    
+    if (!fromNode || !toNode) return;
+    
+    // Avoid duplicates
+    if (!fromNode.consumers.includes(toId)) {
+      fromNode.consumers.push(toId);
+      toNode.sources.push(fromId);
+      
+      this.graph.edges.push({
+        from: fromId,
+        to: toId,
+        dataType,
+        isValid: true
+      });
     }
   }
 

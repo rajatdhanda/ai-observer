@@ -478,7 +478,7 @@
       "file": "image.tsx"
     },
     {
-      "id": "test-projects/streax/src/mocks/data.ts:getMockPostById:317",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/mocks/data.ts:getMockPostById:317",
       "name": "getMockPostById",
       "type": "function",
       "complexity": 1,
@@ -487,7 +487,7 @@
       "file": "data.ts"
     },
     {
-      "id": "test-projects/streax/src/mocks/data.ts:anonymous:317",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/mocks/data.ts:anonymous:317",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -496,7 +496,7 @@
       "file": "data.ts"
     },
     {
-      "id": "test-projects/streax/src/mocks/data.ts:getMockProductById:318",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/mocks/data.ts:getMockProductById:318",
       "name": "getMockProductById",
       "type": "function",
       "complexity": 1,
@@ -505,7 +505,7 @@
       "file": "data.ts"
     },
     {
-      "id": "test-projects/streax/src/mocks/data.ts:anonymous:318",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/mocks/data.ts:anonymous:318",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -514,7 +514,7 @@
       "file": "data.ts"
     },
     {
-      "id": "test-projects/streax/src/mocks/data.ts:getMockClientById:319",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/mocks/data.ts:getMockClientById:319",
       "name": "getMockClientById",
       "type": "function",
       "complexity": 1,
@@ -523,7 +523,7 @@
       "file": "data.ts"
     },
     {
-      "id": "test-projects/streax/src/mocks/data.ts:anonymous:319",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/mocks/data.ts:anonymous:319",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -532,7 +532,7 @@
       "file": "data.ts"
     },
     {
-      "id": "test-projects/streax/src/mocks/data.ts:getMockCourseById:320",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/mocks/data.ts:getMockCourseById:320",
       "name": "getMockCourseById",
       "type": "function",
       "complexity": 1,
@@ -541,7 +541,7 @@
       "file": "data.ts"
     },
     {
-      "id": "test-projects/streax/src/mocks/data.ts:anonymous:320",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/mocks/data.ts:anonymous:320",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -550,7 +550,7 @@
       "file": "data.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useAuth.ts:useAuth:6",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useAuth.ts:useAuth:6",
       "name": "useAuth",
       "type": "function",
       "complexity": 3,
@@ -559,7 +559,7 @@
       "file": "useAuth.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useAuth.ts:anonymous:10",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useAuth.ts:anonymous:10",
       "name": "anonymous",
       "type": "function",
       "complexity": 2,
@@ -568,7 +568,7 @@
       "file": "useAuth.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useAuth.ts:anonymous:12",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useAuth.ts:anonymous:12",
       "name": "anonymous",
       "type": "function",
       "complexity": 2,
@@ -577,7 +577,7 @@
       "file": "useAuth.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useAuth.ts:login:22",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useAuth.ts:login:22",
       "name": "login",
       "type": "function",
       "complexity": 2,
@@ -586,7 +586,7 @@
       "file": "useAuth.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useAuth.ts:logout:31",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useAuth.ts:logout:31",
       "name": "logout",
       "type": "function",
       "complexity": 1,
@@ -595,7 +595,7 @@
       "file": "useAuth.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useClients.ts:useClients:6",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:useClients:6",
       "name": "useClients",
       "type": "function",
       "complexity": 4,
@@ -604,7 +604,7 @@
       "file": "useClients.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:11",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:anonymous:11",
       "name": "anonymous",
       "type": "function",
       "complexity": 3,
@@ -613,7 +613,7 @@
       "file": "useClients.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useClients.ts:fetchClients:12",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:fetchClients:12",
       "name": "fetchClients",
       "type": "function",
       "complexity": 3,
@@ -622,7 +622,7 @@
       "file": "useClients.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:16",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:anonymous:16",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -631,7 +631,7 @@
       "file": "useClients.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:18",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:anonymous:18",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -640,7 +640,7 @@
       "file": "useClients.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useClients.ts:addClient:34",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:addClient:34",
       "name": "addClient",
       "type": "function",
       "complexity": 2,
@@ -649,7 +649,7 @@
       "file": "useClients.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:49",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:anonymous:49",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -658,7 +658,7 @@
       "file": "useClients.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:57",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:anonymous:57",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -667,7 +667,7 @@
       "file": "useClients.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useClients.ts:anonymous:61",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:anonymous:61",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -676,7 +676,7 @@
       "file": "useClients.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useFeed.ts:useFeed:6",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:useFeed:6",
       "name": "useFeed",
       "type": "function",
       "complexity": 7,
@@ -685,7 +685,7 @@
       "file": "useFeed.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useFeed.ts:anonymous:12",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:anonymous:12",
       "name": "anonymous",
       "type": "function",
       "complexity": 3,
@@ -694,7 +694,7 @@
       "file": "useFeed.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useFeed.ts:fetchFeed:13",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:fetchFeed:13",
       "name": "fetchFeed",
       "type": "function",
       "complexity": 3,
@@ -703,7 +703,7 @@
       "file": "useFeed.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useFeed.ts:anonymous:19",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:anonymous:19",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -712,7 +712,7 @@
       "file": "useFeed.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useFeed.ts:anonymous:21",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:anonymous:21",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -721,7 +721,7 @@
       "file": "useFeed.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useFeed.ts:likePost:39",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:likePost:39",
       "name": "likePost",
       "type": "function",
       "complexity": 4,
@@ -730,7 +730,7 @@
       "file": "useFeed.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useFeed.ts:anonymous:41",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:anonymous:41",
       "name": "anonymous",
       "type": "function",
       "complexity": 3,
@@ -739,7 +739,7 @@
       "file": "useFeed.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useFeed.ts:createPost:51",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:createPost:51",
       "name": "createPost",
       "type": "function",
       "complexity": 2,
@@ -748,7 +748,7 @@
       "file": "useFeed.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useFeed.ts:anonymous:65",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:anonymous:65",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -757,7 +757,7 @@
       "file": "useFeed.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useInsurance.ts:useInsurance:6",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useInsurance.ts:useInsurance:6",
       "name": "useInsurance",
       "type": "function",
       "complexity": 3,
@@ -766,7 +766,7 @@
       "file": "useInsurance.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useInsurance.ts:anonymous:11",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useInsurance.ts:anonymous:11",
       "name": "anonymous",
       "type": "function",
       "complexity": 2,
@@ -775,7 +775,7 @@
       "file": "useInsurance.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useInsurance.ts:fetchInsurance:12",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useInsurance.ts:fetchInsurance:12",
       "name": "fetchInsurance",
       "type": "function",
       "complexity": 2,
@@ -784,7 +784,7 @@
       "file": "useInsurance.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useInsurance.ts:anonymous:16",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useInsurance.ts:anonymous:16",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -793,7 +793,7 @@
       "file": "useInsurance.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useInsurance.ts:submitClaim:29",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useInsurance.ts:submitClaim:29",
       "name": "submitClaim",
       "type": "function",
       "complexity": 2,
@@ -802,7 +802,7 @@
       "file": "useInsurance.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useInsurance.ts:anonymous:42",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useInsurance.ts:anonymous:42",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -811,7 +811,7 @@
       "file": "useInsurance.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useLearning.ts:useLearning:6",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useLearning.ts:useLearning:6",
       "name": "useLearning",
       "type": "function",
       "complexity": 3,
@@ -820,7 +820,7 @@
       "file": "useLearning.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useLearning.ts:anonymous:11",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useLearning.ts:anonymous:11",
       "name": "anonymous",
       "type": "function",
       "complexity": 3,
@@ -829,7 +829,7 @@
       "file": "useLearning.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useLearning.ts:fetchCourses:12",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useLearning.ts:fetchCourses:12",
       "name": "fetchCourses",
       "type": "function",
       "complexity": 3,
@@ -838,7 +838,7 @@
       "file": "useLearning.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useLearning.ts:anonymous:16",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useLearning.ts:anonymous:16",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -847,7 +847,7 @@
       "file": "useLearning.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useLearning.ts:anonymous:19",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useLearning.ts:anonymous:19",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -856,7 +856,7 @@
       "file": "useLearning.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useLearning.ts:enrollCourse:31",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useLearning.ts:enrollCourse:31",
       "name": "enrollCourse",
       "type": "function",
       "complexity": 1,
@@ -865,7 +865,7 @@
       "file": "useLearning.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:useProducts:6",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:useProducts:6",
       "name": "useProducts",
       "type": "function",
       "complexity": 5,
@@ -874,7 +874,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:12",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:anonymous:12",
       "name": "anonymous",
       "type": "function",
       "complexity": 3,
@@ -883,7 +883,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:fetchProducts:13",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:fetchProducts:13",
       "name": "fetchProducts",
       "type": "function",
       "complexity": 3,
@@ -892,7 +892,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:17",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:anonymous:17",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -901,7 +901,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:20",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:anonymous:20",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -910,7 +910,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
       "name": "addToCart",
       "type": "function",
       "complexity": 3,
@@ -919,7 +919,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:33",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:anonymous:33",
       "name": "anonymous",
       "type": "function",
       "complexity": 3,
@@ -928,7 +928,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:34",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:anonymous:34",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -937,7 +937,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:36",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:anonymous:36",
       "name": "anonymous",
       "type": "function",
       "complexity": 2,
@@ -946,7 +946,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
       "name": "removeFromCart",
       "type": "function",
       "complexity": 1,
@@ -955,7 +955,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:52",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:anonymous:52",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -964,7 +964,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/hooks/useProducts.ts:anonymous:55",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:anonymous:55",
       "name": "anonymous",
       "type": "function",
       "complexity": 1,
@@ -973,7 +973,7 @@
       "file": "useProducts.ts"
     },
     {
-      "id": "test-projects/streax/src/lib/utils.ts:cn:3",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/lib/utils.ts:cn:3",
       "name": "cn",
       "type": "function",
       "complexity": 1,
@@ -982,7 +982,7 @@
       "file": "utils.ts"
     },
     {
-      "id": "test-projects/streax/src/app/layout.tsx:RootLayout:19",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/layout.tsx:RootLayout:19",
       "name": "RootLayout",
       "type": "component",
       "complexity": 1,
@@ -991,7 +991,7 @@
       "file": "layout.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/page.tsx:Home:2",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/page.tsx:Home:2",
       "name": "Home",
       "type": "component",
       "complexity": 1,
@@ -1000,7 +1000,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:CRMPage:60",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/crm/page.tsx:CRMPage:60",
       "name": "CRMPage",
       "type": "component",
       "complexity": 2,
@@ -1009,7 +1009,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:105",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:105",
       "name": "anonymous",
       "type": "component",
       "complexity": 2,
@@ -1018,7 +1018,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:108",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:108",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1027,7 +1027,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:154",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:154",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1036,7 +1036,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:160",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:160",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1045,7 +1045,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:173",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:173",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1054,7 +1054,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:194",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/crm/page.tsx:anonymous:194",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1063,7 +1063,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:FeedPage:102",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:FeedPage:102",
       "name": "FeedPage",
       "type": "component",
       "complexity": 1,
@@ -1072,7 +1072,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:getProfessionalForPost:106",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:getProfessionalForPost:106",
       "name": "getProfessionalForPost",
       "type": "component",
       "complexity": 1,
@@ -1081,7 +1081,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:107",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:107",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1090,7 +1090,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:120",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:120",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1099,7 +1099,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:121",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:121",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1108,7 +1108,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:122",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:122",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1117,7 +1117,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:123",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:123",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1126,7 +1126,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:124",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:124",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1135,7 +1135,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:132",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:132",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1144,7 +1144,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:139",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:139",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1153,7 +1153,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:144",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:144",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1162,7 +1162,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:145",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:145",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1171,7 +1171,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:146",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:146",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1180,7 +1180,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:147",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:147",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1189,7 +1189,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:155",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:155",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1198,7 +1198,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:178",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:178",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1207,7 +1207,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:194",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:194",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1216,7 +1216,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:214",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:214",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1225,7 +1225,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/insurance/page.tsx:InsurancePage:40",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/insurance/page.tsx:InsurancePage:40",
       "name": "InsurancePage",
       "type": "component",
       "complexity": 1,
@@ -1234,7 +1234,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:117",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:117",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1243,7 +1243,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:123",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:123",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1252,7 +1252,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:129",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:129",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1261,7 +1261,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:135",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/insurance/page.tsx:anonymous:135",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1270,7 +1270,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
       "name": "LearningPage",
       "type": "component",
       "complexity": 12,
@@ -1279,7 +1279,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:getEnrollmentForCourse:146",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:getEnrollmentForCourse:146",
       "name": "getEnrollmentForCourse",
       "type": "component",
       "complexity": 1,
@@ -1288,7 +1288,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:147",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:147",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1297,7 +1297,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:getDifficultyColor:150",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:getDifficultyColor:150",
       "name": "getDifficultyColor",
       "type": "component",
       "complexity": 2,
@@ -1306,7 +1306,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:formatDuration:159",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:formatDuration:159",
       "name": "formatDuration",
       "type": "component",
       "complexity": 3,
@@ -1315,7 +1315,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:216",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:216",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1324,7 +1324,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:226",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:226",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1333,7 +1333,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:237",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:237",
       "name": "anonymous",
       "type": "component",
       "complexity": 3,
@@ -1342,7 +1342,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:242",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:242",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1351,7 +1351,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:292",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:292",
       "name": "anonymous",
       "type": "component",
       "complexity": 2,
@@ -1360,7 +1360,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:337",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:337",
       "name": "anonymous",
       "type": "component",
       "complexity": 2,
@@ -1369,7 +1369,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:338",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:338",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1378,7 +1378,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:380",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:380",
       "name": "anonymous",
       "type": "component",
       "complexity": 2,
@@ -1387,7 +1387,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:381",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:381",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1396,7 +1396,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
       "name": "OrdersPage",
       "type": "component",
       "complexity": 3,
@@ -1405,7 +1405,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:addToCart:119",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:addToCart:119",
       "name": "addToCart",
       "type": "component",
       "complexity": 1,
@@ -1414,7 +1414,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:120",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:120",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1423,7 +1423,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:removeFromCart:128",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:removeFromCart:128",
       "name": "removeFromCart",
       "type": "component",
       "complexity": 2,
@@ -1432,7 +1432,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:129",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:129",
       "name": "anonymous",
       "type": "component",
       "complexity": 2,
@@ -1441,7 +1441,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:getCartCount:141",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:getCartCount:141",
       "name": "getCartCount",
       "type": "component",
       "complexity": 1,
@@ -1450,7 +1450,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:143",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:143",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1459,7 +1459,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:192",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:192",
       "name": "anonymous",
       "type": "component",
       "complexity": 2,
@@ -1468,7 +1468,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:195",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:195",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1477,7 +1477,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1486,7 +1486,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:222",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:222",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1495,7 +1495,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:223",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:223",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1504,7 +1504,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:224",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:224",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1513,7 +1513,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:235",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:235",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1522,7 +1522,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:241",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:241",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1531,7 +1531,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/test/page.tsx:TestPage:5",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/test/page.tsx:TestPage:5",
       "name": "TestPage",
       "type": "component",
       "complexity": 1,
@@ -1540,7 +1540,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/test/page.tsx:anonymous:8",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/test/page.tsx:anonymous:8",
       "name": "anonymous",
       "type": "component",
       "complexity": 1,
@@ -1549,7 +1549,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/test/page.tsx:TestComponentImports:110",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/test/page.tsx:TestComponentImports:110",
       "name": "TestComponentImports",
       "type": "component",
       "complexity": 4,
@@ -1558,7 +1558,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/test/page.tsx:anonymous:113",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/test/page.tsx:anonymous:113",
       "name": "anonymous",
       "type": "component",
       "complexity": 4,
@@ -1567,7 +1567,7 @@
       "file": "page.tsx"
     },
     {
-      "id": "test-projects/streax/src/app/test/page.tsx:testImports:114",
+      "id": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/test/page.tsx:testImports:114",
       "name": "testImports",
       "type": "component",
       "complexity": 4,
@@ -1614,182 +1614,182 @@
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/hooks/useClients.ts:useClients:6",
-      "target": "test-projects/streax/src/hooks/useClients.ts:fetchClients:12",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:useClients:6",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:fetchClients:12",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/hooks/useClients.ts:anonymous:11",
-      "target": "test-projects/streax/src/hooks/useClients.ts:fetchClients:12",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:anonymous:11",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useClients.ts:fetchClients:12",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/hooks/useFeed.ts:useFeed:6",
-      "target": "test-projects/streax/src/hooks/useFeed.ts:fetchFeed:13",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:useFeed:6",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:fetchFeed:13",
       "type": "sync",
       "hasErrors": true
     },
     {
-      "source": "test-projects/streax/src/hooks/useFeed.ts:anonymous:12",
-      "target": "test-projects/streax/src/hooks/useFeed.ts:fetchFeed:13",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:anonymous:12",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useFeed.ts:fetchFeed:13",
       "type": "sync",
       "hasErrors": true
     },
     {
-      "source": "test-projects/streax/src/hooks/useInsurance.ts:useInsurance:6",
-      "target": "test-projects/streax/src/hooks/useInsurance.ts:fetchInsurance:12",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useInsurance.ts:useInsurance:6",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useInsurance.ts:fetchInsurance:12",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/hooks/useInsurance.ts:anonymous:11",
-      "target": "test-projects/streax/src/hooks/useInsurance.ts:fetchInsurance:12",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useInsurance.ts:anonymous:11",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useInsurance.ts:fetchInsurance:12",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/hooks/useLearning.ts:useLearning:6",
-      "target": "test-projects/streax/src/hooks/useLearning.ts:fetchCourses:12",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useLearning.ts:useLearning:6",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useLearning.ts:fetchCourses:12",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/hooks/useLearning.ts:anonymous:11",
-      "target": "test-projects/streax/src/hooks/useLearning.ts:fetchCourses:12",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useLearning.ts:anonymous:11",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useLearning.ts:fetchCourses:12",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/hooks/useProducts.ts:useProducts:6",
-      "target": "test-projects/streax/src/hooks/useProducts.ts:fetchProducts:13",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:useProducts:6",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:fetchProducts:13",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/hooks/useProducts.ts:anonymous:12",
-      "target": "test-projects/streax/src/hooks/useProducts.ts:fetchProducts:13",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:anonymous:12",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:fetchProducts:13",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/feed/page.tsx:FeedPage:102",
-      "target": "test-projects/streax/src/app/(main)/feed/page.tsx:getProfessionalForPost:106",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:FeedPage:102",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:getProfessionalForPost:106",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:139",
-      "target": "test-projects/streax/src/app/(main)/feed/page.tsx:getProfessionalForPost:106",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:anonymous:139",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/feed/page.tsx:getProfessionalForPost:106",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
       "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:formatDuration:26",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
       "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:getDifficultyColor:35",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:LearningPage:142",
       "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:formatDuration:26",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:292",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:292",
       "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:getDifficultyColor:35",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:292",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/learning/page.tsx:anonymous:292",
       "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/components/core/course-card.tsx:formatDuration:26",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
-      "target": "test-projects/streax/src/app/(main)/orders/page.tsx:getCartCount:141",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:getCartCount:141",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
-      "target": "test-projects/streax/src/app/(main)/orders/page.tsx:getCartCount:141",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:getCartCount:141",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
-      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
-      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
-      "target": "test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:OrdersPage:114",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
-      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
-      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
-      "target": "test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:217",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:222",
-      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:222",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:223",
-      "target": "test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:223",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:addToCart:32",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:224",
-      "target": "test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/(main)/orders/page.tsx:anonymous:224",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/hooks/useProducts.ts:removeFromCart:51",
       "type": "sync",
       "hasErrors": false
     },
     {
-      "source": "test-projects/streax/src/app/test/page.tsx:TestComponentImports:110",
-      "target": "test-projects/streax/src/app/test/page.tsx:testImports:114",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/test/page.tsx:TestComponentImports:110",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/test/page.tsx:testImports:114",
       "type": "sync",
       "hasErrors": true
     },
     {
-      "source": "test-projects/streax/src/app/test/page.tsx:anonymous:113",
-      "target": "test-projects/streax/src/app/test/page.tsx:testImports:114",
+      "source": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/test/page.tsx:anonymous:113",
+      "target": "/Users/rajatdhanda/Tech/Projects/ai-observer/test-projects/streax/src/app/test/page.tsx:testImports:114",
       "type": "sync",
       "hasErrors": true
     }

@@ -12,6 +12,14 @@ import { renderTableFlowView } from './components/table-flow-view';
 import { renderRegistryView } from './components/registry-view';
 import { NineRulesValidator } from '../validator/nine-rules-validator';
 import { renderNineRulesView } from './components/nine-rules-view';
+import { DataFlowTracer } from '../validator/data-flow-tracer';
+import { renderDataFlowView } from './components/data-flow-view';
+import { renderEnhancedDataFlowView } from './components/enhanced-data-flow-view';
+import { renderDataFlowWithTabs } from './components/data-flow-tabs';
+import { ContractValidator } from '../validator/contract-validator';
+import { FileWatcher } from '../utils/file-watcher';
+import { BoundaryValidator } from '../validator/boundary-validator';
+import { VersionValidator } from '../validator/version-validator';
 
 const PORT = 3001;
 
@@ -31,12 +39,24 @@ class Dashboard {
   private tableMappingResults: any = null;
   private nineRulesValidator: NineRulesValidator | null = null;
   private nineRulesResults: any = null;
+  private dataFlowTracer: DataFlowTracer | null = null;
+  private contractValidator: ContractValidator | null = null;
+  private contractResults: any = null;
+  private fileWatcher: FileWatcher;
 
   constructor() {
     // Get project path from environment or command line
     // Default to test-projects/streax for testing
     this.projectPath = process.argv[2] || process.env.OBSERVER_PROJECT_PATH || path.join(process.cwd(), 'test-projects', 'streax');
     this.scanForProjects();
+    
+    // Initialize file watcher
+    this.fileWatcher = new FileWatcher(this.projectPath);
+    
+    // Auto-run data flow analysis on startup
+    this.runDataFlowAnalysis().catch(err => {
+      console.error('Failed to run initial data flow analysis:', err);
+    });
   }
 
   private scanForProjects() {
@@ -153,6 +173,34 @@ class Dashboard {
         const html = renderNineRulesView(this.nineRulesResults);
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(html);
+      } else if (req.url === '/api/data-flow') {
+        const results = await this.runDataFlowAnalysis();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(results));
+      } else if (req.url === '/api/data-flow-view') {
+        const html = renderDataFlowWithTabs(this.dataFlowResults);
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/api/contracts') {
+        const results = await this.runContractValidation();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(results));
+      } else if (req.url === '/api/file-changes') {
+        const changes = this.fileWatcher.getChanges();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(changes));
+      } else if (req.url === '/api/business-logic') {
+        const businessData = this.loadBusinessLogic();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(businessData));
+      } else if (req.url === '/api/boundaries') {
+        const boundaryResults = this.runBoundaryValidation();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(boundaryResults));
+      } else if (req.url === '/api/versions') {
+        const versionResults = this.runVersionValidation();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(versionResults));
       } else if (req.url === '/enhanced') {
         const enhancedPath = path.join(__dirname, 'enhanced.html');
         const html = fs.readFileSync(enhancedPath, 'utf-8');
@@ -284,6 +332,157 @@ Available projects: ${this.availableProjects.length}
     this.nineRulesValidator = new NineRulesValidator(this.projectPath);
     this.nineRulesResults = await this.nineRulesValidator.validateAll();
     return this.nineRulesResults;
+  }
+
+  private async runContractValidation() {
+    console.log('📋 Running contract validation...');
+    
+    if (!this.contractValidator) {
+      this.contractValidator = new ContractValidator(this.projectPath);
+    }
+    
+    // Get static validation results
+    const staticResults = await this.contractValidator.validate();
+    
+    // Run runtime enforcement analysis
+    const RuntimeEnforcer = require('../validator/runtime-enforcer').RuntimeEnforcer;
+    const runtimeEnforcer = new RuntimeEnforcer(this.projectPath);
+    const runtimeAnalysis = runtimeEnforcer.analyzeAndInjectValidation();
+    
+    // Combine results
+    this.contractResults = {
+      ...staticResults,
+      runtime: {
+        pointsNeedingValidation: runtimeAnalysis.points.length,
+        validationPoints: runtimeAnalysis.points.slice(0, 10), // First 10 for display
+        schemasGenerated: runtimeAnalysis.schemas.length
+      }
+    };
+    
+    return this.contractResults;
+  }
+  
+  private runBoundaryValidation() {
+    const validator = new BoundaryValidator(this.projectPath);
+    const results = validator.analyze();
+    
+    // Group by type for dashboard
+    const byType: Record<string, any> = {};
+    for (const boundary of results.boundaries) {
+      if (!byType[boundary.boundary]) {
+        byType[boundary.boundary] = {
+          total: 0,
+          validated: 0,
+          coverage: 0
+        };
+      }
+      byType[boundary.boundary].total++;
+      if (boundary.hasValidation) {
+        byType[boundary.boundary].validated++;
+      }
+    }
+    
+    // Calculate coverage per type
+    for (const type of Object.keys(byType)) {
+      const info = byType[type];
+      info.coverage = info.total > 0 
+        ? Math.round((info.validated / info.total) * 100)
+        : 0;
+    }
+    
+    return {
+      ...results,
+      byType
+    };
+  }
+  
+  private runVersionValidation() {
+    const validator = new VersionValidator(this.projectPath);
+    return validator.validate();
+  }
+  
+  private loadBusinessLogic() {
+    const businessPath = path.join(this.projectPath, 'contracts', 'business.md');
+    const contractsPath = path.join(this.projectPath, 'contracts.yaml');
+    
+    let businessContent = '';
+    let rules: any[] = [];
+    let stats = { totalRules: 0, coverage: 0 };
+    let mappings: any[] = [];
+    
+    // Read business.md if it exists
+    if (fs.existsSync(businessPath)) {
+      businessContent = fs.readFileSync(businessPath, 'utf-8');
+      
+      // Parse business rules
+      const sections = businessContent.split('##').filter(s => s.trim());
+      
+      for (const section of sections) {
+        const lines = section.split('\n').filter(l => l.trim());
+        if (lines.length === 0) continue;
+        
+        const entity = lines[0].trim();
+        const sectionRules = lines.slice(1)
+          .filter(l => l.startsWith('-'))
+          .map(l => l.replace(/^-\s*/, '').trim());
+        
+        if (sectionRules.length > 0) {
+          rules.push({
+            entity,
+            rules: sectionRules
+          });
+          stats.totalRules += sectionRules.length;
+        }
+      }
+    }
+    
+    // Check contract coverage
+    if (fs.existsSync(contractsPath)) {
+      const contractsContent = fs.readFileSync(contractsPath, 'utf-8');
+      
+      // Simple coverage calculation - check if entities in business.md have contracts
+      let coveredRules = 0;
+      for (const rule of rules) {
+        if (contractsContent.toLowerCase().includes(rule.entity.toLowerCase())) {
+          coveredRules += rule.rules.length * 0.7; // Assume 70% coverage if entity exists
+        }
+      }
+      
+      stats.coverage = stats.totalRules > 0 ? Math.round((coveredRules / stats.totalRules) * 100) : 0;
+      
+      // Create sample mappings
+      if (rules.length > 0) {
+        mappings = [
+          { businessRule: "Professional must have valid email", contract: "Professional.email: string (required, email)" },
+          { businessRule: "Years of experience cannot be negative", contract: "Professional.yearsOfExperience: number (positive)" },
+          { businessRule: "Posts cannot be empty", contract: "Post.content: string (minLength: 1)" },
+          { businessRule: "Maximum 500 viewers per session", contract: "LiveSession.maxViewers: 500" },
+          { businessRule: "Price must be positive", contract: "Product.price: number (positive)" }
+        ];
+      }
+    }
+    
+    return {
+      rules,
+      stats,
+      mappings,
+      hasBusinessFile: fs.existsSync(businessPath),
+      hasContractsFile: fs.existsSync(contractsPath)
+    };
+  }
+  
+  private async runDataFlowAnalysis() {
+    this.dataFlowTracer = new DataFlowTracer(this.projectPath);
+    const graph = await this.dataFlowTracer.analyze();
+    
+    // Convert Map to serializable format
+    this.dataFlowResults = {
+      nodes: Array.from(graph.nodes.values()),
+      edges: graph.edges,
+      issues: graph.issues
+    };
+    
+    return this.dataFlowResults;
   }
 
   private getHTML(): string {

@@ -53,164 +53,164 @@ graph TD
   _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_image_tsx_anonymous_51["anonymous<br/>📁 image.tsx"]
   _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_image_tsx_handleLoad_62["handleLoad<br/>📁 image.tsx"]
   _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_image_tsx_handleError_67["handleError<br/>📁 image.tsx"]
-  test_projects_streax_src_mocks_data_ts_getMockPostById_317["getMockPostById<br/>📁 data.ts"]
-  test_projects_streax_src_mocks_data_ts_anonymous_317["anonymous<br/>📁 data.ts"]
-  test_projects_streax_src_mocks_data_ts_getMockProductById_318["getMockProductById<br/>📁 data.ts"]
-  test_projects_streax_src_mocks_data_ts_anonymous_318["anonymous<br/>📁 data.ts"]
-  test_projects_streax_src_mocks_data_ts_getMockClientById_319["getMockClientById<br/>📁 data.ts"]
-  test_projects_streax_src_mocks_data_ts_anonymous_319["anonymous<br/>📁 data.ts"]
-  test_projects_streax_src_mocks_data_ts_getMockCourseById_320["getMockCourseById<br/>📁 data.ts"]
-  test_projects_streax_src_mocks_data_ts_anonymous_320["anonymous<br/>📁 data.ts"]
-  test_projects_streax_src_hooks_useAuth_ts_useAuth_6["useAuth<br/>📁 useAuth.ts"]
-  test_projects_streax_src_hooks_useAuth_ts_anonymous_10["anonymous<br/>📁 useAuth.ts"]
-  test_projects_streax_src_hooks_useAuth_ts_anonymous_12["anonymous<br/>📁 useAuth.ts"]
-  test_projects_streax_src_hooks_useAuth_ts_login_22["login<br/>📁 useAuth.ts"]
-  test_projects_streax_src_hooks_useAuth_ts_logout_31["logout<br/>📁 useAuth.ts"]
-  test_projects_streax_src_hooks_useClients_ts_useClients_6["useClients<br/>📁 useClients.ts"]
-  test_projects_streax_src_hooks_useClients_ts_anonymous_11["anonymous<br/>📁 useClients.ts"]
-  test_projects_streax_src_hooks_useClients_ts_fetchClients_12["fetchClients<br/>📁 useClients.ts"]
-  test_projects_streax_src_hooks_useClients_ts_anonymous_16["anonymous<br/>📁 useClients.ts"]
-  test_projects_streax_src_hooks_useClients_ts_anonymous_18["anonymous<br/>📁 useClients.ts"]
-  test_projects_streax_src_hooks_useClients_ts_addClient_34["addClient<br/>📁 useClients.ts"]
-  test_projects_streax_src_hooks_useClients_ts_anonymous_49["anonymous<br/>📁 useClients.ts"]
-  test_projects_streax_src_hooks_useClients_ts_anonymous_57["anonymous<br/>📁 useClients.ts"]
-  test_projects_streax_src_hooks_useClients_ts_anonymous_61["anonymous<br/>📁 useClients.ts"]
-  test_projects_streax_src_hooks_useFeed_ts_useFeed_6["useFeed<br/>📁 useFeed.ts"]
-  test_projects_streax_src_hooks_useFeed_ts_anonymous_12["anonymous<br/>📁 useFeed.ts"]
-  test_projects_streax_src_hooks_useFeed_ts_fetchFeed_13["fetchFeed<br/>📁 useFeed.ts"]
-  test_projects_streax_src_hooks_useFeed_ts_anonymous_19["anonymous<br/>📁 useFeed.ts"]
-  test_projects_streax_src_hooks_useFeed_ts_anonymous_21["anonymous<br/>📁 useFeed.ts"]
-  test_projects_streax_src_hooks_useFeed_ts_likePost_39["likePost<br/>📁 useFeed.ts"]
-  test_projects_streax_src_hooks_useFeed_ts_anonymous_41["anonymous<br/>📁 useFeed.ts"]
-  test_projects_streax_src_hooks_useFeed_ts_createPost_51["createPost<br/>📁 useFeed.ts"]
-  test_projects_streax_src_hooks_useFeed_ts_anonymous_65["anonymous<br/>📁 useFeed.ts"]
-  test_projects_streax_src_hooks_useInsurance_ts_useInsurance_6["useInsurance<br/>📁 useInsurance.ts"]
-  test_projects_streax_src_hooks_useInsurance_ts_anonymous_11["anonymous<br/>📁 useInsurance.ts"]
-  test_projects_streax_src_hooks_useInsurance_ts_fetchInsurance_12["fetchInsurance<br/>📁 useInsurance.ts"]
-  test_projects_streax_src_hooks_useInsurance_ts_anonymous_16["anonymous<br/>📁 useInsurance.ts"]
-  test_projects_streax_src_hooks_useInsurance_ts_submitClaim_29["submitClaim<br/>📁 useInsurance.ts"]
-  test_projects_streax_src_hooks_useInsurance_ts_anonymous_42["anonymous<br/>📁 useInsurance.ts"]
-  test_projects_streax_src_hooks_useLearning_ts_useLearning_6["useLearning<br/>📁 useLearning.ts"]
-  test_projects_streax_src_hooks_useLearning_ts_anonymous_11["anonymous<br/>📁 useLearning.ts"]
-  test_projects_streax_src_hooks_useLearning_ts_fetchCourses_12["fetchCourses<br/>📁 useLearning.ts"]
-  test_projects_streax_src_hooks_useLearning_ts_anonymous_16["anonymous<br/>📁 useLearning.ts"]
-  test_projects_streax_src_hooks_useLearning_ts_anonymous_19["anonymous<br/>📁 useLearning.ts"]
-  test_projects_streax_src_hooks_useLearning_ts_enrollCourse_31["enrollCourse<br/>📁 useLearning.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_useProducts_6["useProducts<br/>📁 useProducts.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_anonymous_12["anonymous<br/>📁 useProducts.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_fetchProducts_13["fetchProducts<br/>📁 useProducts.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_anonymous_17["anonymous<br/>📁 useProducts.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_anonymous_20["anonymous<br/>📁 useProducts.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_addToCart_32["addToCart<br/>📁 useProducts.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_anonymous_33["anonymous<br/>📁 useProducts.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_anonymous_34["anonymous<br/>📁 useProducts.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_anonymous_36["anonymous<br/>📁 useProducts.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_removeFromCart_51["removeFromCart<br/>📁 useProducts.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_anonymous_52["anonymous<br/>📁 useProducts.ts"]
-  test_projects_streax_src_hooks_useProducts_ts_anonymous_55["anonymous<br/>📁 useProducts.ts"]
-  test_projects_streax_src_lib_utils_ts_cn_3["cn<br/>📁 utils.ts"]
-  test_projects_streax_src_app_layout_tsx_RootLayout_19["RootLayout<br/>📁 layout.tsx"]
-  test_projects_streax_src_app_page_tsx_Home_2["Home<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__crm_page_tsx_CRMPage_60["CRMPage<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__crm_page_tsx_anonymous_105["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__crm_page_tsx_anonymous_108["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__crm_page_tsx_anonymous_154["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__crm_page_tsx_anonymous_160["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__crm_page_tsx_anonymous_173["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__crm_page_tsx_anonymous_194["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_FeedPage_102["FeedPage<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_getProfessionalForPost_106["getProfessionalForPost<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_107["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_120["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_121["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_122["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_123["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_124["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_132["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_139["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_144["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_145["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_146["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_147["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_155["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_178["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_194["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_214["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__insurance_page_tsx_InsurancePage_40["InsurancePage<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__insurance_page_tsx_anonymous_117["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__insurance_page_tsx_anonymous_123["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__insurance_page_tsx_anonymous_129["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__insurance_page_tsx_anonymous_135["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_LearningPage_142["LearningPage<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_getEnrollmentForCourse_146["getEnrollmentForCourse<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_147["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_getDifficultyColor_150["getDifficultyColor<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_formatDuration_159["formatDuration<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_216["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_226["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_237["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_242["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_292["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_337["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_338["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_380["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_381["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114["OrdersPage<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_addToCart_119["addToCart<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_120["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_removeFromCart_128["removeFromCart<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_129["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_getCartCount_141["getCartCount<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_143["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_192["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_195["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_217["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_222["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_223["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_224["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_235["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_241["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app_test_page_tsx_TestPage_5["TestPage<br/>📁 page.tsx"]
-  test_projects_streax_src_app_test_page_tsx_anonymous_8["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app_test_page_tsx_TestComponentImports_110["TestComponentImports<br/>📁 page.tsx"]
-  test_projects_streax_src_app_test_page_tsx_anonymous_113["anonymous<br/>📁 page.tsx"]
-  test_projects_streax_src_app_test_page_tsx_testImports_114["testImports<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_getMockPostById_317["getMockPostById<br/>📁 data.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_anonymous_317["anonymous<br/>📁 data.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_getMockProductById_318["getMockProductById<br/>📁 data.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_anonymous_318["anonymous<br/>📁 data.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_getMockClientById_319["getMockClientById<br/>📁 data.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_anonymous_319["anonymous<br/>📁 data.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_getMockCourseById_320["getMockCourseById<br/>📁 data.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_anonymous_320["anonymous<br/>📁 data.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useAuth_ts_useAuth_6["useAuth<br/>📁 useAuth.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useAuth_ts_anonymous_10["anonymous<br/>📁 useAuth.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useAuth_ts_anonymous_12["anonymous<br/>📁 useAuth.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useAuth_ts_login_22["login<br/>📁 useAuth.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useAuth_ts_logout_31["logout<br/>📁 useAuth.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_useClients_6["useClients<br/>📁 useClients.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_11["anonymous<br/>📁 useClients.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_fetchClients_12["fetchClients<br/>📁 useClients.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_16["anonymous<br/>📁 useClients.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_18["anonymous<br/>📁 useClients.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_addClient_34["addClient<br/>📁 useClients.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_49["anonymous<br/>📁 useClients.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_57["anonymous<br/>📁 useClients.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_61["anonymous<br/>📁 useClients.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_useFeed_6["useFeed<br/>📁 useFeed.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_anonymous_12["anonymous<br/>📁 useFeed.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_fetchFeed_13["fetchFeed<br/>📁 useFeed.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_anonymous_19["anonymous<br/>📁 useFeed.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_anonymous_21["anonymous<br/>📁 useFeed.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_likePost_39["likePost<br/>📁 useFeed.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_anonymous_41["anonymous<br/>📁 useFeed.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_createPost_51["createPost<br/>📁 useFeed.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_anonymous_65["anonymous<br/>📁 useFeed.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_useInsurance_6["useInsurance<br/>📁 useInsurance.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_anonymous_11["anonymous<br/>📁 useInsurance.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_fetchInsurance_12["fetchInsurance<br/>📁 useInsurance.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_anonymous_16["anonymous<br/>📁 useInsurance.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_submitClaim_29["submitClaim<br/>📁 useInsurance.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_anonymous_42["anonymous<br/>📁 useInsurance.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_useLearning_6["useLearning<br/>📁 useLearning.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_anonymous_11["anonymous<br/>📁 useLearning.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_fetchCourses_12["fetchCourses<br/>📁 useLearning.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_anonymous_16["anonymous<br/>📁 useLearning.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_anonymous_19["anonymous<br/>📁 useLearning.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_enrollCourse_31["enrollCourse<br/>📁 useLearning.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_useProducts_6["useProducts<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_12["anonymous<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_fetchProducts_13["fetchProducts<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_17["anonymous<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_20["anonymous<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_addToCart_32["addToCart<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_33["anonymous<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_34["anonymous<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_36["anonymous<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_removeFromCart_51["removeFromCart<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_52["anonymous<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_55["anonymous<br/>📁 useProducts.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_lib_utils_ts_cn_3["cn<br/>📁 utils.ts"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_layout_tsx_RootLayout_19["RootLayout<br/>📁 layout.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_page_tsx_Home_2["Home<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_CRMPage_60["CRMPage<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_105["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_108["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_154["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_160["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_173["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_194["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_FeedPage_102["FeedPage<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_getProfessionalForPost_106["getProfessionalForPost<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_107["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_120["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_121["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_122["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_123["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_124["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_132["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_139["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_144["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_145["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_146["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_147["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_155["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_178["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_194["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_214["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__insurance_page_tsx_InsurancePage_40["InsurancePage<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__insurance_page_tsx_anonymous_117["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__insurance_page_tsx_anonymous_123["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__insurance_page_tsx_anonymous_129["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__insurance_page_tsx_anonymous_135["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_LearningPage_142["LearningPage<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_getEnrollmentForCourse_146["getEnrollmentForCourse<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_147["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_getDifficultyColor_150["getDifficultyColor<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_formatDuration_159["formatDuration<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_216["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_226["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_237["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_242["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_292["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_337["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_338["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_380["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_381["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114["OrdersPage<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_addToCart_119["addToCart<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_120["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_removeFromCart_128["removeFromCart<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_129["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_getCartCount_141["getCartCount<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_143["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_192["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_195["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_217["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_222["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_223["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_224["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_235["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_241["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_TestPage_5["TestPage<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_anonymous_8["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_TestComponentImports_110["TestComponentImports<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_anonymous_113["anonymous<br/>📁 page.tsx"]
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_testImports_114["testImports<br/>📁 page.tsx"]
   _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_client_card_tsx_ClientCard_17 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_client_card_tsx_getLoyaltyColor_30
   _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_client_card_tsx_ClientCard_17 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_client_card_tsx_getDaysAgo_24
   _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_CourseCard_18 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_formatDuration_26
   _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_CourseCard_18 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_getDifficultyColor_35
   _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_CourseCard_18 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_formatDuration_26
   _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_post_card_tsx_PostCard_17 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_post_card_tsx_getTimeAgo_25
-  test_projects_streax_src_hooks_useClients_ts_useClients_6 -->|sync| test_projects_streax_src_hooks_useClients_ts_fetchClients_12
-  test_projects_streax_src_hooks_useClients_ts_anonymous_11 -->|sync| test_projects_streax_src_hooks_useClients_ts_fetchClients_12
-  test_projects_streax_src_hooks_useFeed_ts_useFeed_6 -->|error| test_projects_streax_src_hooks_useFeed_ts_fetchFeed_13
-  test_projects_streax_src_hooks_useFeed_ts_anonymous_12 -->|error| test_projects_streax_src_hooks_useFeed_ts_fetchFeed_13
-  test_projects_streax_src_hooks_useInsurance_ts_useInsurance_6 -->|sync| test_projects_streax_src_hooks_useInsurance_ts_fetchInsurance_12
-  test_projects_streax_src_hooks_useInsurance_ts_anonymous_11 -->|sync| test_projects_streax_src_hooks_useInsurance_ts_fetchInsurance_12
-  test_projects_streax_src_hooks_useLearning_ts_useLearning_6 -->|sync| test_projects_streax_src_hooks_useLearning_ts_fetchCourses_12
-  test_projects_streax_src_hooks_useLearning_ts_anonymous_11 -->|sync| test_projects_streax_src_hooks_useLearning_ts_fetchCourses_12
-  test_projects_streax_src_hooks_useProducts_ts_useProducts_6 -->|sync| test_projects_streax_src_hooks_useProducts_ts_fetchProducts_13
-  test_projects_streax_src_hooks_useProducts_ts_anonymous_12 -->|sync| test_projects_streax_src_hooks_useProducts_ts_fetchProducts_13
-  test_projects_streax_src_app__main__feed_page_tsx_FeedPage_102 -->|sync| test_projects_streax_src_app__main__feed_page_tsx_getProfessionalForPost_106
-  test_projects_streax_src_app__main__feed_page_tsx_anonymous_139 -->|sync| test_projects_streax_src_app__main__feed_page_tsx_getProfessionalForPost_106
-  test_projects_streax_src_app__main__learning_page_tsx_LearningPage_142 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_formatDuration_26
-  test_projects_streax_src_app__main__learning_page_tsx_LearningPage_142 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_getDifficultyColor_35
-  test_projects_streax_src_app__main__learning_page_tsx_LearningPage_142 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_formatDuration_26
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_292 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_getDifficultyColor_35
-  test_projects_streax_src_app__main__learning_page_tsx_anonymous_292 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_formatDuration_26
-  test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114 -->|sync| test_projects_streax_src_app__main__orders_page_tsx_getCartCount_141
-  test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114 -->|sync| test_projects_streax_src_app__main__orders_page_tsx_getCartCount_141
-  test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114 -->|sync| test_projects_streax_src_hooks_useProducts_ts_addToCart_32
-  test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114 -->|sync| test_projects_streax_src_hooks_useProducts_ts_addToCart_32
-  test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114 -->|sync| test_projects_streax_src_hooks_useProducts_ts_removeFromCart_51
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_217 -->|sync| test_projects_streax_src_hooks_useProducts_ts_addToCart_32
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_217 -->|sync| test_projects_streax_src_hooks_useProducts_ts_addToCart_32
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_217 -->|sync| test_projects_streax_src_hooks_useProducts_ts_removeFromCart_51
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_222 -->|sync| test_projects_streax_src_hooks_useProducts_ts_addToCart_32
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_223 -->|sync| test_projects_streax_src_hooks_useProducts_ts_addToCart_32
-  test_projects_streax_src_app__main__orders_page_tsx_anonymous_224 -->|sync| test_projects_streax_src_hooks_useProducts_ts_removeFromCart_51
-  test_projects_streax_src_app_test_page_tsx_TestComponentImports_110 -->|error| test_projects_streax_src_app_test_page_tsx_testImports_114
-  test_projects_streax_src_app_test_page_tsx_anonymous_113 -->|error| test_projects_streax_src_app_test_page_tsx_testImports_114
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_useClients_6 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_fetchClients_12
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_11 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_fetchClients_12
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_useFeed_6 -->|error| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_fetchFeed_13
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_anonymous_12 -->|error| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_fetchFeed_13
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_useInsurance_6 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_fetchInsurance_12
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_anonymous_11 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_fetchInsurance_12
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_useLearning_6 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_fetchCourses_12
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_anonymous_11 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_fetchCourses_12
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_useProducts_6 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_fetchProducts_13
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_12 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_fetchProducts_13
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_FeedPage_102 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_getProfessionalForPost_106
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_139 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_getProfessionalForPost_106
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_LearningPage_142 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_formatDuration_26
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_LearningPage_142 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_getDifficultyColor_35
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_LearningPage_142 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_formatDuration_26
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_292 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_getDifficultyColor_35
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_292 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_course_card_tsx_formatDuration_26
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_getCartCount_141
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_getCartCount_141
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_addToCart_32
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_addToCart_32
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_removeFromCart_51
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_217 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_addToCart_32
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_217 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_addToCart_32
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_217 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_removeFromCart_51
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_222 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_addToCart_32
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_223 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_addToCart_32
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_224 -->|sync| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_removeFromCart_51
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_TestComponentImports_110 -->|error| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_testImports_114
+  _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_anonymous_113 -->|error| _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_testImports_114
 
   subgraph components_core
     _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_components_core_card_tsx_Card_17
@@ -269,154 +269,154 @@ graph TD
   end
 
   subgraph src_mocks
-    test_projects_streax_src_mocks_data_ts_getMockPostById_317
-    test_projects_streax_src_mocks_data_ts_anonymous_317
-    test_projects_streax_src_mocks_data_ts_getMockProductById_318
-    test_projects_streax_src_mocks_data_ts_anonymous_318
-    test_projects_streax_src_mocks_data_ts_getMockClientById_319
-    test_projects_streax_src_mocks_data_ts_anonymous_319
-    test_projects_streax_src_mocks_data_ts_getMockCourseById_320
-    test_projects_streax_src_mocks_data_ts_anonymous_320
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_getMockPostById_317
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_anonymous_317
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_getMockProductById_318
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_anonymous_318
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_getMockClientById_319
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_anonymous_319
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_getMockCourseById_320
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_mocks_data_ts_anonymous_320
   end
 
   subgraph src_hooks
-    test_projects_streax_src_hooks_useAuth_ts_useAuth_6
-    test_projects_streax_src_hooks_useAuth_ts_anonymous_10
-    test_projects_streax_src_hooks_useAuth_ts_anonymous_12
-    test_projects_streax_src_hooks_useAuth_ts_login_22
-    test_projects_streax_src_hooks_useAuth_ts_logout_31
-    test_projects_streax_src_hooks_useClients_ts_useClients_6
-    test_projects_streax_src_hooks_useClients_ts_anonymous_11
-    test_projects_streax_src_hooks_useClients_ts_fetchClients_12
-    test_projects_streax_src_hooks_useClients_ts_anonymous_16
-    test_projects_streax_src_hooks_useClients_ts_anonymous_18
-    test_projects_streax_src_hooks_useClients_ts_addClient_34
-    test_projects_streax_src_hooks_useClients_ts_anonymous_49
-    test_projects_streax_src_hooks_useClients_ts_anonymous_57
-    test_projects_streax_src_hooks_useClients_ts_anonymous_61
-    test_projects_streax_src_hooks_useFeed_ts_useFeed_6
-    test_projects_streax_src_hooks_useFeed_ts_anonymous_12
-    test_projects_streax_src_hooks_useFeed_ts_fetchFeed_13
-    test_projects_streax_src_hooks_useFeed_ts_anonymous_19
-    test_projects_streax_src_hooks_useFeed_ts_anonymous_21
-    test_projects_streax_src_hooks_useFeed_ts_likePost_39
-    test_projects_streax_src_hooks_useFeed_ts_anonymous_41
-    test_projects_streax_src_hooks_useFeed_ts_createPost_51
-    test_projects_streax_src_hooks_useFeed_ts_anonymous_65
-    test_projects_streax_src_hooks_useInsurance_ts_useInsurance_6
-    test_projects_streax_src_hooks_useInsurance_ts_anonymous_11
-    test_projects_streax_src_hooks_useInsurance_ts_fetchInsurance_12
-    test_projects_streax_src_hooks_useInsurance_ts_anonymous_16
-    test_projects_streax_src_hooks_useInsurance_ts_submitClaim_29
-    test_projects_streax_src_hooks_useInsurance_ts_anonymous_42
-    test_projects_streax_src_hooks_useLearning_ts_useLearning_6
-    test_projects_streax_src_hooks_useLearning_ts_anonymous_11
-    test_projects_streax_src_hooks_useLearning_ts_fetchCourses_12
-    test_projects_streax_src_hooks_useLearning_ts_anonymous_16
-    test_projects_streax_src_hooks_useLearning_ts_anonymous_19
-    test_projects_streax_src_hooks_useLearning_ts_enrollCourse_31
-    test_projects_streax_src_hooks_useProducts_ts_useProducts_6
-    test_projects_streax_src_hooks_useProducts_ts_anonymous_12
-    test_projects_streax_src_hooks_useProducts_ts_fetchProducts_13
-    test_projects_streax_src_hooks_useProducts_ts_anonymous_17
-    test_projects_streax_src_hooks_useProducts_ts_anonymous_20
-    test_projects_streax_src_hooks_useProducts_ts_addToCart_32
-    test_projects_streax_src_hooks_useProducts_ts_anonymous_33
-    test_projects_streax_src_hooks_useProducts_ts_anonymous_34
-    test_projects_streax_src_hooks_useProducts_ts_anonymous_36
-    test_projects_streax_src_hooks_useProducts_ts_removeFromCart_51
-    test_projects_streax_src_hooks_useProducts_ts_anonymous_52
-    test_projects_streax_src_hooks_useProducts_ts_anonymous_55
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useAuth_ts_useAuth_6
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useAuth_ts_anonymous_10
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useAuth_ts_anonymous_12
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useAuth_ts_login_22
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useAuth_ts_logout_31
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_useClients_6
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_11
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_fetchClients_12
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_16
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_18
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_addClient_34
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_49
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_57
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useClients_ts_anonymous_61
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_useFeed_6
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_anonymous_12
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_fetchFeed_13
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_anonymous_19
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_anonymous_21
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_likePost_39
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_anonymous_41
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_createPost_51
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useFeed_ts_anonymous_65
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_useInsurance_6
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_anonymous_11
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_fetchInsurance_12
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_anonymous_16
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_submitClaim_29
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useInsurance_ts_anonymous_42
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_useLearning_6
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_anonymous_11
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_fetchCourses_12
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_anonymous_16
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_anonymous_19
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useLearning_ts_enrollCourse_31
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_useProducts_6
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_12
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_fetchProducts_13
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_17
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_20
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_addToCart_32
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_33
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_34
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_36
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_removeFromCart_51
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_52
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_hooks_useProducts_ts_anonymous_55
   end
 
   subgraph src_lib
-    test_projects_streax_src_lib_utils_ts_cn_3
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_lib_utils_ts_cn_3
   end
 
   subgraph src_app
-    test_projects_streax_src_app_layout_tsx_RootLayout_19
-    test_projects_streax_src_app_page_tsx_Home_2
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_layout_tsx_RootLayout_19
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_page_tsx_Home_2
   end
 
   subgraph _main__crm
-    test_projects_streax_src_app__main__crm_page_tsx_CRMPage_60
-    test_projects_streax_src_app__main__crm_page_tsx_anonymous_105
-    test_projects_streax_src_app__main__crm_page_tsx_anonymous_108
-    test_projects_streax_src_app__main__crm_page_tsx_anonymous_154
-    test_projects_streax_src_app__main__crm_page_tsx_anonymous_160
-    test_projects_streax_src_app__main__crm_page_tsx_anonymous_173
-    test_projects_streax_src_app__main__crm_page_tsx_anonymous_194
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_CRMPage_60
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_105
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_108
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_154
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_160
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_173
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__crm_page_tsx_anonymous_194
   end
 
   subgraph _main__feed
-    test_projects_streax_src_app__main__feed_page_tsx_FeedPage_102
-    test_projects_streax_src_app__main__feed_page_tsx_getProfessionalForPost_106
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_107
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_120
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_121
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_122
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_123
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_124
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_132
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_139
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_144
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_145
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_146
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_147
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_155
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_178
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_194
-    test_projects_streax_src_app__main__feed_page_tsx_anonymous_214
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_FeedPage_102
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_getProfessionalForPost_106
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_107
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_120
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_121
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_122
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_123
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_124
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_132
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_139
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_144
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_145
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_146
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_147
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_155
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_178
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_194
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__feed_page_tsx_anonymous_214
   end
 
   subgraph _main__insurance
-    test_projects_streax_src_app__main__insurance_page_tsx_InsurancePage_40
-    test_projects_streax_src_app__main__insurance_page_tsx_anonymous_117
-    test_projects_streax_src_app__main__insurance_page_tsx_anonymous_123
-    test_projects_streax_src_app__main__insurance_page_tsx_anonymous_129
-    test_projects_streax_src_app__main__insurance_page_tsx_anonymous_135
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__insurance_page_tsx_InsurancePage_40
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__insurance_page_tsx_anonymous_117
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__insurance_page_tsx_anonymous_123
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__insurance_page_tsx_anonymous_129
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__insurance_page_tsx_anonymous_135
   end
 
   subgraph _main__learning
-    test_projects_streax_src_app__main__learning_page_tsx_LearningPage_142
-    test_projects_streax_src_app__main__learning_page_tsx_getEnrollmentForCourse_146
-    test_projects_streax_src_app__main__learning_page_tsx_anonymous_147
-    test_projects_streax_src_app__main__learning_page_tsx_getDifficultyColor_150
-    test_projects_streax_src_app__main__learning_page_tsx_formatDuration_159
-    test_projects_streax_src_app__main__learning_page_tsx_anonymous_216
-    test_projects_streax_src_app__main__learning_page_tsx_anonymous_226
-    test_projects_streax_src_app__main__learning_page_tsx_anonymous_237
-    test_projects_streax_src_app__main__learning_page_tsx_anonymous_242
-    test_projects_streax_src_app__main__learning_page_tsx_anonymous_292
-    test_projects_streax_src_app__main__learning_page_tsx_anonymous_337
-    test_projects_streax_src_app__main__learning_page_tsx_anonymous_338
-    test_projects_streax_src_app__main__learning_page_tsx_anonymous_380
-    test_projects_streax_src_app__main__learning_page_tsx_anonymous_381
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_LearningPage_142
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_getEnrollmentForCourse_146
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_147
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_getDifficultyColor_150
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_formatDuration_159
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_216
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_226
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_237
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_242
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_292
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_337
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_338
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_380
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__learning_page_tsx_anonymous_381
   end
 
   subgraph _main__orders
-    test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114
-    test_projects_streax_src_app__main__orders_page_tsx_addToCart_119
-    test_projects_streax_src_app__main__orders_page_tsx_anonymous_120
-    test_projects_streax_src_app__main__orders_page_tsx_removeFromCart_128
-    test_projects_streax_src_app__main__orders_page_tsx_anonymous_129
-    test_projects_streax_src_app__main__orders_page_tsx_getCartCount_141
-    test_projects_streax_src_app__main__orders_page_tsx_anonymous_143
-    test_projects_streax_src_app__main__orders_page_tsx_anonymous_192
-    test_projects_streax_src_app__main__orders_page_tsx_anonymous_195
-    test_projects_streax_src_app__main__orders_page_tsx_anonymous_217
-    test_projects_streax_src_app__main__orders_page_tsx_anonymous_222
-    test_projects_streax_src_app__main__orders_page_tsx_anonymous_223
-    test_projects_streax_src_app__main__orders_page_tsx_anonymous_224
-    test_projects_streax_src_app__main__orders_page_tsx_anonymous_235
-    test_projects_streax_src_app__main__orders_page_tsx_anonymous_241
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_OrdersPage_114
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_addToCart_119
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_120
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_removeFromCart_128
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_129
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_getCartCount_141
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_143
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_192
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_195
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_217
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_222
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_223
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_224
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_235
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app__main__orders_page_tsx_anonymous_241
   end
 
   subgraph app_test
-    test_projects_streax_src_app_test_page_tsx_TestPage_5
-    test_projects_streax_src_app_test_page_tsx_anonymous_8
-    test_projects_streax_src_app_test_page_tsx_TestComponentImports_110
-    test_projects_streax_src_app_test_page_tsx_anonymous_113
-    test_projects_streax_src_app_test_page_tsx_testImports_114
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_TestPage_5
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_anonymous_8
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_TestComponentImports_110
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_anonymous_113
+    _Users_rajatdhanda_Tech_Projects_ai_observer_test_projects_streax_src_app_test_page_tsx_testImports_114
   end
 ```

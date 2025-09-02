@@ -1,0 +1,89 @@
+# AI Observer - Universal Contract Definitions
+# This file defines the "truth" for all data shapes across your application
+# Works with ANY folder structure, ANY database, ANY framework
+
+version: 1.0
+description: >
+  These contracts define what fields MUST be called across all layers.
+  AI should ALWAYS follow these contracts when generating code.
+
+contracts:
+  # Example contracts for common entities
+  User:
+    schema:
+      id: string
+      email: string
+      name: string
+      createdAt: datetime
+      updatedAt: datetime
+    
+    rules:
+      - "Email must be unique"
+      - "Email must be valid format"
+    
+    naming:
+      database: users        # Table name
+      hook: useUser         # Hook name
+      component: User*      # Component pattern
+    
+    boundaries:
+      - "useUser hook must return User type"
+      - "User components must use these exact field names"
+
+  Order:
+    schema:
+      id: string
+      userId: string        # MUST be userId, not user_id or customerId
+      items: OrderItem[]
+      totalAmount: number   # MUST be camelCase
+      status: string        # pending | processing | completed | cancelled
+      createdAt: datetime
+    
+    rules:
+      - "Orders require authenticated user"
+      - "Status flow: pending → processing → completed/cancelled"
+      - "Cannot modify after completed/cancelled"
+      - "Minimum order amount: $10"
+    
+    examples:
+      valid:
+        id: "ord_123"
+        userId: "usr_456"
+        totalAmount: 59.98
+        status: "pending"
+      
+      invalid:
+        customerId: "usr_456"  # WRONG! Should be userId
+        total_amount: 59.98    # WRONG! Should be totalAmount
+    
+    boundaries:
+      - "useOrders must return Order[]"
+      - "OrdersTab must use userId not customerId"
+
+  Product:
+    schema:
+      id: string
+      name: string
+      price: number
+      description: string
+      inStock: boolean      # MUST be camelCase, not in_stock
+      categoryId: string
+    
+    rules:
+      - "Price must be positive"
+      - "Name is required"
+
+# AI Instructions
+ai_context: |
+  CRITICAL: When generating code:
+  1. ALWAYS use the field names exactly as defined above
+  2. NEVER create alternative field names
+  3. If database uses snake_case, map it to camelCase in code
+  4. Import types from wherever they're defined in the project
+  5. Follow the naming conventions for each layer
+
+# Validation Rules
+validation:
+  strict_mode: true  # Fail on any contract violation
+  check_boundaries: true  # Validate at layer transitions
+  auto_fix: false  # Don't auto-fix, just report
