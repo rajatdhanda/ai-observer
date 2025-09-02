@@ -43,8 +43,76 @@ function groupViolations(violations: ContractViolation[], groupBy: string): Map<
       case 'component':
         key = violation.component || 'No Component';
         break;
-      case 'file':
-        key = violation.file || 'No File';
+      case 'api':
+        // Extract API/Route name with nested folder structure
+        if (violation.file) {
+          const filePath = violation.file.toLowerCase();
+          if (filePath.includes('/api/') || filePath.includes('/routes/')) {
+            // Extract the full path after api/routes
+            const parts = violation.file.split('/');
+            const apiIndex = parts.findIndex(p => p.toLowerCase() === 'api' || p.toLowerCase() === 'routes');
+            if (apiIndex >= 0 && apiIndex < parts.length - 1) {
+              // Get all parts after 'api' until the file, creating nested structure
+              const pathParts = parts.slice(apiIndex + 1);
+              const fileName = pathParts[pathParts.length - 1].replace(/\.(ts|js|tsx|jsx)$/, '');
+              
+              if (pathParts.length > 1) {
+                // Has nested folders - show as "folder/subfolder"
+                const folders = pathParts.slice(0, -1).join('/');
+                key = `📁 ${folders}/${fileName}`;
+              } else {
+                // Direct file in api folder
+                key = fileName;
+              }
+            } else {
+              key = 'API Endpoint';
+            }
+          } else {
+            key = 'Not an API';
+          }
+        } else {
+          key = 'No API';
+        }
+        break;
+      case 'page':
+        // Extract Page name with nested folder structure
+        if (violation.file) {
+          const filePath = violation.file.toLowerCase();
+          if (filePath.includes('/app/') || filePath.includes('/pages/')) {
+            // Extract the full path after app/pages
+            const parts = violation.file.split('/');
+            const pageIndex = parts.findIndex(p => p.toLowerCase() === 'app' || p.toLowerCase() === 'pages');
+            if (pageIndex >= 0 && pageIndex < parts.length - 1) {
+              // Get all parts after 'app/pages' until the file
+              const pathParts = parts.slice(pageIndex + 1);
+              const fileName = pathParts[pathParts.length - 1].replace(/\.(ts|js|tsx|jsx)$/, '');
+              
+              // Handle special Next.js patterns
+              const isRouteGroup = pathParts.some(p => p.startsWith('(') && p.endsWith(')'));
+              
+              if (pathParts.length > 1) {
+                // Has nested folders - show full path
+                const folders = pathParts.slice(0, -1).map(folder => {
+                  // Show route groups in parentheses
+                  if (folder.startsWith('(') && folder.endsWith(')')) {
+                    return folder;
+                  }
+                  return folder;
+                }).join('/');
+                key = `📁 ${folders}/${fileName}`;
+              } else {
+                // Direct file in app/pages folder
+                key = fileName;
+              }
+            } else {
+              key = 'Page';
+            }
+          } else {
+            key = 'Not a Page';
+          }
+        } else {
+          key = 'No Page';
+        }
         break;
       case 'severity':
         key = violation.severity;
@@ -252,14 +320,22 @@ export function renderContractView(result: ContractValidationResult | null, grou
           color: white;
           cursor: pointer;
         ">Component</button>
-        <button onclick="reloadContractView('file')" style="
+        <button onclick="reloadContractView('api')" style="
           padding: 6px 12px;
-          background: ${groupBy === 'file' ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)'};
+          background: ${groupBy === 'api' ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)'};
           border: none;
           border-radius: 4px;
           color: white;
           cursor: pointer;
-        ">File</button>
+        ">API</button>
+        <button onclick="reloadContractView('page')" style="
+          padding: 6px 12px;
+          background: ${groupBy === 'page' ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)'};
+          border: none;
+          border-radius: 4px;
+          color: white;
+          cursor: pointer;
+        ">Pages</button>
         <button onclick="reloadContractView('severity')" style="
           padding: 6px 12px;
           background: ${groupBy === 'severity' ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)'};
@@ -274,7 +350,7 @@ export function renderContractView(result: ContractValidationResult | null, grou
       <div>
         ${sortedGroups.length > 0 ? 
           sortedGroups.map(([groupName, violations], index) => 
-            renderViolationGroup(groupName, violations, index === 0) // Expand first group
+            renderViolationGroup(groupName, violations, false) // All collapsed by default
           ).join('') :
           '<div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 8px; color: #10b981;">✅ All contracts are passing!</div>'
         }
@@ -319,6 +395,38 @@ export function parseContractErrors(errors: any[]): ContractViolation[] {
         message: error.violation,
         severity: error.severity || 'error',
         suggestedFix: error.fix
+      });
+    } else if (error.entity && error.location) {
+      // Contract validator format with location string
+      const [filePath, lineNum] = error.location.split(':');
+      const file = filePath || error.location;
+      const line = lineNum ? parseInt(lineNum) : undefined;
+      
+      // Extract hook/component from file path
+      let hook: string | undefined;
+      let component: string | undefined;
+      
+      if (file.includes('hooks/') || file.includes('use')) {
+        // It's a hook
+        const hookMatch = file.match(/use[A-Z]\w+/);
+        hook = hookMatch ? hookMatch[0] : 'Custom Hook';
+      } else if (file.includes('components/') || file.includes('.tsx')) {
+        // It's a component
+        const filename = file.split('/').pop()?.replace(/\.(tsx?|jsx?)$/, '');
+        component = filename;
+      }
+      
+      violations.push({
+        table: error.entity,
+        hook,
+        component,
+        file,
+        line,
+        field: error.expected || error.field,
+        rule: error.type || 'contract',
+        message: error.message,
+        severity: error.type === 'warning' ? 'warning' : 'error',
+        suggestedFix: error.suggestion
       });
     } else {
       // Generic object error

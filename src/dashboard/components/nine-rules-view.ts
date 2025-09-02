@@ -30,32 +30,19 @@ npx ts-node src/cli/validate.ts</pre>
     <div style="padding: 20px;">
       <h2 style="margin-bottom: 30px;">🔍 9 Core Rules Validation</h2>
       
-      <!-- Overall Score Card -->
-      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 12px; margin-bottom: 30px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <h3 style="font-size: 24px; margin-bottom: 10px;">Overall Health Score</h3>
-            <div style="display: flex; align-items: baseline; gap: 20px;">
-              <span style="font-size: 48px; font-weight: bold;">${grade}</span>
-              <span style="font-size: 36px;">${summary.overallScore}%</span>
-            </div>
+      <!-- Compact Score Bar -->
+      <div style="background: rgba(30, 30, 40, 0.8); padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <h3 style="margin: 0; font-size: 16px;">✅ Code Quality</h3>
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <span style="font-size: 20px; font-weight: bold; color: ${gradeColor};">${grade}</span>
+            <span style="font-size: 16px; color: ${gradeColor};">${summary.overallScore}%</span>
           </div>
-          <div style="text-align: right;">
-            <div style="display: flex; gap: 30px;">
-              <div>
-                <div style="font-size: 24px; font-weight: bold;">✅ ${summary.passedRules}</div>
-                <div style="opacity: 0.9;">Passed</div>
-              </div>
-              <div>
-                <div style="font-size: 24px; font-weight: bold;">❌ ${summary.criticalIssues}</div>
-                <div style="opacity: 0.9;">Critical</div>
-              </div>
-              <div>
-                <div style="font-size: 24px; font-weight: bold;">⚠️ ${summary.warnings}</div>
-                <div style="opacity: 0.9;">Warnings</div>
-              </div>
-            </div>
-          </div>
+        </div>
+        <div style="display: flex; gap: 20px; font-size: 14px;">
+          <span>✅ ${summary.passedRules} passed</span>
+          <span style="color: #ef4444;">❌ ${summary.criticalIssues} critical</span>
+          <span style="color: #f59e0b;">⚠️ ${summary.warnings} warnings</span>
         </div>
       </div>
 

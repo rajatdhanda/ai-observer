@@ -74,8 +74,64 @@ function groupIssues(issues: GroupedIssue[], groupBy: string): Map<string, Group
       case 'component':
         key = issue.component || 'No Component';
         break;
-      case 'file':
-        key = issue.file || 'No File';
+      case 'api':
+        // Extract API/Route name with nested folder structure
+        if (issue.file) {
+          const filePath = issue.file.toLowerCase();
+          if (filePath.includes('/api/') || filePath.includes('/routes/')) {
+            const parts = issue.file.split('/');
+            const apiIndex = parts.findIndex(p => p.toLowerCase() === 'api' || p.toLowerCase() === 'routes');
+            if (apiIndex >= 0 && apiIndex < parts.length - 1) {
+              const pathParts = parts.slice(apiIndex + 1);
+              const fileName = pathParts[pathParts.length - 1].replace(/\.(ts|js|tsx|jsx)$/, '');
+              
+              if (pathParts.length > 1) {
+                const folders = pathParts.slice(0, -1).join('/');
+                key = `📁 ${folders}/${fileName}`;
+              } else {
+                key = fileName;
+              }
+            } else {
+              key = 'API Endpoint';
+            }
+          } else {
+            key = 'Not an API';
+          }
+        } else {
+          key = 'No API';
+        }
+        break;
+      case 'page':
+        // Extract Page name with nested folder structure
+        if (issue.file) {
+          const filePath = issue.file.toLowerCase();
+          if (filePath.includes('/app/') || filePath.includes('/pages/')) {
+            const parts = issue.file.split('/');
+            const pageIndex = parts.findIndex(p => p.toLowerCase() === 'app' || p.toLowerCase() === 'pages');
+            if (pageIndex >= 0 && pageIndex < parts.length - 1) {
+              const pathParts = parts.slice(pageIndex + 1);
+              const fileName = pathParts[pathParts.length - 1].replace(/\.(ts|js|tsx|jsx)$/, '');
+              
+              if (pathParts.length > 1) {
+                const folders = pathParts.slice(0, -1).map(folder => {
+                  if (folder.startsWith('(') && folder.endsWith(')')) {
+                    return folder;
+                  }
+                  return folder;
+                }).join('/');
+                key = `📁 ${folders}/${fileName}`;
+              } else {
+                key = fileName;
+              }
+            } else {
+              key = 'Page';
+            }
+          } else {
+            key = 'Not a Page';
+          }
+        } else {
+          key = 'No Page';
+        }
         break;
       case 'rule':
         key = `Rule ${issue.ruleNumber}: ${issue.rule}`;
@@ -267,14 +323,22 @@ export function renderEnhancedNineRulesView(summary: ValidationSummary | null, g
           color: white;
           cursor: pointer;
         ">Component</button>
-        <button onclick="reloadNineRulesView('file')" style="
+        <button onclick="reloadNineRulesView('api')" style="
           padding: 6px 12px;
-          background: ${groupBy === 'file' ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)'};
+          background: ${groupBy === 'api' ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)'};
           border: none;
           border-radius: 4px;
           color: white;
           cursor: pointer;
-        ">File</button>
+        ">API</button>
+        <button onclick="reloadNineRulesView('page')" style="
+          padding: 6px 12px;
+          background: ${groupBy === 'page' ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)'};
+          border: none;
+          border-radius: 4px;
+          color: white;
+          cursor: pointer;
+        ">Pages</button>
         <button onclick="reloadNineRulesView('severity')" style="
           padding: 6px 12px;
           background: ${groupBy === 'severity' ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)'};
@@ -289,7 +353,7 @@ export function renderEnhancedNineRulesView(summary: ValidationSummary | null, g
       <div>
         ${allIssues.length > 0 ? 
           sortedGroups.map(([groupName, issues], index) => 
-            renderIssueGroup(groupName, issues, index === 0)
+            renderIssueGroup(groupName, issues, false) // All collapsed by default
           ).join('') :
           '<div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 8px; color: #10b981;">✅ All 9 core rules are passing!</div>'
         }

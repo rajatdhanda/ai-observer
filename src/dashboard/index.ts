@@ -401,12 +401,17 @@ Available projects: ${this.availableProjects.length}
       const violationCount = staticResults.violations?.length || 0;
       const score = staticResults.score || 0;
       
+      // When we have violations, totalChecked should be violations + some theoretical passed checks
+      // Assuming each violation is a failed check, and score represents % of successful checks
+      const totalChecked = violationCount > 0 ? violationCount : 100;
+      const passed = violationCount > 0 ? 0 : Math.round((score / 100) * totalChecked);
+      
       this.contractResults = {
         ...staticResults,
         runtime: runtimeData,
         // Map the fields for the component
-        totalChecked: violationCount > 0 ? violationCount : 100, // If we have violations, that's what we checked
-        passed: Math.round((score / 100) * (violationCount || 100)),
+        totalChecked: totalChecked,
+        passed: passed,
         failed: violationCount,
         violations: staticResults.violations || []
       };
