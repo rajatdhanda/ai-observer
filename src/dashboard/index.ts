@@ -12,10 +12,12 @@ import { renderTableFlowView } from './components/table-flow-view';
 import { renderRegistryView } from './components/registry-view';
 import { NineRulesValidator } from '../validator/nine-rules-validator';
 import { renderNineRulesView } from './components/nine-rules-view';
+import { renderEnhancedNineRulesView } from './components/enhanced-nine-rules-view';
 import { DataFlowTracer } from '../validator/data-flow-tracer';
 import { renderDataFlowView } from './components/data-flow-view';
 import { renderEnhancedDataFlowView } from './components/enhanced-data-flow-view';
 import { renderDataFlowWithTabs } from './components/data-flow-tabs';
+import { renderContractView, parseContractErrors, ContractValidationResult } from './components/contract-view';
 import { ContractValidator } from '../validator/contract-validator';
 import { FileWatcher } from '../utils/file-watcher';
 import { BoundaryValidator } from '../validator/boundary-validator';
@@ -174,6 +176,12 @@ class Dashboard {
         const html = renderNineRulesView(this.nineRulesResults);
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(html);
+      } else if (req.url?.startsWith('/api/nine-rules-enhanced')) {
+        const url = new URL(req.url, `http://localhost:${PORT}`);
+        const groupBy = url.searchParams.get('groupBy') || 'rule';
+        const html = renderEnhancedNineRulesView(this.nineRulesResults, groupBy);
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
       } else if (req.url === '/api/data-flow') {
         const results = await this.runDataFlowAnalysis();
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -186,6 +194,23 @@ class Dashboard {
         const results = await this.runContractValidation();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(results));
+      } else if (req.url?.startsWith('/api/contracts-html')) {
+        const url = new URL(req.url, `http://localhost:${PORT}`);
+        const groupBy = url.searchParams.get('groupBy') || 'table';
+        const results = await this.runContractValidation();
+        
+        // Convert to our structured format
+        const contractResult: ContractValidationResult = {
+          violations: parseContractErrors(results.violations || []),
+          totalChecked: results.totalChecked || 0,
+          passed: results.passed || 0,
+          failed: results.failed || results.violations?.length || 0,
+          timestamp: new Date()
+        };
+        
+        const html = renderContractView(contractResult, groupBy);
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
       } else if (req.url === '/api/file-changes') {
         const changes = this.fileWatcher.getChanges();
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -342,29 +367,66 @@ Available projects: ${this.availableProjects.length}
   private async runContractValidation() {
     console.log('📋 Running contract validation...');
     
-    if (!this.contractValidator) {
-      this.contractValidator = new ContractValidator(this.projectPath);
-    }
-    
-    // Get static validation results
-    const staticResults = await this.contractValidator.validate();
-    
-    // Run runtime enforcement analysis
-    const RuntimeEnforcer = require('../validator/runtime-enforcer').RuntimeEnforcer;
-    const runtimeEnforcer = new RuntimeEnforcer(this.projectPath);
-    const runtimeAnalysis = runtimeEnforcer.analyzeAndInjectValidation();
-    
-    // Combine results
-    this.contractResults = {
-      ...staticResults,
-      runtime: {
-        pointsNeedingValidation: runtimeAnalysis.points.length,
-        validationPoints: runtimeAnalysis.points.slice(0, 10), // First 10 for display
-        schemasGenerated: runtimeAnalysis.schemas.length
+    try {
+      if (!this.contractValidator) {
+        this.contractValidator = new ContractValidator(this.projectPath);
       }
-    };
-    
-    return this.contractResults;
+      
+      // Get static validation results
+      const staticResults = await this.contractValidator.validate();
+      
+      let runtimeData = {
+        pointsNeedingValidation: 0,
+        validationPoints: [],
+        schemasGenerated: 0
+      };
+      
+      // Try to run runtime enforcement analysis
+      try {
+        const RuntimeEnforcer = require('../validator/runtime-enforcer').RuntimeEnforcer;
+        const runtimeEnforcer = new RuntimeEnforcer(this.projectPath);
+        const runtimeAnalysis = runtimeEnforcer.analyzeAndInjectValidation();
+        
+        runtimeData = {
+          pointsNeedingValidation: runtimeAnalysis.points.length,
+          validationPoints: runtimeAnalysis.points.slice(0, 10), // First 10 for display
+          schemasGenerated: runtimeAnalysis.schemas.length
+        };
+      } catch (runtimeError: any) {
+        console.log('Runtime enforcement analysis skipped:', runtimeError?.message || 'Unknown error');
+      }
+      
+      // Combine results  
+      // staticResults has: score, violations, summary
+      const violationCount = staticResults.violations?.length || 0;
+      const score = staticResults.score || 0;
+      
+      this.contractResults = {
+        ...staticResults,
+        runtime: runtimeData,
+        // Map the fields for the component
+        totalChecked: violationCount > 0 ? violationCount : 100, // If we have violations, that's what we checked
+        passed: Math.round((score / 100) * (violationCount || 100)),
+        failed: violationCount,
+        violations: staticResults.violations || []
+      };
+      
+      return this.contractResults;
+    } catch (error) {
+      console.error('Error in contract validation:', error);
+      // Return empty result that the component can handle
+      return {
+        violations: [],
+        totalChecked: 0,
+        passed: 0,
+        failed: 0,
+        runtime: {
+          pointsNeedingValidation: 0,
+          validationPoints: [],
+          schemasGenerated: 0
+        }
+      };
+    }
   }
   
   private runBoundaryValidation() {

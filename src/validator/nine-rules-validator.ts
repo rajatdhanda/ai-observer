@@ -52,8 +52,9 @@ export class NineRulesValidator {
   private results: ValidationResult[] = [];
 
   constructor(projectPath: string) {
-    this.projectPath = projectPath;
-    const configPath = ts.findConfigFile(projectPath, ts.sys.fileExists, 'tsconfig.json');
+    // Resolve relative paths to absolute
+    this.projectPath = path.isAbsolute(projectPath) ? projectPath : path.resolve(process.cwd(), projectPath);
+    const configPath = ts.findConfigFile(this.projectPath, ts.sys.fileExists, 'tsconfig.json');
     if (configPath) {
       const { config } = ts.readConfigFile(configPath, ts.sys.readFile);
       const { options, fileNames } = ts.parseJsonConfigFileContent(
@@ -790,7 +791,8 @@ export class NineRulesValidator {
     for (const dir of searchDirs) {
       const dirPath = path.join(this.projectPath, dir);
       if (fs.existsSync(dirPath)) {
-        files.push(...this.getFilesRecursive(dirPath, patterns));
+        const foundFiles = this.getFilesRecursive(dirPath, patterns);
+        files.push(...foundFiles);
       }
     }
     
@@ -811,12 +813,32 @@ export class NineRulesValidator {
       } else if (item.isFile()) {
         // Check if file matches any pattern
         const matches = patterns.some(pattern => {
-          // Simple pattern matching
-          if (pattern.includes('**')) {
-            const ext = pattern.split('**')[1];
+          // Handle different pattern types
+          if (pattern.includes('**/')) {
+            // Pattern like **/hooks/**/*.ts or **/app/**/*.tsx
+            const parts = pattern.split('**/').filter(p => p);
+            
+            // Check each part
+            for (const part of parts) {
+              if (part.includes('*')) {
+                // Handle file extension patterns like *.ts
+                const ext = part.replace('*', '');
+                if (!fullPath.endsWith(ext)) return false;
+              } else if (part.includes('/')) {
+                // Handle folder patterns like hooks/ or components/
+                const folder = part.replace(/\//g, path.sep).replace(/\*\./g, '');
+                if (!fullPath.includes(path.sep + folder.replace(/\*$/, ''))) return false;
+              }
+            }
+            return true;
+          } else if (pattern.startsWith('**/')) {
+            // Pattern like **/*.ts
+            const ext = pattern.replace('**/', '').replace('*', '');
             return fullPath.endsWith(ext);
+          } else {
+            // Simple contains check
+            return fullPath.includes(pattern);
           }
-          return fullPath.includes(pattern.replace('**/', ''));
         });
         
         if (matches) {

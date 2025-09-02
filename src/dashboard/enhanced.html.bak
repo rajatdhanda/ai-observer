@@ -2066,23 +2066,16 @@
       }
     }
 
-    async function loadContracts(groupBy = 'table', runValidation = true) {
+    async function loadContracts(groupBy = 'table') {
       const mainContent = document.getElementById('mainContent');
       const queryContent = document.getElementById('queryContent');
       
       if (queryContent) queryContent.innerHTML = '';
       
-      // Save scroll position before updating
-      const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+      mainContent.innerHTML = '<div style="padding: 20px;">Running contract validation...</div>';
       
       // Make loadContracts available globally for the component
       window.loadContractValidation = loadContracts;
-      
-      if (!runValidation) {
-        // Don't show loading message for quick updates
-      } else {
-        mainContent.innerHTML = '<div style="padding: 20px;">Running contract validation...</div>';
-      }
       
       try {
         // Fetch the pre-rendered HTML from our component
@@ -2090,57 +2083,126 @@
         const html = await res.text();
         
         mainContent.innerHTML = html;
-        
-        // Restore scroll position after content loads
-        if (!runValidation) {
-          requestAnimationFrame(() => {
-            window.scrollTo({
-              top: scrollPos,
-              behavior: 'instant'
-            });
-          });
-        }
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <div style="display: flex; align-items: baseline; gap: 10px;">
+                      <span style="font-size: 36px; font-weight: bold;">${runtime.pointsNeedingValidation || 0}</span>
+                      <span style="font-size: 14px; opacity: 0.8;">
+                        Points Need Validation
+                      </span>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 24px; font-weight: bold;">${runtime.schemasGenerated || 0}</div>
+                    <div style="opacity: 0.8; font-size: 12px;">Schemas Ready</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Violations List -->
+            ${violations.length > 0 ? `
+              <div style="background: #1a1a1a; padding: 20px; border-radius: 8px;">
+                <h3 style="color: #ef4444; margin-bottom: 20px;">Contract Violations</h3>
+                <div style="max-height: 600px; overflow-y: auto;">
+                  ${violations.map(v => `
+                    <div style="background: #0f0f0f; padding: 15px; border-radius: 6px; margin-bottom: 10px; border-left: 3px solid ${v.type === 'error' ? '#ef4444' : '#f59e0b'};">
+                      <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                          <div style="color: ${v.type === 'error' ? '#f87171' : '#fbbf24'}; font-weight: 500;">
+                            ${v.entity}: ${v.message}
+                          </div>
+                          <div style="color: #64748b; font-size: 12px; margin-top: 5px;">
+                            📍 ${v.location}
+                          </div>
+                          <div style="color: #60a5fa; font-size: 12px; margin-top: 5px;">
+                            💡 ${v.suggestion}
+                          </div>
+                        </div>
+                        <div style="background: ${v.type === 'error' ? '#7c2d12' : '#78350f'}; padding: 4px 8px; border-radius: 4px;">
+                          <span style="color: ${v.type === 'error' ? '#fca5a5' : '#fcd34d'}; font-size: 11px;">
+                            ${v.expected} → ${v.actual}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : `
+              <div style="background: #1a1a1a; padding: 40px; border-radius: 8px; text-align: center;">
+                <div style="color: #10b981; font-size: 24px; margin-bottom: 10px;">✅</div>
+                <div style="color: #10b981; font-size: 18px;">All contracts are being followed!</div>
+              </div>
+            `}
+            
+            <!-- Runtime Validation Points -->
+            ${runtime.pointsNeedingValidation > 0 ? `
+              <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                <h3 style="color: #f59e0b; margin-bottom: 20px;">⚡ Runtime Validation Points</h3>
+                <div style="max-height: 400px; overflow-y: auto;">
+                  ${(runtime.validationPoints || []).map(point => `
+                    <div style="background: #0f0f0f; padding: 15px; border-radius: 6px; margin-bottom: 10px; border-left: 3px solid #f59e0b;">
+                      <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                          <div style="color: #fbbf24; font-weight: 500;">
+                            ${point.entity} - ${point.operation}
+                          </div>
+                          <div style="color: #64748b; font-size: 12px; margin-top: 5px;">
+                            📍 ${point.file}:${point.line}
+                          </div>
+                          <div style="background: #1e293b; padding: 8px; border-radius: 4px; margin-top: 8px;">
+                            <code style="color: #60a5fa; font-size: 11px;">${point.suggestion || 'Add validation here'}</code>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+            
+            <!-- How to Fix -->
+            ${violations.length > 0 || runtime.pointsNeedingValidation > 0 ? `
+              <div style="background: #1e293b; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                <h3 style="color: #60a5fa; margin-bottom: 15px;">How to Fix</h3>
+                <ol style="color: #94a3b8; line-height: 1.8;">
+                  ${violations.length > 0 ? `
+                    <li>Review contracts.yaml for the correct field names</li>
+                    <li>Update your code to use the contract field names</li>
+                  ` : ''}
+                  ${runtime.pointsNeedingValidation > 0 ? `
+                    <li>Add runtime validation using the generated Zod schemas</li>
+                    <li>Import validation functions: <code style="background: #0f0f0f; padding: 2px 6px; border-radius: 4px;">import { validateOrder } from './contracts/schemas/order.schema'</code></li>
+                  ` : ''}
+                  <li>Run validation again: <code style="background: #0f0f0f; padding: 2px 6px; border-radius: 4px;">npm run validate-contracts</code></li>
+                  <li>Add contracts to AI context when generating new code</li>
+                </ol>
+              </div>
+            ` : ''}
+          </div>
+        `;
       } catch (error) {
         console.error('Error loading contracts:', error);
         mainContent.innerHTML = '<div style="color: #ef4444; padding: 20px;">Error loading contract validation</div>';
       }
     }
     
-    async function loadNineRules(groupBy = 'rule', runValidation = true) {
+    async function loadNineRules() {
       const mainContent = document.getElementById('mainContent');
-      
-      // Save scroll position before updating
-      const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
-      
-      // Make loadNineRules available globally for the component
-      window.loadNineRules = loadNineRules;
+      mainContent.innerHTML = '<div style="padding: 20px;">Running 9 Core Rules validation...</div>';
       
       try {
-        // Only run validation on first load
-        if (runValidation) {
-          mainContent.innerHTML = '<div style="padding: 20px;">Running 9 Core Rules validation...</div>';
-          await fetch('/api/nine-rules');
-        } else {
-          // Don't show loading message for quick updates
-        }
+        // Run 9-rules validation
+        await fetch('/api/nine-rules');
         
-        // Get the enhanced rendered view with grouping
-        const res = await fetch(`/api/nine-rules-enhanced?groupBy=${groupBy}`);
+        // Get the rendered view
+        const res = await fetch('/api/nine-rules-view');
         const html = await res.text();
         
         mainContent.innerHTML = html;
-        
-        // Restore scroll position after content loads
-        if (!runValidation) {
-          requestAnimationFrame(() => {
-            window.scrollTo({
-              top: scrollPos,
-              behavior: 'instant'
-            });
-          });
-        }
       } catch (error) {
-        mainContent.innerHTML = '<div style="color: #ef4444; padding: 20px;">Error loading 9-rules view</div>';
+        mainContent.innerHTML = '<div style="color: #ef4444; padding: 20px;">Error running 9-rules validation</div>';
       }
     }
     
@@ -2674,52 +2736,8 @@
     init();
     // Initialize dashboard
     setTimeout(() => {
-      document.getElementById('mode-description').textContent = 'Daily workflow: Start with 🏠 Overview → Run ✅ Health Check → Focus on specific areas below';
+      document.getElementById('mode-description').textContent = 'Start here: Run health check, then explore detailed analysis in tabs below';
     }, 500);
-    
-    // Global functions for enhanced components
-    
-    // Nine Rules View functions
-    function toggleNineRulesGroup(groupId) {
-      const group = document.getElementById(groupId);
-      const arrow = document.getElementById(groupId + '-arrow');
-      if (group && arrow) {
-        if (group.style.display === 'none') {
-          group.style.display = 'block';
-          arrow.textContent = '▼';
-        } else {
-          group.style.display = 'none';
-          arrow.textContent = '▶';
-        }
-      }
-    }
-    
-    function reloadNineRulesView(groupBy) {
-      if (window.loadNineRules) {
-        window.loadNineRules(groupBy, false); // false = don't run validation, just reload view
-      }
-    }
-    
-    // Contract View functions  
-    function toggleGroup(groupId) {
-      const group = document.getElementById(groupId);
-      const arrow = document.getElementById(groupId + '-arrow');
-      if (group && arrow) {
-        if (group.style.display === 'none') {
-          group.style.display = 'block';
-          arrow.textContent = '▼';
-        } else {
-          group.style.display = 'none';
-          arrow.textContent = '▶';
-        }
-      }
-    }
-    
-    function reloadContractView(groupBy) {
-      if (window.loadContractValidation) {
-        window.loadContractValidation(groupBy, false); // false = don't run validation, just reload view
-      }
-    }
   </script>
 </body>
 </html>
