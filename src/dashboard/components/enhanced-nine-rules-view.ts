@@ -71,6 +71,40 @@ function groupIssues(issues: GroupedIssue[], groupBy: string): Map<string, Group
     let key = 'Unknown';
     
     switch(groupBy) {
+      case 'table':
+        // Extract table name from message or file
+        if (issue.message.includes('table')) {
+          const tableMatch = issue.message.match(/table\s+['"`]?(\w+)['"`]?/i);
+          key = tableMatch ? tableMatch[1] : 'Unknown Table';
+        } else if (issue.file && issue.file.includes('/tables/')) {
+          const parts = issue.file.split('/');
+          const tableIndex = parts.findIndex(p => p === 'tables');
+          if (tableIndex >= 0 && tableIndex < parts.length - 1) {
+            key = parts[tableIndex + 1].replace(/\.(ts|js|tsx|jsx)$/, '');
+          } else {
+            key = 'Unknown Table';
+          }
+        } else {
+          key = 'No Table';
+        }
+        break;
+      case 'hook':
+        // Extract hook name from file or message
+        if (issue.file) {
+          const hookMatch = issue.file.match(/use[A-Z]\w+/);
+          if (hookMatch) {
+            key = hookMatch[0];
+          } else if (issue.file.includes('/hooks/')) {
+            const parts = issue.file.split('/');
+            const fileName = parts[parts.length - 1].replace(/\.(ts|js|tsx|jsx)$/, '');
+            key = fileName;
+          } else {
+            key = 'No Hook';
+          }
+        } else {
+          key = 'No Hook';
+        }
+        break;
       case 'component':
         key = issue.component || 'No Component';
         break;
@@ -214,6 +248,22 @@ function renderSingleIssue(issue: GroupedIssue): string {
     info: 'ℹ️'
   };
   
+  // Extract code snippet or context from message
+  let codeContext = '';
+  let cleanMessage = issue.message;
+  
+  // Check for patterns like "Raw query key found: ['VIP']"
+  const rawQueryMatch = issue.message.match(/Raw query key found: (.+)/);
+  const rawRouteMatch = issue.message.match(/Raw route string found: (.+)/);
+  
+  if (rawQueryMatch) {
+    codeContext = rawQueryMatch[1];
+    cleanMessage = 'Raw query key found';
+  } else if (rawRouteMatch) {
+    codeContext = rawRouteMatch[1];
+    cleanMessage = 'Raw route string found';
+  }
+  
   return `
     <div style="
       background: rgba(30, 30, 40, 0.6);
@@ -230,7 +280,18 @@ function renderSingleIssue(issue: GroupedIssue): string {
       </div>
       
       <div style="color: #e2e8f0; margin-bottom: 8px;">
-        ${issue.message}
+        ${cleanMessage}
+        ${codeContext ? `
+          <span style="
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #fbbf24;
+            margin-left: 8px;
+          ">${codeContext}</span>
+        ` : ''}
       </div>
       
       ${issue.file ? `
@@ -244,7 +305,7 @@ function renderSingleIssue(issue: GroupedIssue): string {
           cursor: pointer;
           word-break: break-all;
           margin-top: 8px;
-        " onclick="navigator.clipboard.writeText('${issue.file}')" title="Click to copy">
+        " onclick="navigator.clipboard.writeText('${issue.file}${issue.line ? ':' + issue.line : ''}')" title="Click to copy">
           📍 ${issue.file}${issue.line ? `:${issue.line}` : ''}
         </div>
       ` : ''}
@@ -315,6 +376,22 @@ export function renderEnhancedNineRulesView(summary: ValidationSummary | null, g
           color: white;
           cursor: pointer;
         ">Rule</button>
+        <button onclick="reloadNineRulesView('table')" style="
+          padding: 6px 12px;
+          background: ${groupBy === 'table' ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)'};
+          border: none;
+          border-radius: 4px;
+          color: white;
+          cursor: pointer;
+        ">Table</button>
+        <button onclick="reloadNineRulesView('hook')" style="
+          padding: 6px 12px;
+          background: ${groupBy === 'hook' ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)'};
+          border: none;
+          border-radius: 4px;
+          color: white;
+          cursor: pointer;
+        ">Hook</button>
         <button onclick="reloadNineRulesView('component')" style="
           padding: 6px 12px;
           background: ${groupBy === 'component' ? '#3b82f6' : 'rgba(59, 130, 246, 0.2)'};

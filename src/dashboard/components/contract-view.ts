@@ -147,6 +147,12 @@ function renderViolation(violation: ContractViolation, index: number): string {
   const location = violation.file && violation.line 
     ? `${violation.file}:${violation.line}` 
     : violation.file || '';
+  
+  // Extract table/hook/component context
+  let entityContext = '';
+  if (violation.table) entityContext = `Table: ${violation.table}`;
+  else if (violation.hook) entityContext = `Hook: ${violation.hook}`;
+  else if (violation.component) entityContext = `Component: ${violation.component}`;
     
   return `
     <div style="
@@ -161,11 +167,27 @@ function renderViolation(violation: ContractViolation, index: number): string {
         <strong style="color: ${severityColors[violation.severity]};">
           ${violation.rule || 'Contract Violation'}
         </strong>
-        ${violation.field ? `<span style="color: #60a5fa;">Field: ${violation.field}</span>` : ''}
+        ${violation.field ? `
+          <span style="
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #60a5fa;
+          ">${violation.field}</span>
+        ` : ''}
       </div>
       
       <div style="color: #e2e8f0; margin-bottom: 8px;">
         ${violation.message}
+        ${entityContext && !violation.message.includes('Table:') ? `
+          <div style="
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 4px;
+          ">${entityContext}</div>
+        ` : ''}
       </div>
       
       ${location ? `
