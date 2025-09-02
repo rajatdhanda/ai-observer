@@ -232,12 +232,17 @@ export class ContractValidator {
   private findFieldViolations(content: string, correctField: string, entityName: string): any[] {
     const violations = [];
     const lines = content.split('\n');
+    const reportedLines = new Set(); // Track lines already reported
 
     // Common wrong variations
     const wrongVariations = this.getWrongVariations(correctField);
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
+      
+      // Skip if we already reported this line for this field
+      const lineKey = `${i}-${correctField}`;
+      if (reportedLines.has(lineKey)) continue;
       
       for (const wrong of wrongVariations) {
         if (line.includes(wrong) && !line.includes(correctField)) {
@@ -249,6 +254,8 @@ export class ContractValidator {
               line: i + 1,
               used: wrong
             });
+            reportedLines.add(lineKey); // Mark this line as reported
+            break; // Only report once per line
           }
         }
       }

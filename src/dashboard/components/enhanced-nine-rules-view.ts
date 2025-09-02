@@ -253,14 +253,14 @@ function renderSingleIssue(issue: GroupedIssue): string {
   let cleanMessage = issue.message;
   
   // Check for patterns like "Raw query key found: ['VIP']"
-  const rawQueryMatch = issue.message.match(/Raw query key found: (.+)/);
-  const rawRouteMatch = issue.message.match(/Raw route string found: (.+)/);
+  const rawQueryMatch = issue.message.match(/Raw query key found:\s*(.+)/i);
+  const rawRouteMatch = issue.message.match(/Raw route string found:\s*(.+)/i);
   
   if (rawQueryMatch) {
-    codeContext = rawQueryMatch[1];
+    codeContext = rawQueryMatch[1].trim();
     cleanMessage = 'Raw query key found';
   } else if (rawRouteMatch) {
-    codeContext = rawRouteMatch[1];
+    codeContext = rawRouteMatch[1].trim();
     cleanMessage = 'Raw route string found';
   }
   
