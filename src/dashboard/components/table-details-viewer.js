@@ -14,11 +14,13 @@ class TableDetailsViewer {
     const healthScore = data.score || this.calculateHealthScore(data);
     const properties = this.extractProperties(data);
     const relationships = data.relationships || [];
+    const issues = this.collectAllIssues(tableName, validationData);
     
     this.container.innerHTML = `
       <div style="padding: 20px;">
         ${this.renderHeader(tableName, data)}
         ${this.renderHealthScore(healthScore, data)}
+        ${issues.length > 0 ? this.renderIssues(issues) : ''}
         ${this.renderStatsGrid(data)}
         ${this.renderDataFlowPipeline(data)}
         ${this.renderProperties(properties)}
@@ -301,6 +303,159 @@ class TableDetailsViewer {
     if (score >= 60) return "👍 Good, but could use more integration.";
     if (score >= 40) return "⚠️ Needs attention - missing key integrations.";
     return "🔴 Critical - requires immediate attention.";
+  }
+  
+  collectAllIssues(tableName, validationData) {
+    const issues = [];
+    
+    // Collect contract violations
+    // Match both exact and case-insensitive, also check if location includes table name
+    if (validationData?.contractViolations) {
+      validationData.contractViolations
+        .filter(v => {
+          // Check if entity matches (case-insensitive)
+          if (v.entity?.toLowerCase() === tableName.toLowerCase()) return true;
+          // Also check if the location contains the table name
+          if (v.location?.toLowerCase().includes(tableName.toLowerCase())) return true;
+          // Check for common variations (e.g., "professionals" for "professional")
+          if (v.entity?.toLowerCase() === tableName.toLowerCase() + 's') return true;
+          if (v.entity?.toLowerCase() + 's' === tableName.toLowerCase()) return true;
+          return false;
+        })
+        .forEach(v => {
+          issues.push({
+            type: 'naming',
+            severity: v.type === 'error' ? 'error' : 'warning',
+            message: `${v.actual} → ${v.expected}`,
+            detail: v.message,
+            location: v.location,
+            fix: v.suggestion
+          });
+        });
+    }
+    
+    // Collect boundary issues
+    if (validationData?.boundaries) {
+      validationData.boundaries
+        .filter(b => !b.hasValidation && b.location?.toLowerCase().includes(tableName.toLowerCase()))
+        .forEach(b => {
+          issues.push({
+            type: 'validation',
+            severity: b.boundary.includes('webhook') || b.boundary.includes('dbWrite') ? 'error' : 'warning',
+            message: `Missing ${b.boundary.replace(/([A-Z])/g, ' $1').toLowerCase()} validation`,
+            detail: b.issue,
+            location: b.location,
+            fix: 'Add .parse() or .safeParse() validation'
+          });
+        });
+    }
+    
+    // Collect nine rules violations
+    if (validationData?.nineRules?.results) {
+      validationData.nineRules.results
+        .filter(r => r.issues?.some(i => i.file?.toLowerCase().includes(tableName.toLowerCase())))
+        .forEach(rule => {
+          rule.issues
+            .filter(i => i.file?.toLowerCase().includes(tableName.toLowerCase()))
+            .forEach(issue => {
+              issues.push({
+                type: 'quality',
+                severity: issue.severity === 'critical' ? 'error' : 'warning',
+                message: issue.message,
+                detail: `Rule ${rule.ruleNumber}: ${rule.rule}`,
+                location: issue.file,
+                fix: issue.suggestion || ''
+              });
+            });
+        });
+    }
+    
+    return issues;
+  }
+  
+  renderIssues(issues) {
+    // Group issues by type
+    const grouped = {};
+    issues.forEach(issue => {
+      if (!grouped[issue.type]) grouped[issue.type] = [];
+      grouped[issue.type].push(issue);
+    });
+    
+    const typeLabels = {
+      naming: '📝 Field Naming',
+      validation: '🔒 Data Validation', 
+      quality: '✨ Code Quality'
+    };
+    
+    const severityColors = {
+      error: '#ef4444',
+      warning: '#f59e0b',
+      info: '#3b82f6'
+    };
+    
+    return `
+      <div style="
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+      ">
+        <h3 style="color: #f8fafc; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+          ⚡ Issues Found
+          <span style="
+            background: #ef444420;
+            color: #ef4444;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+          ">${issues.length}</span>
+        </h3>
+        
+        ${Object.entries(grouped).map(([type, typeIssues]) => `
+          <div style="margin-bottom: 16px;">
+            <div style="color: #94a3b8; font-size: 13px; margin-bottom: 8px; font-weight: 600;">
+              ${typeLabels[type] || type}
+            </div>
+            <div style="display: grid; gap: 8px;">
+              ${typeIssues.map(issue => `
+                <div style="
+                  background: #0f0f0f;
+                  padding: 12px;
+                  border-radius: 8px;
+                  border-left: 3px solid ${severityColors[issue.severity]};
+                ">
+                  <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div style="flex: 1;">
+                      <div style="color: #f8fafc; font-size: 14px; margin-bottom: 4px;">
+                        ${issue.message}
+                      </div>
+                      ${issue.location ? `
+                        <div style="color: #64748b; font-size: 11px; font-family: monospace;">
+                          ${issue.location.split('/').pop()}
+                        </div>
+                      ` : ''}
+                    </div>
+                    ${issue.fix ? `
+                      <div style="
+                        color: #3b82f6;
+                        font-size: 11px;
+                        padding: 4px 8px;
+                        background: #3b82f610;
+                        border-radius: 4px;
+                        white-space: nowrap;
+                      ">
+                        💡 ${issue.fix.length > 30 ? issue.fix.substring(0, 30) + '...' : issue.fix}
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
   }
 }
 

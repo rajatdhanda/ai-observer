@@ -547,6 +547,241 @@
     `;
   }
   
+  // Boundaries View Functions
+  window.loadBoundariesView = async function() {
+    const mainContent = document.getElementById('mainContent');
+    mainContent.innerHTML = `
+      <div style="padding: 20px;">
+        <div style="text-align: center; color: #9ca3af; margin: 40px 0;">
+          <div style="font-size: 20px; margin-bottom: 16px;">⟳</div>
+          <div>Loading boundary validation...</div>
+        </div>
+      </div>
+    `;
+    
+    try {
+      const response = await fetch('/api/boundaries');
+      if (!response.ok) throw new Error('Failed to fetch boundary data');
+      
+      const data = await response.json();
+      
+      mainContent.innerHTML = `
+        <div style="padding: 20px;">
+          <div style="
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            color: white;
+          ">
+            <h1 style="margin: 0 0 8px 0; display: flex; align-items: center; gap: 12px;">
+              🔒 Boundary Validation
+            </h1>
+            <p style="margin: 0; opacity: 0.9; font-size: 14px;">
+              Data validation at system boundaries and transfer points
+            </p>
+          </div>
+          
+          ${renderBoundariesSummary(data)}
+          ${data.critical.length > 0 ? renderCriticalBoundaries(data.critical) : ''}
+          ${renderBoundariesByType(data.boundaries)}
+        </div>
+      `;
+    } catch (error) {
+      console.error('Error loading boundary data:', error);
+      mainContent.innerHTML = `
+        <div style="padding: 20px;">
+          <div style="text-align: center; color: #ef4444; margin: 40px 0;">
+            <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+            <h2>Error Loading Boundaries</h2>
+            <p style="color: #64748b;">Failed to load boundary data: ${error.message}</p>
+          </div>
+        </div>
+      `;
+    }
+  };
+  
+  window.renderBoundariesSummary = function(data) {
+    const coverage = data.coverage || 0;
+    const coverageColor = coverage >= 80 ? '#10b981' : coverage >= 60 ? '#f59e0b' : '#ef4444';
+    
+    return `
+      <div style="
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+      ">
+        <h2 style="color: #f8fafc; margin: 0 0 20px 0;">📊 Boundary Summary</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
+            <div style="color: ${coverageColor}; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${coverage}%</div>
+            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Coverage</div>
+            <div style="color: #f8fafc; font-size: 13px;">Validated boundaries</div>
+          </div>
+          
+          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
+            <div style="color: #3b82f6; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${data.boundaries.length}</div>
+            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Total Boundaries</div>
+            <div style="color: #f8fafc; font-size: 13px;">All data transfer points</div>
+          </div>
+          
+          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
+            <div style="color: #10b981; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${data.boundaries.filter(b => b.hasValidation).length}</div>
+            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Validated</div>
+            <div style="color: #f8fafc; font-size: 13px;">Protected boundaries</div>
+          </div>
+          
+          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
+            <div style="color: #ef4444; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${data.critical.length}</div>
+            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Critical Issues</div>
+            <div style="color: #f8fafc; font-size: 13px;">Needs immediate attention</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  window.renderCriticalBoundaries = function(critical) {
+    return `
+      <div style="
+        background: #1a1a1a;
+        border: 1px solid #ef4444;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+      ">
+        <h3 style="color: #ef4444; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+          🔴 Critical - Unvalidated Boundaries
+          <span style="
+            background: #ef444420;
+            color: #ef4444;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+          ">${critical.length} issues</span>
+        </h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          ${critical.slice(0, 5).map(boundary => `
+            <div style="
+              background: #ef444410;
+              border-left: 4px solid #ef4444;
+              padding: 16px;
+              border-radius: 0 8px 8px 0;
+            ">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                <div style="color: #ef4444; font-weight: 500; text-transform: capitalize;">
+                  ${boundary.boundary}
+                </div>
+                <div style="color: #64748b; font-size: 12px; font-family: monospace;">
+                  ${boundary.location}
+                </div>
+              </div>
+              
+              <div style="color: #f8fafc; margin-bottom: 8px; font-size: 14px;">
+                ${boundary.issue}
+              </div>
+              
+              <div style="color: #3b82f6; font-size: 13px; font-style: italic;">
+                💡 Add schema validation using .parse() or .safeParse() methods
+              </div>
+            </div>
+          `).join('')}
+          
+          ${critical.length > 5 ? `
+            <div style="text-align: center; color: #64748b; font-size: 12px; padding: 8px;">
+              Showing 5 of ${critical.length} critical boundaries
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+  
+  window.renderBoundariesByType = function(boundaries) {
+    // Group boundaries by type
+    const grouped = {};
+    boundaries.forEach(b => {
+      if (!grouped[b.boundary]) grouped[b.boundary] = [];
+      grouped[b.boundary].push(b);
+    });
+    
+    return `
+      <div style="
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 20px;
+      ">
+        <h3 style="color: #f8fafc; margin: 0 0 20px 0;">🔍 All Boundaries by Type</h3>
+        
+        <div style="display: grid; gap: 16px;">
+          ${Object.entries(grouped).map(([type, items]) => {
+            const validated = items.filter(b => b.hasValidation).length;
+            const percentage = Math.round((validated / items.length) * 100);
+            const typeColor = percentage >= 80 ? '#10b981' : percentage >= 60 ? '#f59e0b' : '#ef4444';
+            
+            return `
+              <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; border-left: 3px solid ${typeColor};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h4 style="color: ${typeColor}; margin: 0; font-size: 16px; text-transform: capitalize;">
+                    ${type.replace(/([A-Z])/g, ' $1')}
+                  </h4>
+                  <div style="
+                    background: ${typeColor}20;
+                    color: ${typeColor};
+                    padding: 4px 8px;
+                    border-radius: 12px;
+                    font-size: 11px;
+                    font-weight: 500;
+                  ">
+                    ${percentage}% validated (${validated}/${items.length})
+                  </div>
+                </div>
+                
+                <div style="display: grid; gap: 8px; max-height: 200px; overflow-y: auto;">
+                  ${items.slice(0, 6).map(b => `
+                    <div style="
+                      display: flex;
+                      align-items: center;
+                      padding: 8px;
+                      background: ${b.hasValidation ? '#10b98110' : '#ef444410'};
+                      border-radius: 6px;
+                      font-size: 13px;
+                    ">
+                      <span style="margin-right: 8px; font-size: 16px;">
+                        ${b.hasValidation ? '✅' : '❌'}
+                      </span>
+                      <div style="flex: 1;">
+                        <div style="color: #f8fafc; margin-bottom: 2px;">${b.location}</div>
+                        ${!b.hasValidation && b.issue ? `
+                          <div style="color: #ef4444; font-size: 11px;">⚠️ ${b.issue}</div>
+                        ` : ''}
+                        ${b.validationType ? `
+                          <div style="color: #10b981; font-size: 11px;">✓ ${b.validationType}</div>
+                        ` : ''}
+                      </div>
+                    </div>
+                  `).join('')}
+                  
+                  ${items.length > 6 ? `
+                    <div style="text-align: center; color: #64748b; font-size: 11px; padding: 8px;">
+                      ... and ${items.length - 6} more boundaries
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+  
   // Analytics tab view
   window.loadAnalyticsView = async function() {
     const mainContent = document.getElementById('mainContent');

@@ -79,6 +79,25 @@ class ValidationService {
       });
     }
     
+    // Add boundary violations
+    if (validationData?.boundaries) {
+      validationData.boundaries
+        .filter(b => !b.hasValidation && this.violationMatchesEntity({ location: b.location }, entityName, entityType))
+        .forEach(b => {
+          const { file, line } = this.parseLocation(b.location);
+          violations.push({
+            type: 'boundary',
+            severity: (b.boundary.includes('webhook') || b.boundary.includes('dbWrite')) ? 'critical' : 'warning',
+            message: b.issue || `Missing ${b.boundary} validation`,
+            location: b.location,
+            file,
+            line,
+            formattedLocation: line ? `${file.split('/').pop()}:${line}` : file.split('/').pop(),
+            suggestion: 'Add .parse() or .safeParse() validation'
+          });
+        });
+    }
+    
     return violations;
   }
 
@@ -86,6 +105,20 @@ class ValidationService {
    * Check if a violation matches an entity
    */
   violationMatchesEntity(violation, entityName, entityType) {
+    // Check entity field in violation (for contract violations)
+    if (violation.entity) {
+      const violationEntity = violation.entity.toLowerCase();
+      const name = entityName.toLowerCase();
+      
+      // Direct match or plural variations
+      if (violationEntity === name || 
+          violationEntity + 's' === name || 
+          violationEntity === name + 's') {
+        return true;
+      }
+    }
+    
+    // Check location-based matching
     if (!violation.location) return false;
     
     const location = violation.location.toLowerCase();
@@ -102,6 +135,9 @@ class ValidationService {
         return location.includes(name + 'component') || location.includes(name + '.tsx');
       case 'page':
         return location.includes(name + '/page.tsx') || location === name;
+      case 'table':
+        // For tables, also check if violation entity matches
+        return false; // Will be caught by entity check above
       default:
         return false;
     }

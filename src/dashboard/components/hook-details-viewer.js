@@ -54,9 +54,18 @@ class HookDetailsViewer {
   getViolations(hookName, validationData) {
     const violations = [];
     
+    // Contract violations
     if (validationData?.contracts?.violations) {
       validationData.contracts.violations.forEach(v => {
-        if (v.location && v.location.toLowerCase().includes(hookName.toLowerCase())) {
+        // Check multiple matching strategies for hooks
+        const hookNameLower = hookName.toLowerCase();
+        const isMatch = 
+          v.location?.toLowerCase().includes(hookNameLower) ||
+          v.entity?.toLowerCase() === hookNameLower ||
+          v.entity?.toLowerCase() === hookNameLower.replace('use', '') ||
+          (hookNameLower.startsWith('use') && v.entity?.toLowerCase() === hookNameLower.substring(3).toLowerCase());
+        
+        if (isMatch) {
           const line = this.extractLineNumber(v.location);
           violations.push({
             type: 'contract',
@@ -68,6 +77,42 @@ class HookDetailsViewer {
             file: v.location,
             line
           });
+        }
+      });
+    }
+    
+    // Boundary violations
+    if (validationData?.boundaries) {
+      validationData.boundaries
+        .filter(b => !b.hasValidation && b.location?.toLowerCase().includes(hookName.toLowerCase()))
+        .forEach(b => {
+          violations.push({
+            type: 'boundary',
+            severity: b.boundary.includes('webhook') || b.boundary.includes('dbWrite') ? 'critical' : 'warning',
+            message: `Missing ${b.boundary.replace(/([A-Z])/g, ' $1').toLowerCase()} validation`,
+            suggestion: 'Add .parse() or .safeParse() validation',
+            file: b.location,
+            line: this.extractLineNumber(b.location)
+          });
+        });
+    }
+    
+    // Nine rules violations
+    if (validationData?.nineRules?.results) {
+      validationData.nineRules.results.forEach(rule => {
+        if (rule.issues) {
+          rule.issues
+            .filter(issue => issue.file?.toLowerCase().includes(hookName.toLowerCase()))
+            .forEach(issue => {
+              violations.push({
+                type: 'quality',
+                severity: issue.severity === 'critical' ? 'critical' : 'warning',
+                message: issue.message,
+                suggestion: issue.suggestion || `Rule ${rule.ruleNumber}: ${rule.rule}`,
+                file: issue.file,
+                line: this.extractLineNumber(issue.file)
+              });
+            });
         }
       });
     }

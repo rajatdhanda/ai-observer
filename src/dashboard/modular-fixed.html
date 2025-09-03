@@ -286,6 +286,7 @@
     <button class="tab active" onclick="switchTab('overview')">Overview</button>
     <button class="tab" onclick="switchTab('architecture')">Architecture</button>
     <button class="tab" onclick="switchTab('validation')">Validation</button>
+    <button class="tab" onclick="switchTab('boundaries')">Boundaries</button>
     <button class="tab" onclick="switchTab('analytics')">Analytics</button>
   </div>
   
@@ -401,15 +402,22 @@
           fetch('/api/table-mapping'),
           fetch('/api/architecture-data'),
           fetch('/api/contracts'),
-          fetch('/api/nine-rules')
+          fetch('/api/nine-rules'),
+          fetch('/api/boundaries')
         ]);
         
-        const [project, tables, architecture, contracts, nineRules] = await Promise.all(
+        const [project, tables, architecture, contracts, nineRules, boundaries] = await Promise.all(
           responses.map(r => r.json())
         );
         
-        // Update state
-        state.validationData = { contracts, nineRules };
+        // Update state - keep old structure for compatibility
+        state.validationData = { 
+          contracts: contracts,  // Keep full contracts object for existing code
+          contractViolations: contracts.violations,  // Also expose violations directly
+          nineRules,
+          boundaries: boundaries.boundaries,
+          criticalBoundaries: boundaries.critical
+        };
         
         // Enrich tables
         for (const [name, data] of Object.entries(tables.tables || {})) {
@@ -704,6 +712,10 @@
           
         case 'validation':
           loadValidationView();
+          break;
+          
+        case 'boundaries':
+          loadBoundariesView();
           break;
           
         case 'analytics':
