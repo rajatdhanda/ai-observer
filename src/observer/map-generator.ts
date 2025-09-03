@@ -37,6 +37,12 @@ interface CodebaseMap {
     invalidates?: string[];
     metrics?: FileMetrics;
   }>;
+  tables?: Record<string, {
+    hooks: string[];
+    components: string[];
+    apis: string[];
+    files: string[];
+  }>;
 }
 
 export class MapGenerator {
@@ -49,7 +55,8 @@ export class MapGenerator {
     exports: {},
     imports: {},
     entryPoints: {},
-    files: {}
+    files: {},
+    tables: {}
   };
 
   constructor(private projectPath: string) {
@@ -70,6 +77,9 @@ export class MapGenerator {
     
     // Find entry points
     this.findEntryPoints();
+    
+    // Map tables to functions
+    this.mapTablesToFunctions();
     
     console.log(`✅ Processed ${files.length} files`);
     return this.map;
@@ -366,6 +376,62 @@ export class MapGenerator {
            filePath.includes('admin') ||
            filePath.includes('dashboard') ||
            filePath.includes('protected');
+  }
+
+  private mapTablesToFunctions(): void {
+    // Common table/entity names to look for
+    const tableNames = [
+      'User', 'Professional', 'Client', 'Order', 'Product', 
+      'Post', 'Comment', 'Session', 'Insurance', 'Course',
+      'Payment', 'Invoice', 'Cart', 'Appointment'
+    ];
+
+    // Initialize tables map
+    for (const tableName of tableNames) {
+      const tableNameLower = tableName.toLowerCase();
+      const tableData = {
+        hooks: [] as string[],
+        components: [] as string[],
+        apis: [] as string[],
+        files: [] as string[]
+      };
+
+      // Search through all files for references to this table
+      for (const [filePath, fileData] of Object.entries(this.map.files)) {
+        const content = fs.readFileSync(path.join(this.projectPath, filePath), 'utf-8');
+        
+        // Check if file references this table
+        if (content.includes(tableName) || content.includes(tableNameLower)) {
+          tableData.files.push(filePath);
+          
+          // Categorize by file type
+          if (filePath.includes('/hooks/')) {
+            const hookExports = this.map.exports[filePath] || [];
+            hookExports.forEach(exp => {
+              if (exp.name.toLowerCase().includes(tableNameLower)) {
+                tableData.hooks.push(exp.name);
+              }
+            });
+          } else if (filePath.includes('/components/')) {
+            const componentExports = this.map.exports[filePath] || [];
+            componentExports.forEach(exp => {
+              if (exp.name.toLowerCase().includes(tableNameLower)) {
+                tableData.components.push(exp.name);
+              }
+            });
+          } else if (filePath.includes('/api/')) {
+            if (filePath.toLowerCase().includes(tableNameLower)) {
+              tableData.apis.push(filePath);
+            }
+          }
+        }
+      }
+
+      // Only add table to map if we found references
+      if (tableData.files.length > 0) {
+        this.map.tables![tableName] = tableData;
+      }
+    }
   }
 
   async saveToFile(outputPath: string): Promise<void> {

@@ -36,6 +36,28 @@ class ValidationService {
   }
 
   /**
+   * Format file location for display
+   */
+  formatFileLocation(filePath, line) {
+    if (!filePath) return '';
+    
+    // Special handling for page.tsx files
+    if (filePath.endsWith('/page.tsx')) {
+      const parts = filePath.split('/');
+      // Find the meaningful part (e.g., 'orders' from 'src/app/(main)/orders/page.tsx')
+      for (let i = parts.length - 2; i >= 0; i--) {
+        if (parts[i] && !parts[i].startsWith('(') && parts[i] !== 'app' && parts[i] !== 'src') {
+          return line ? `${parts[i]}/page.tsx:${line}` : `${parts[i]}/page.tsx`;
+        }
+      }
+    }
+    
+    // Default behavior for other files
+    const fileName = filePath.split('/').pop();
+    return line ? `${fileName}:${line}` : fileName;
+  }
+
+  /**
    * Get violations for any entity (table, hook, component, page)
    */
   getViolationsForEntity(entityName, validationData, entityType = 'any') {
@@ -55,7 +77,7 @@ class ValidationService {
             location: v.location,
             file,
             line,
-            formattedLocation: line ? `${file.split('/').pop()}:${line}` : file.split('/').pop()
+            formattedLocation: this.formatFileLocation(file, line)
           });
         }
       });
@@ -75,7 +97,7 @@ class ValidationService {
             location: locationString,
             file,
             line,
-            formattedLocation: line ? `${file.split('/').pop()}:${line}` : file.split('/').pop()
+            formattedLocation: this.formatFileLocation(file, line)
           });
         }
       });
@@ -94,7 +116,7 @@ class ValidationService {
             location: b.location,
             file,
             line,
-            formattedLocation: line ? `${file.split('/').pop()}:${line}` : file.split('/').pop(),
+            formattedLocation: this.formatFileLocation(file, line),
             suggestion: 'Add .parse() or .safeParse() validation'
           });
         });
