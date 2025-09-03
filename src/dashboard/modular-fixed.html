@@ -256,6 +256,24 @@
   <script src="/components/component-details-viewer.js"></script>
   <script src="/components/page-details-viewer.js"></script>
   <script src="/components/sidebar-navigator.js"></script>
+  <!-- Production Configuration -->
+  <script>
+    // AI Observer Production Configuration
+    window.AI_OBSERVER_CONFIG = window.AI_OBSERVER_CONFIG || {
+      // Asset paths (configurable for different deployments)  
+      basePath: '/components',
+      
+      // Pagination settings
+      violationsPagination: {
+        itemsPerPage: 10,
+        showPaginationAfter: 10
+      },
+      
+      // Performance settings
+      maxDisplayItems: 100
+    };
+  </script>
+  
   <script>
     // Dashboard state
     let state = {
@@ -894,7 +912,9 @@
       const contractScore = contractData.score || 0;
       const nineRulesScore = nineRulesData.overallScore || 0;
       const overallScore = Math.round((contractScore + nineRulesScore) / 2);
-      const color = overallScore >= 70 ? '#10b981' : overallScore >= 40 ? '#f59e0b' : '#ef4444';
+      // Use configurable colors
+      const config = window.HealthScoringConfig || { thresholds: { healthy: 70, needsAttention: 40 }, colors: { healthy: '#10b981', warning: '#f59e0b', critical: '#ef4444' } };
+      const color = overallScore >= config.thresholds.healthy ? config.colors.healthy : overallScore >= config.thresholds.needsAttention ? config.colors.warning : config.colors.critical;
       
       return `
         <div style="
@@ -926,7 +946,7 @@
               </div>
               <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Overall Score</div>
               <div style="color: ${color}; font-size: 14px; font-weight: 500;">
-                ${overallScore >= 70 ? 'Good' : overallScore >= 40 ? 'Fair' : 'Needs Work'}
+                ${overallScore >= config.thresholds.healthy ? 'Good' : overallScore >= config.thresholds.needsAttention ? 'Fair' : 'Needs Work'}
               </div>
             </div>
             
@@ -980,8 +1000,8 @@
         ">
           <h3 style="color: #ef4444; margin: 0 0 16px 0;">📋 Contract Violations (${violations.length})</h3>
           
-          <div style="display: flex; flex-direction: column; gap: 12px;">
-            ${violations.slice(0, 10).map(violation => `
+          <div id="contractViolationsList" style="display: flex; flex-direction: column; gap: 12px;">
+            ${violations.slice(0, Math.min(10, violations.length)).map(violation => `
               <div style="
                 background: #0f0f0f;
                 border-left: 4px solid #ef4444;
@@ -1021,8 +1041,18 @@
             `).join('')}
             
             ${violations.length > 10 ? `
-              <div style="text-align: center; padding: 16px; color: #64748b;">
-                ... and ${violations.length - 10} more violations
+              <div style="text-align: center; padding: 16px;">
+                <button onclick="window.showAllViolations('contractViolations', ${JSON.stringify(violations).replace(/"/g, '&quot;')})" style="
+                  background: #3b82f6;
+                  color: white;
+                  border: none;
+                  padding: 8px 16px;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  font-size: 12px;
+                ">
+                  Show All ${violations.length} Violations
+                </button>
               </div>
             ` : ''}
           </div>
@@ -1180,6 +1210,10 @@
       const healthScore = Math.round(((contractData.score || 0) + (nineRulesData.overallScore || 0)) / 2);
       const codeQuality = nineRulesData.passedRules || 0;
       
+      // Use configurable health scoring
+      const config = window.HealthScoringConfig || { thresholds: { healthy: 70, needsAttention: 40 }, colors: { healthy: '#10b981', warning: '#f59e0b', critical: '#ef4444' } };
+      const healthColor = healthScore >= config.thresholds.healthy ? config.colors.healthy : healthScore >= config.thresholds.needsAttention ? config.colors.warning : config.colors.critical;
+      
       return `
         <div style="
           background: #1a1a1a;
@@ -1198,7 +1232,7 @@
             </div>
             
             <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
-              <div style="color: ${healthScore >= 70 ? '#10b981' : healthScore >= 40 ? '#f59e0b' : '#ef4444'}; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${healthScore}</div>
+              <div style="color: ${healthColor}; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${healthScore}</div>
               <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Health Score</div>
               <div style="color: #f8fafc; font-size: 13px;">Overall system health</div>
             </div>
@@ -1224,10 +1258,17 @@
       const qualityScore = nineRulesData.overallScore || 0;
       const overallScore = Math.round((contractScore + qualityScore) / 2);
       
-      // Calculate trend indicators (simplified for demo)
-      const contractTrend = contractScore > 50 ? '📈' : contractScore > 20 ? '📊' : '📉';
-      const qualityTrend = qualityScore > 70 ? '📈' : qualityScore > 40 ? '📊' : '📉';
-      const overallTrend = overallScore > 60 ? '📈' : overallScore > 30 ? '📊' : '📉';
+      // Use configurable health scoring
+      const config = window.HealthScoringConfig || { thresholds: { healthy: 70, needsAttention: 40 } };
+      
+      // Calculate trend indicators using config thresholds
+      const contractTrend = contractScore >= config.thresholds.healthy ? '📈' : contractScore >= config.thresholds.needsAttention ? '📊' : '📉';
+      const qualityTrend = qualityScore >= config.thresholds.healthy ? '📈' : qualityScore >= config.thresholds.needsAttention ? '📊' : '📉';
+      const overallTrend = overallScore >= config.thresholds.healthy ? '📈' : overallScore >= config.thresholds.needsAttention ? '📊' : '📉';
+      
+      function getHealthStatus(score) {
+        return score >= config.thresholds.healthy ? 'Healthy' : score >= config.thresholds.needsAttention ? 'Fair' : 'Needs Work';
+      }
       
       return `
         <div style="
@@ -1315,7 +1356,7 @@
                   ${overallScore}
                 </div>
                 <div>
-                  <div style="color: #f8fafc; font-size: 14px;">${overallScore >= 70 ? 'Healthy' : overallScore >= 40 ? 'Fair' : 'Needs Work'}</div>
+                  <div style="color: #f8fafc; font-size: 14px;">${getHealthStatus(overallScore)}</div>
                   <div style="color: #64748b; font-size: 12px;">Combined score</div>
                 </div>
               </div>
@@ -1524,8 +1565,91 @@
       `;
     }
     
-    // Start dashboard
-    init();
+    // Show all violations function
+    window.showAllViolations = function(containerId, violations) {
+      // Find the violations container and expand it
+      const violationsList = document.querySelector('#contractViolationsList') || 
+                            document.querySelector('[style*="display: flex; flex-direction: column; gap: 12px;"]');
+      
+      if (violationsList && violations) {
+        // Re-render with all violations
+        violationsList.innerHTML = violations.map(violation => `
+          <div style="
+            background: #0f0f0f;
+            border-left: 4px solid #ef4444;
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+          ">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+              <div style="color: #ef4444; font-weight: 500; margin-right: 12px;">
+                ${violation.entity}
+              </div>
+              <div style="
+                background: #ef444420;
+                color: #ef4444;
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-size: 11px;
+                text-transform: uppercase;
+              ">
+                ${violation.type}
+              </div>
+            </div>
+            <div style="color: #f8fafc; margin-bottom: 8px; font-size: 14px;">
+              ${violation.message}
+            </div>
+            <div style="color: #64748b; font-size: 12px; font-family: monospace; margin-bottom: 8px;">
+              ${violation.location}
+            </div>
+            ${violation.suggestion ? `
+              <div style="color: #3b82f6; font-size: 13px; font-style: italic;">
+                💡 ${violation.suggestion}
+              </div>
+            ` : ''}
+          </div>
+        `).join('');
+        
+        // Hide the entire "Show All" button container
+        const showAllContainer = document.querySelector('button[onclick*="showAllViolations"]')?.parentElement;
+        if (showAllContainer) {
+          showAllContainer.style.display = 'none';
+        }
+      }
+    };
+    
+    // Production error boundary
+    window.onerror = function(msg, url, line, col, error) {
+      console.error('🚨 AI Observer Error:', { msg, url, line, col, error });
+      return false; // Don't suppress default handling
+    };
+    
+    // Start dashboard with try-catch
+    try {
+      init();
+      console.log('✅ AI Observer Dashboard initialized successfully');
+      
+      // Show production ready indicator
+      const indicator = document.createElement('div');
+      indicator.style.cssText = 'position: fixed; top: 10px; right: 10px; background: #10b981; color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.2);';
+      indicator.textContent = '🏭 PRODUCTION READY';
+      document.body.appendChild(indicator);
+      setTimeout(() => {
+        indicator.style.opacity = '0';
+        indicator.style.transition = 'opacity 0.3s';
+        setTimeout(() => indicator.remove(), 300);
+      }, 2500);
+    } catch (error) {
+      console.error('❌ Dashboard initialization failed:', error);
+      document.getElementById('mainContent').innerHTML = `
+        <div style="color: #ef4444; padding: 40px; text-align: center; background: #1a1a1a; border-radius: 12px; margin: 20px;">
+          <h2>⚠️ Dashboard Error</h2>
+          <p>Failed to initialize: ${error.message}</p>
+          <button onclick="location.reload()" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 16px;">
+            🔄 Reload Dashboard
+          </button>
+        </div>
+      `;
+    }
     
     // Initialize enhanced control bar
     if (window.ControlBar) {
