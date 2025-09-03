@@ -6,6 +6,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { ContractDetector } from '../validator/contract-detector';
 
 interface CodebaseMap {
   meta: any;
@@ -13,6 +14,7 @@ interface CodebaseMap {
   imports: Record<string, string[]>;
   entryPoints: Record<string, { type: string; protected: boolean }>;
   files: Record<string, any>;
+  tables?: Record<string, any>;
 }
 
 interface Violation {
@@ -26,8 +28,10 @@ interface Violation {
 export class ValidatorRunner {
   private map: CodebaseMap;
   private violations: Violation[] = [];
+  private mapPath: string;
 
   constructor(mapPath: string) {
+    this.mapPath = mapPath;
     const mapContent = fs.readFileSync(mapPath, 'utf-8');
     this.map = JSON.parse(mapContent);
   }
@@ -35,7 +39,7 @@ export class ValidatorRunner {
   /**
    * Run all 9 core validators
    */
-  runAll(): { violations: Violation[]; score: number; summary: any } {
+  runAll(): { violations: Violation[]; score: number; summary: any; contractDetections?: any } {
     this.violations = [];
 
     // Run each validator
@@ -48,11 +52,15 @@ export class ValidatorRunner {
     this.validateCacheInvalidation();        // Rule 7: <5% of bugs
     this.validateFormValidation();           // Rule 8: <5% of bugs
     this.validateAuthGuards();               // Rule 9: <5% of bugs
+    
+    // Run contract detection
+    const contractDetections = this.validateContracts();
 
     return {
       violations: this.violations,
       score: this.calculateScore(),
-      summary: this.generateSummary()
+      summary: this.generateSummary(),
+      contractDetections
     };
   }
 
@@ -268,6 +276,48 @@ export class ValidatorRunner {
           }
         }
       }
+    }
+  }
+
+  /**
+   * Contract Detection - Find missing/outdated contracts
+   */
+  private validateContracts() {
+    try {
+      // Get project path from map path (streax-map.json is in root, project is in test-projects/streax)
+      const contractsPath = 'test-projects/streax/contracts.yaml';
+      
+      // Run contract detector
+      const detector = new ContractDetector(this.mapPath, contractsPath);
+      const detections = detector.detect();
+      
+      // Convert detections to violations
+      for (const detection of detections) {
+        let severity: 'critical' | 'warning' | 'info' = 'warning';
+        if (detection.type === 'missing') severity = 'critical';
+        if (detection.type === 'mismatch') severity = 'critical';
+        
+        this.violations.push({
+          rule: 'Contract Compliance',
+          severity,
+          file: detection.locations?.[0] || contractsPath,
+          message: detection.message,
+          fix: detection.action
+        });
+      }
+      
+      return {
+        detections,
+        summary: {
+          missing: detections.filter(d => d.type === 'missing').length,
+          outdated: detections.filter(d => d.type === 'outdated').length,
+          unused: detections.filter(d => d.type === 'unused').length,
+          mismatches: detections.filter(d => d.type === 'mismatch').length
+        }
+      };
+    } catch (error: any) {
+      console.log('Contract detection skipped:', error?.message);
+      return null;
     }
   }
 

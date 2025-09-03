@@ -477,7 +477,8 @@ Available projects: ${this.availableProjects.length}
         ...validationResults,
         files: mapData.files || {},
         exports: mapData.exports || {},
-        imports: mapData.imports || {}
+        imports: mapData.imports || {},
+        contractDetections: validationResults.contractDetections
       };
     } catch (error) {
       console.error('Map validation error:', error);
@@ -487,7 +488,8 @@ Available projects: ${this.availableProjects.length}
         summary: { error: (error as Error).message },
         files: {},
         exports: {},
-        imports: {}
+        imports: {},
+        contractDetections: null
       };
     }
   }
