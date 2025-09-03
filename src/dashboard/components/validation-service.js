@@ -64,13 +64,15 @@ class ValidationService {
     if (validationData?.nineRules?.violations) {
       validationData.nineRules.violations.forEach(v => {
         if (this.violationMatchesEntity(v, entityName, entityType)) {
-          const { file, line } = this.parseLocation(v.location);
+          // Use v.file if available, otherwise v.location
+          const locationString = v.file || v.location;
+          const { file, line } = this.parseLocation(locationString);
           violations.push({
             type: 'nineRules',
             severity: this.mapNineRulesSeverity(v.severity),
             message: v.message,
             rule: v.rule,
-            location: v.location,
+            location: locationString,
             file,
             line,
             formattedLocation: line ? `${file.split('/').pop()}:${line}` : file.split('/').pop()
@@ -118,10 +120,11 @@ class ValidationService {
       }
     }
     
-    // Check location-based matching
-    if (!violation.location) return false;
+    // Check location-based matching - support both 'location' and 'file' fields
+    const locationField = violation.location || violation.file;
+    if (!locationField) return false;
     
-    const location = violation.location.toLowerCase();
+    const location = locationField.toLowerCase();
     const name = entityName.toLowerCase();
     
     // Direct name match
@@ -134,6 +137,11 @@ class ValidationService {
       case 'component':
         return location.includes(name + 'component') || location.includes(name + '.tsx');
       case 'page':
+        // For pages, entityName might be the full path like 'src/app/(main)/orders/page.tsx'
+        // We should check if the violation's file path matches
+        if (name.includes('page.tsx')) {
+          return location === name;
+        }
         return location.includes(name + '/page.tsx') || location === name;
       case 'table':
         // For tables, also check if violation entity matches

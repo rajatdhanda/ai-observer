@@ -464,16 +464,30 @@ Available projects: ${this.availableProjects.length}
         generator.saveToFile(mapPath);
       }
       
+      // Load the map data
+      const mapData = JSON.parse(fs.readFileSync(mapPath, 'utf-8'));
+      
       // Run validators
       const { ValidatorRunner } = require('../observer/validator-runner');
       const runner = new ValidatorRunner(mapPath);
-      return runner.runAll();
+      const validationResults = runner.runAll();
+      
+      // Return both map data and validation results
+      return {
+        ...validationResults,
+        files: mapData.files || {},
+        exports: mapData.exports || {},
+        imports: mapData.imports || {}
+      };
     } catch (error) {
       console.error('Map validation error:', error);
       return { 
         violations: [], 
         score: 0, 
-        summary: { error: (error as Error).message } 
+        summary: { error: (error as Error).message },
+        files: {},
+        exports: {},
+        imports: {}
       };
     }
   }
