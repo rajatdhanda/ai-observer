@@ -247,11 +247,14 @@
   <!-- Enhanced Components -->
   <script src="/components/severity-badge.js"></script>
   <script src="/components/control-bar.js"></script>
+  <script src="/components/self-test.js"></script>
   
   <!-- Existing Components -->
   <script src="/components/entity-data-provider.js"></script>
   <script src="/components/hook-details-viewer.js"></script>
   <script src="/components/table-details-viewer.js"></script>
+  <script src="/components/component-details-viewer.js"></script>
+  <script src="/components/page-details-viewer.js"></script>
   <script src="/components/sidebar-navigator.js"></script>
   <script>
     // Dashboard state
@@ -384,18 +387,24 @@
       });
       event?.currentTarget?.classList.add('selected');
       
-      // Render content using components
+      // Render content using enhanced viewers
       if (type === 'table') {
-        tableViewer.render(name, state.tables[name], state.validationData);
+        window.tableDetailsViewer.render(name, state.tables[name], state.validationData);
       } else if (type === 'hook') {
         const hookData = state.hooks.find(h => 
           (typeof h === 'string' ? h : h.hookName) === name
         );
-        hookViewer.render(name, hookData, state.validationData);
+        window.hookDetailsViewer.render(name, hookData, state.validationData);
       } else if (type === 'component') {
-        renderComponent(name);
+        const componentData = state.components.find(c => 
+          (typeof c === 'string' ? c : c.name || c.componentName) === name
+        ) || { name };
+        window.componentDetailsViewer.render(name, componentData, state.validationData);
       } else if (type === 'page') {
-        renderPage(name);
+        const pageData = state.pages.find(p => 
+          (typeof p === 'string' ? p : p.path) === name
+        ) || { path: name };
+        window.pageDetailsViewer.render(name, pageData, state.validationData);
       }
       
       // Update query inspector in right panel
@@ -555,6 +564,51 @@
       alert('Export functionality coming soon!');
     };
     
+    // Tab switching functionality
+    window.switchTab = function(tab) {
+      // Remove active class from all tabs
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      
+      // Add active class to clicked tab
+      event.target.classList.add('active');
+      
+      // Update main content based on tab
+      const mainContent = document.getElementById('mainContent');
+      
+      switch(tab) {
+        case 'architecture':
+          mainContent.innerHTML = `
+            <div class="card">
+              <h2>🏗️ Architecture Overview</h2>
+              <p>Architecture analysis and relationships coming soon...</p>
+            </div>
+          `;
+          break;
+          
+        case 'validation':
+          mainContent.innerHTML = `
+            <div class="card">
+              <h2>✅ Validation Results</h2>
+              <p>Validation rules and contract testing coming soon...</p>
+            </div>
+          `;
+          break;
+          
+        case 'analytics':
+          mainContent.innerHTML = `
+            <div class="card">
+              <h2>📊 Analytics Dashboard</h2>
+              <p>Performance metrics and analytics coming soon...</p>
+            </div>
+          `;
+          break;
+          
+        default:
+          // Keep existing content for 'overview'
+          break;
+      }
+    };
+    
     // Start dashboard
     init();
     
@@ -568,6 +622,12 @@
     window.loadCurrentData = async function() {
       await init(); // Reload using existing init function
     };
+    
+    // Initialize all viewers
+    window.tableDetailsViewer = new TableDetailsViewer('mainContent');
+    window.hookDetailsViewer = new HookDetailsViewer('mainContent');
+    window.componentDetailsViewer = new ComponentDetailsViewer('mainContent');
+    window.pageDetailsViewer = new PageDetailsViewer('mainContent');
   </script>
 </body>
 </html>

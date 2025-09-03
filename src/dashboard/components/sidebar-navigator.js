@@ -268,7 +268,7 @@ class SidebarNavigator {
         "
         onmouseover="this.style.background='#252525'"
         onmouseout="this.style.background='#0f0f0f'"
-        onclick="this.expandSection('${section}')"
+        onclick="expandSection('${section}')"
         data-section="${section}"
         data-count="${count}"
       >
