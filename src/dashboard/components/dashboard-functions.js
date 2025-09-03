@@ -1,260 +1,15 @@
 /**
- * Dashboard Tab Functions Module  
- * Complete extraction from modular-fixed.html
+ * Dashboard Functions - Modular Version
+ * This file loads all the split renderer modules
  */
+
+// Note: The individual renderer files will be loaded from HTML directly
+// This file contains the remaining functions that haven't been modularized yet
 
 (function() {
   'use strict';
 
-  // Helper function for theme colors
-  window.getThemeColor = window.getThemeColor || function(path, fallback = '#666') {
-    if (!window.AI_OBSERVER_THEME) return fallback;
-    const keys = path.split('.');
-    let value = window.AI_OBSERVER_THEME;
-    for (const key of keys) {
-      value = value[key];
-      if (!value) return fallback;
-    }
-    return value;
-  };
-
-  window.loadArchitectureView = async function() {
-    const mainContent = document.getElementById('mainContent');
-    mainContent.innerHTML = `
-      <div style="padding: 20px;">
-        <div style="text-align: center; color: #9ca3af; margin: 40px 0;">
-          <div style="font-size: 20px; margin-bottom: 16px;">⟳</div>
-          <div>Loading architecture analysis...</div>
-        </div>
-      </div>
-    `;
-    
-    try {
-      // Get architecture data from existing endpoint
-      const response = await fetch('/api/analysis');
-      const data = await response.json();
-      
-      mainContent.innerHTML = `
-        <div style="padding: 20px;">
-          <div style="
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            color: white;
-          ">
-            <h1 style="margin: 0 0 8px 0;">🏗️ Architecture Overview</h1>
-            <p style="margin: 0; opacity: 0.9;">System relationships and component dependencies</p>
-          </div>
-          
-          ${renderArchitectureSummary(data)}
-          ${renderEntityCounts(data)}
-          ${renderRelationshipMap(data)}
-          ${renderHealthOverview(data)}
-        </div>
-      `;
-    } catch (error) {
-      mainContent.innerHTML = `
-        <div class="card" style="color: #ef4444;">
-          <h2>⚠️ Error Loading Architecture</h2>
-          <p>Failed to load architecture data: ${error.message}</p>
-        </div>
-      `;
-    }
-  }
-  
-  window.renderArchitectureSummary = function(data) {
-    const tables = data.types?.interfaces?.filter(i => i.category === 'database')?.length || 0;
-    const components = data.types?.interfaces?.filter(i => i.category === 'component')?.length || 0;
-    const hooks = 0; // Will get from components analysis
-    const pages = 0; // Will get from pages analysis
-    
-    return `
-      <div class="card" style="margin-bottom: 20px;">
-        <h3 style="color: #f8fafc; margin: 0 0 16px 0;">📊 System Overview</h3>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; text-align: center;">
-          <div style="padding: 16px; background: #0f0f0f; border-radius: 8px;">
-            <div style="font-size: 24px; color: #10b981; font-weight: bold;">${tables}</div>
-            <div style="color: #64748b; font-size: 12px;">Tables</div>
-          </div>
-          <div style="padding: 16px; background: #0f0f0f; border-radius: 8px;">
-            <div style="font-size: 24px; color: #3b82f6; font-weight: bold;">${hooks}</div>
-            <div style="color: #64748b; font-size: 12px;">Hooks</div>
-          </div>
-          <div style="padding: 16px; background: #0f0f0f; border-radius: 8px;">
-            <div style="font-size: 24px; color: #f59e0b; font-weight: bold;">${components}</div>
-            <div style="color: #64748b; font-size: 12px;">Components</div>
-          </div>
-          <div style="padding: 16px; background: #0f0f0f; border-radius: 8px;">
-            <div style="font-size: 24px; color: #8b5cf6; font-weight: bold;">${pages}</div>
-            <div style="color: #64748b; font-size: 12px;">Pages</div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  
-  window.renderEntityCounts = function(data) {
-    const tables = data.types?.interfaces?.filter(i => i.category === 'database') || [];
-    const components = data.types?.interfaces?.filter(i => i.category === 'component') || [];
-    
-    return `
-      <div class="card" style="margin-bottom: 20px;">
-        <h3 style="color: #f8fafc; margin: 0 0 16px 0;">🔗 Entity Overview</h3>
-        <div style="display: grid; gap: 12px;">
-          ${renderEntityList('Database Types', tables.reduce((acc, t) => ({...acc, [t.name]: t}), {}), 'table', '#10b981')}
-          ${renderEntityList('Components', components.reduce((acc, t) => ({...acc, [t.name]: t}), {}), 'component', '#f59e0b')}
-        </div>
-      </div>
-    `;
-  }
-  
-  window.renderEntityList = function(title, entities, type, color) {
-    if (!entities || Object.keys(entities).length === 0) return '';
-    
-    const items = Object.keys(entities).slice(0, 8);
-    const remaining = Math.max(0, Object.keys(entities).length - 8);
-    
-    return `
-      <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; border-left: 3px solid ${color};">
-        <div style="color: ${color}; font-weight: 500; margin-bottom: 8px;">${title} (${Object.keys(entities).length})</div>
-        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-          ${items.map(item => `
-            <span style="
-              background: var(--border-dark);
-              padding: 4px 8px;
-              border-radius: 4px;
-              font-size: 11px;
-              color: #9ca3af;
-              cursor: pointer;
-            " onclick="selectItem('${item}', '${type}')">
-              ${item}
-            </span>
-          `).join('')}
-          ${remaining > 0 ? `
-            <span style="color: #64748b; font-size: 11px; padding: 4px;">
-              +${remaining} more...
-            </span>
-          ` : ''}
-        </div>
-      </div>
-    `;
-  }
-  
-  window.renderRelationshipMap = function(data) {
-    // Extract relationships from type interfaces
-    const relationships = [];
-    
-    const components = data.types?.interfaces?.filter(i => i.category === 'component') || [];
-    const databases = data.types?.interfaces?.filter(i => i.category === 'database') || [];
-    
-    // Show component property relationships
-    components.forEach(comp => {
-      const relatedProps = comp.properties?.filter(p => 
-        databases.some(db => p.name.toLowerCase().includes(db.name.toLowerCase()))
-      ) || [];
-      
-      relatedProps.forEach(prop => {
-        const relatedDb = databases.find(db => 
-          prop.name.toLowerCase().includes(db.name.toLowerCase())
-        );
-        if (relatedDb) {
-          relationships.push({
-            from: comp.name,
-            to: relatedDb.name,
-            type: 'component→data',
-            color: '#f59e0b'
-          });
-        }
-      });
-    });
-    
-    return `
-      <div class="card" style="margin-bottom: 20px;">
-        <h3 style="color: #f8fafc; margin: 0 0 16px 0;">🌐 Relationship Map</h3>
-        ${relationships.length > 0 ? `
-          <div style="display: grid; gap: 8px; max-height: 300px; overflow-y: auto;">
-            ${relationships.slice(0, 20).map(rel => `
-              <div style="
-                display: flex;
-                align-items: center;
-                padding: 8px;
-                background: #0f0f0f;
-                border-radius: 6px;
-                font-size: 13px;
-              ">
-                <span style="color: #f8fafc; font-weight: 500;">${rel.from}</span>
-                <span style="color: ${rel.color}; margin: 0 8px;">→</span>
-                <span style="color: #9ca3af;">${rel.to}</span>
-                <span style="
-                  background: var(--border-dark);
-                  padding: 2px 6px;
-                  border-radius: 3px;
-                  font-size: 10px;
-                  color: ${rel.color};
-                  margin-left: auto;
-                ">${rel.type}</span>
-              </div>
-            `).join('')}
-            ${relationships.length > 20 ? `
-              <div style="text-align: center; color: #64748b; font-size: 12px; padding: 8px;">
-                Showing 20 of ${relationships.length} relationships
-              </div>
-            ` : ''}
-          </div>
-        ` : `
-          <div style="text-align: center; color: #64748b; padding: 40px;">
-            No relationships detected
-          </div>
-        `}
-      </div>
-    `;
-  }
-  
-  window.renderHealthOverview = function(data) {
-    // Calculate overall health based on actual data
-    const totalEntities = data.types?.interfaces?.length || 0;
-    
-    return `
-      <div class="card">
-        <h3 style="color: #f8fafc; margin: 0 0 16px 0;">💊 System Health</h3>
-        <div style="display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center;">
-          <div>
-            <div style="color: #9ca3af; margin-bottom: 12px;">Overall architecture health based on entity count and relationships</div>
-            <div style="display: flex; gap: 16px; font-size: 13px;">
-              <div>
-                <span style="color: #64748b;">Total Entities:</span>
-                <span style="color: #f8fafc; margin-left: 8px;">${totalEntities}</span>
-              </div>
-              <div>
-                <span style="color: #64748b;">Coverage:</span>
-                <span style="color: #10b981; margin-left: 8px;">Good</span>
-              </div>
-            </div>
-          </div>
-          <div style="text-align: center;">
-            <div style="
-              width: 60px;
-              height: 60px;
-              border-radius: 50%;
-              background: #10b98120;
-              border: 2px solid #10b981;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              color: #10b981;
-              font-weight: bold;
-            ">
-              ${Math.min(100, Math.max(60, totalEntities * 2))}
-            </div>
-            <div style="color: #10b981; font-size: 11px; margin-top: 4px;">Healthy</div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  
-  // Validation tab view
+  // Validation View Functions
   window.loadValidationView = async function() {
     const mainContent = document.getElementById('mainContent');
     mainContent.innerHTML = `
@@ -267,7 +22,6 @@
     `;
     
     try {
-      // Fetch both contract and nine-rules data in parallel
       const [contractResponse, nineRulesResponse] = await Promise.all([
         fetch('/api/contracts'),
         fetch('/api/nine-rules')
@@ -293,9 +47,9 @@
             </p>
           </div>
           
-          ${renderValidationSummary(contractData, nineRulesData)}
-          ${renderContractViolations(contractData)}
-          ${renderNineRulesViolations(nineRulesData)}
+          ${window.renderValidationSummary(contractData, nineRulesData)}
+          ${window.renderContractViolations(contractData)}
+          ${window.renderNineRulesViolations(nineRulesData)}
         </div>
       `;
       
@@ -312,12 +66,11 @@
       `;
     }
   }
-  
+
   window.renderValidationSummary = function(contractData, nineRulesData) {
     const contractScore = contractData.score || 0;
     const nineRulesScore = nineRulesData.overallScore || 0;
     const overallScore = Math.round((contractScore + nineRulesScore) / 2);
-    // Use configurable colors
     const config = window.HealthScoringConfig || { thresholds: { healthy: 70, needsAttention: 40 }, colors: { healthy: '#10b981', warning: '#f59e0b', critical: '#ef4444' } };
     const color = overallScore >= config.thresholds.healthy ? config.colors.healthy : overallScore >= config.thresholds.needsAttention ? config.colors.warning : config.colors.critical;
     
@@ -376,7 +129,7 @@
       </div>
     `;
   }
-  
+
   window.renderContractViolations = function(contractData) {
     const violations = contractData.violations || [];
     
@@ -464,7 +217,7 @@
       </div>
     `;
   }
-  
+
   window.renderNineRulesViolations = function(nineRulesData) {
     const results = nineRulesData.results || [];
     const failedRules = results.filter(rule => rule.status === 'fail');
@@ -546,8 +299,8 @@
       </div>
     `;
   }
-  
-  // Boundaries View Functions
+
+  // Boundaries View Functions  
   window.loadBoundariesView = async function() {
     const mainContent = document.getElementById('mainContent');
     mainContent.innerHTML = `
@@ -561,49 +314,46 @@
     
     try {
       const response = await fetch('/api/boundaries');
-      if (!response.ok) throw new Error('Failed to fetch boundary data');
-      
       const data = await response.json();
+      
+      const critical = data.boundaries?.filter(b => !b.hasValidation) || [];
       
       mainContent.innerHTML = `
         <div style="padding: 20px;">
           <div style="
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 24px;
             color: white;
           ">
             <h1 style="margin: 0 0 8px 0; display: flex; align-items: center; gap: 12px;">
-              🔒 Boundary Validation
+              🛡️ Boundary Validation
             </h1>
             <p style="margin: 0; opacity: 0.9; font-size: 14px;">
-              Data validation at system boundaries and transfer points
+              Input validation at system boundaries
             </p>
           </div>
           
-          ${renderBoundariesSummary(data)}
-          ${data.critical.length > 0 ? renderCriticalBoundaries(data.critical) : ''}
-          ${renderBoundariesByType(data.boundaries)}
+          ${window.renderBoundariesSummary(data)}
+          ${window.renderCriticalBoundaries(critical)}
+          ${window.renderBoundariesByType(data.boundaries)}
         </div>
       `;
     } catch (error) {
-      console.error('Error loading boundary data:', error);
       mainContent.innerHTML = `
-        <div style="padding: 20px;">
-          <div style="text-align: center; color: #ef4444; margin: 40px 0;">
-            <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
-            <h2>Error Loading Boundaries</h2>
-            <p style="color: #64748b;">Failed to load boundary data: ${error.message}</p>
-          </div>
+        <div style="text-align: center; color: #ef4444; margin: 40px 0;">
+          <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+          <h2>Error Loading Boundaries</h2>
+          <p style="color: #64748b;">Please check your connection and try again.</p>
         </div>
       `;
     }
   };
-  
+
   window.renderBoundariesSummary = function(data) {
     const coverage = data.coverage || 0;
-    const coverageColor = coverage >= 80 ? '#10b981' : coverage >= 60 ? '#f59e0b' : '#ef4444';
+    const coverageColor = coverage >= 80 ? '#10b981' : coverage >= 50 ? '#f59e0b' : '#ef4444';
     
     return `
       <div style="
@@ -613,101 +363,82 @@
         padding: 20px;
         margin-bottom: 20px;
       ">
-        <h2 style="color: #f8fafc; margin: 0 0 20px 0;">📊 Boundary Summary</h2>
+        <h3 style="color: #f8fafc; margin: 0 0 20px 0;">📊 Validation Coverage</h3>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="color: ${coverageColor}; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${coverage}%</div>
-            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Coverage</div>
-            <div style="color: #f8fafc; font-size: 13px;">Validated boundaries</div>
+          <div style="text-align: center;">
+            <div style="font-size: 32px; font-weight: bold; color: ${coverageColor};">${coverage}%</div>
+            <div style="color: #64748b; font-size: 14px;">Overall Coverage</div>
           </div>
-          
-          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="color: #3b82f6; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${data.boundaries.length}</div>
-            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Total Boundaries</div>
-            <div style="color: #f8fafc; font-size: 13px;">All data transfer points</div>
+          <div style="text-align: center;">
+            <div style="font-size: 32px; font-weight: bold; color: #3b82f6;">${data.boundaries?.length || 0}</div>
+            <div style="color: #64748b; font-size: 14px;">Total Boundaries</div>
           </div>
-          
-          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="color: #10b981; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${data.boundaries.filter(b => b.hasValidation).length}</div>
-            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Validated</div>
-            <div style="color: #f8fafc; font-size: 13px;">Protected boundaries</div>
+          <div style="text-align: center;">
+            <div style="font-size: 32px; font-weight: bold; color: #10b981;">${data.boundaries?.filter(b => b.hasValidation).length || 0}</div>
+            <div style="color: #64748b; font-size: 14px;">Validated</div>
           </div>
-          
-          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="color: #ef4444; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${data.critical.length}</div>
-            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Critical Issues</div>
-            <div style="color: #f8fafc; font-size: 13px;">Needs immediate attention</div>
+          <div style="text-align: center;">
+            <div style="font-size: 32px; font-weight: bold; color: #ef4444;">${data.boundaries?.filter(b => !b.hasValidation).length || 0}</div>
+            <div style="color: #64748b; font-size: 14px;">Unvalidated</div>
           </div>
         </div>
       </div>
     `;
-  }
-  
+  };
+
   window.renderCriticalBoundaries = function(critical) {
+    if (!critical || critical.length === 0) return '';
+    
     return `
       <div style="
-        background: #1a1a1a;
+        background: #ef444410;
         border: 1px solid #ef4444;
         border-radius: 12px;
         padding: 20px;
         margin-bottom: 20px;
       ">
-        <h3 style="color: #ef4444; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
-          🔴 Critical - Unvalidated Boundaries
-          <span style="
-            background: #ef444420;
-            color: #ef4444;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            text-transform: uppercase;
-          ">${critical.length} issues</span>
-        </h3>
+        <h3 style="color: #ef4444; margin: 0 0 16px 0;">⚠️ Critical: Unvalidated Boundaries</h3>
         
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          ${critical.slice(0, 5).map(boundary => `
+        <div style="display: grid; gap: 12px;">
+          ${critical.map(boundary => `
             <div style="
-              background: #ef444410;
-              border-left: 4px solid #ef4444;
+              background: #0f0f0f;
               padding: 16px;
-              border-radius: 0 8px 8px 0;
+              border-radius: 8px;
+              border-left: 3px solid #ef4444;
             ">
-              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                <div style="color: #ef4444; font-weight: 500; text-transform: capitalize;">
-                  ${boundary.boundary}
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="color: #f8fafc; font-weight: 500;">${boundary.file}</div>
+                  <div style="color: #94a3b8; font-size: 14px; margin-top: 4px;">
+                    ${boundary.boundary} - ${boundary.function}
+                  </div>
                 </div>
-                <div style="color: #64748b; font-size: 12px; font-family: monospace;">
-                  ${boundary.location}
+                <div style="
+                  background: #ef444420;
+                  color: #ef4444;
+                  padding: 4px 12px;
+                  border-radius: 16px;
+                  font-size: 12px;
+                ">
+                  No Validation
                 </div>
-              </div>
-              
-              <div style="color: #f8fafc; margin-bottom: 8px; font-size: 14px;">
-                ${boundary.issue}
-              </div>
-              
-              <div style="color: #3b82f6; font-size: 13px; font-style: italic;">
-                💡 Add schema validation using .parse() or .safeParse() methods
               </div>
             </div>
           `).join('')}
-          
-          ${critical.length > 5 ? `
-            <div style="text-align: center; color: #64748b; font-size: 12px; padding: 8px;">
-              Showing 5 of ${critical.length} critical boundaries
-            </div>
-          ` : ''}
         </div>
       </div>
     `;
-  }
-  
+  };
+
   window.renderBoundariesByType = function(boundaries) {
-    // Group boundaries by type
-    const grouped = {};
+    if (!boundaries || boundaries.length === 0) return '';
+    
+    const byType = {};
     boundaries.forEach(b => {
-      if (!grouped[b.boundary]) grouped[b.boundary] = [];
-      grouped[b.boundary].push(b);
+      if (!byType[b.boundary]) byType[b.boundary] = [];
+      byType[b.boundary].push(b);
     });
     
     return `
@@ -717,430 +448,89 @@
         border-radius: 12px;
         padding: 20px;
       ">
-        <h3 style="color: #f8fafc; margin: 0 0 20px 0;">🔍 All Boundaries by Type</h3>
+        <h3 style="color: #f8fafc; margin: 0 0 20px 0;">🔍 Boundaries by Type</h3>
         
-        <div style="display: grid; gap: 16px;">
-          ${Object.entries(grouped).map(([type, items]) => {
-            const validated = items.filter(b => b.hasValidation).length;
-            const percentage = Math.round((validated / items.length) * 100);
-            const typeColor = percentage >= 80 ? '#10b981' : percentage >= 60 ? '#f59e0b' : '#ef4444';
-            
-            return `
-              <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; border-left: 3px solid ${typeColor};">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                  <h4 style="color: ${typeColor}; margin: 0; font-size: 16px; text-transform: capitalize;">
-                    ${type.replace(/([A-Z])/g, ' $1')}
-                  </h4>
-                  <div style="
-                    background: ${typeColor}20;
-                    color: ${typeColor};
-                    padding: 4px 8px;
-                    border-radius: 12px;
-                    font-size: 11px;
-                    font-weight: 500;
-                  ">
-                    ${percentage}% validated (${validated}/${items.length})
-                  </div>
-                </div>
-                
-                <div style="display: grid; gap: 8px; max-height: 200px; overflow-y: auto;">
-                  ${items.slice(0, 6).map(b => `
-                    <div style="
-                      display: flex;
-                      align-items: center;
-                      padding: 8px;
-                      background: ${b.hasValidation ? '#10b98110' : '#ef444410'};
-                      border-radius: 6px;
-                      font-size: 13px;
-                    ">
-                      <span style="margin-right: 8px; font-size: 16px;">
-                        ${b.hasValidation ? '✅' : '❌'}
-                      </span>
-                      <div style="flex: 1;">
-                        <div style="color: #f8fafc; margin-bottom: 2px;">${b.location}</div>
-                        ${!b.hasValidation && b.issue ? `
-                          <div style="color: #ef4444; font-size: 11px;">⚠️ ${b.issue}</div>
-                        ` : ''}
-                        ${b.validationType ? `
-                          <div style="color: #10b981; font-size: 11px;">✓ ${b.validationType}</div>
-                        ` : ''}
-                      </div>
-                    </div>
-                  `).join('')}
-                  
-                  ${items.length > 6 ? `
-                    <div style="text-align: center; color: #64748b; font-size: 11px; padding: 8px;">
-                      ... and ${items.length - 6} more boundaries
-                    </div>
-                  ` : ''}
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      </div>
-    `;
-  }
-  
-  // 9 Rules View - Map-based validation
-  window.loadNineRulesView = async function() {
-    const mainContent = document.getElementById('mainContent');
-    mainContent.innerHTML = `
-      <div style="padding: 20px;">
-        <div style="text-align: center; color: #9ca3af; margin: 40px 0;">
-          <div style="font-size: 20px; margin-bottom: 16px;">⟳</div>
-          <div>Running 9 Core Validation Rules...</div>
-        </div>
-      </div>
-    `;
-    
-    try {
-      const response = await fetch('/api/map-validation');
-      if (!response.ok) throw new Error('Failed to fetch validation data');
-      
-      const data = await response.json();
-      
-      mainContent.innerHTML = `
-        <div style="padding: 20px;">
-          <div style="
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            color: white;
-          ">
-            <h1 style="margin: 0 0 8px 0; display: flex; align-items: center; gap: 12px;">
-              🎯 9 Core Validation Rules
-            </h1>
-            <p style="margin: 0; opacity: 0.9; font-size: 14px;">
-              Map-based validation covering 90% of production bugs
-            </p>
-          </div>
+        ${Object.entries(byType).map(([type, items]) => {
+          const validated = items.filter(i => i.hasValidation).length;
+          const percentage = Math.round((validated / items.length) * 100);
+          const color = percentage >= 80 ? '#10b981' : percentage >= 50 ? '#f59e0b' : '#ef4444';
           
-          ${renderRulesScore(data)}
-          ${renderRulesSummary(data)}
-          ${renderContractDetections(data)}
-          ${renderCriticalViolations(data)}
-          ${renderAllViolations(data)}
-        </div>
-      `;
-    } catch (error) {
-      console.error('Error loading 9 rules data:', error);
-      mainContent.innerHTML = `
-        <div style="padding: 20px;">
-          <div style="text-align: center; color: #ef4444; margin: 40px 0;">
-            <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
-            <h2>Error Loading Validation</h2>
-            <p style="color: #64748b;">Failed to load validation data: ${error.message}</p>
-          </div>
-        </div>
-      `;
-    }
-  };
-  
-  function renderRulesScore(data) {
-    const score = data.score || 0;
-    const scoreColor = score >= 80 ? '#10b981' : score >= 50 ? '#f59e0b' : '#ef4444';
-    const scoreText = score >= 80 ? 'Excellent' : score >= 50 ? 'Needs Work' : 'Critical';
-    
-    return `
-      <div style="
-        background: #1a1a1a;
-        border: 1px solid #333;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-      ">
-        <div style="display: flex; align-items: center; gap: 24px;">
-          <div style="
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: ${scoreColor}20;
-            border: 3px solid ${scoreColor};
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-          ">
-            <div style="font-size: 32px; font-weight: bold; color: ${scoreColor};">${score}</div>
-            <div style="font-size: 11px; color: #64748b;">SCORE</div>
-          </div>
-          
-          <div style="flex: 1;">
-            <div style="font-size: 20px; color: ${scoreColor}; margin-bottom: 8px;">${scoreText}</div>
-            <div style="color: #94a3b8;">
-              ${data.violations?.length || 0} violations found across ${Object.keys(data.summary?.byRule || {}).length} rules
-            </div>
-            ${data.summary?.bySeverity ? `
-              <div style="display: flex; gap: 16px; margin-top: 12px;">
-                <span style="color: #ef4444;">⚫ Critical: ${data.summary.bySeverity.critical || 0}</span>
-                <span style="color: #f59e0b;">⚫ Warning: ${data.summary.bySeverity.warning || 0}</span>
-                <span style="color: #3b82f6;">⚫ Info: ${data.summary.bySeverity.info || 0}</span>
-              </div>
-            ` : ''}
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  
-  function renderContractDetections(data) {
-    if (!data.contractDetections) return '';
-    
-    const { summary, detections } = data.contractDetections;
-    if (!summary) return '';
-    
-    const hasDetections = summary.missing > 0 || summary.outdated > 0 || summary.unused > 0 || summary.mismatches > 0;
-    if (!hasDetections) return '';
-    
-    return `
-      <div style="
-        background: #1a1a1a;
-        border: 1px solid #333;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-      ">
-        <h3 style="color: #f8fafc; margin: 0 0 20px 0;">🔍 Contract Detection Analysis</h3>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
-          ${summary.missing > 0 ? `
-            <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; border-left: 3px solid #ef4444;">
-              <div style="color: #ef4444; font-size: 24px; font-weight: bold;">${summary.missing}</div>
-              <div style="color: #94a3b8; font-size: 14px;">Missing Contracts</div>
-              <div style="color: #64748b; font-size: 12px; margin-top: 4px;">Entities without contracts</div>
-            </div>
-          ` : ''}
-          
-          ${summary.outdated > 0 ? `
-            <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; border-left: 3px solid #f59e0b;">
-              <div style="color: #f59e0b; font-size: 24px; font-weight: bold;">${summary.outdated}</div>
-              <div style="color: #94a3b8; font-size: 14px;">Outdated Contracts</div>
-              <div style="color: #64748b; font-size: 12px; margin-top: 4px;">New fields detected</div>
-            </div>
-          ` : ''}
-          
-          ${summary.unused > 0 ? `
-            <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; border-left: 3px solid #3b82f6;">
-              <div style="color: #3b82f6; font-size: 24px; font-weight: bold;">${summary.unused}</div>
-              <div style="color: #94a3b8; font-size: 14px;">Unused Contracts</div>
-              <div style="color: #64748b; font-size: 12px; margin-top: 4px;">Not used in code</div>
-            </div>
-          ` : ''}
-          
-          ${summary.mismatches > 0 ? `
-            <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; border-left: 3px solid #ef4444;">
-              <div style="color: #ef4444; font-size: 24px; font-weight: bold;">${summary.mismatches}</div>
-              <div style="color: #94a3b8; font-size: 14px;">Naming Mismatches</div>
-              <div style="color: #64748b; font-size: 12px; margin-top: 4px;">snake_case vs camelCase</div>
-            </div>
-          ` : ''}
-        </div>
-        
-        ${detections && detections.filter(d => d.type === 'missing').length > 0 ? `
-          <div style="background: #0f0f0f; padding: 16px; border-radius: 8px;">
-            <h4 style="color: #ef4444; margin: 0 0 12px 0;">Missing Contracts Detected:</h4>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-              ${detections.filter(d => d.type === 'missing').slice(0, 10).map(d => `
-                <span style="
-                  background: #ef444420;
-                  color: #f87171;
-                  padding: 4px 12px;
-                  border-radius: 16px;
-                  font-size: 13px;
-                  border: 1px solid #ef444440;
-                ">
-                  ${d.entity}
-                </span>
-              `).join('')}
-            </div>
-            <div style="color: #64748b; font-size: 12px; margin-top: 12px;">
-              💡 Add these entities to contracts.yaml to define their data structure
-            </div>
-          </div>
-        ` : ''}
-      </div>
-    `;
-  }
-  
-  function renderRulesSummary(data) {
-    const rules = [
-      { name: 'Type-Database Alignment', impact: '30%', description: 'All DB functions must parse with Zod' },
-      { name: 'Hook-Database Pattern', impact: '25%', description: 'Components → Hooks → DB only' },
-      { name: 'Error Handling', impact: '20%', description: 'Try-catch blocks and error states' },
-      { name: 'Loading States', impact: '15%', description: 'Loading indicators in hooks' },
-      { name: 'API Type Safety', impact: '10%', description: 'Parse all API inputs/outputs' },
-      { name: 'Contract Compliance', impact: '10%', description: 'Entities have defined contracts' },
-      { name: 'Registry Usage', impact: '<5%', description: 'No raw route strings' },
-      { name: 'Cache Invalidation', impact: '<5%', description: 'Mutations invalidate cache' },
-      { name: 'Form Validation', impact: '<5%', description: 'Forms have validation' },
-      { name: 'Auth Guards', impact: '<5%', description: 'Protected routes have auth' }
-    ];
-    
-    const violations = data.summary?.byRule || {};
-    
-    return `
-      <div style="
-        background: #1a1a1a;
-        border: 1px solid #333;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-      ">
-        <h3 style="color: #f8fafc; margin: 0 0 20px 0;">📋 Rules Coverage</h3>
-        
-        <div style="display: grid; gap: 12px;">
-          ${rules.map((rule, index) => {
-            const count = violations[rule.name] || 0;
-            const status = count === 0 ? 'pass' : 'fail';
-            const color = status === 'pass' ? '#10b981' : '#ef4444';
-            
-            return `
-              <div style="
-                background: #0f0f0f;
+          return `
+            <details style="margin-bottom: 16px;">
+              <summary style="
+                cursor: pointer;
                 padding: 16px;
+                background: #0f0f0f;
                 border-radius: 8px;
-                border-left: 3px solid ${color};
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
               ">
-                <div>
-                  <div style="display: flex; align-items: center; gap: 12px;">
-                    <span style="color: ${color}; font-size: 18px;">
-                      ${status === 'pass' ? '✅' : '❌'}
-                    </span>
-                    <div>
-                      <div style="color: #f8fafc; font-weight: 500;">
-                        Rule ${index + 1}: ${rule.name}
-                      </div>
-                      <div style="color: #64748b; font-size: 12px;">
-                        ${rule.description} (${rule.impact} of bugs)
-                      </div>
-                    </div>
+                <div style="color: #f8fafc; font-weight: 500;">
+                  ${type} (${items.length})
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                  <div style="
+                    background: ${color}20;
+                    color: ${color};
+                    padding: 4px 12px;
+                    border-radius: 16px;
+                    font-size: 12px;
+                  ">
+                    ${percentage}% validated
                   </div>
                 </div>
-                <div style="
-                  background: ${color}20;
-                  color: ${color};
-                  padding: 4px 8px;
-                  border-radius: 12px;
-                  font-size: 12px;
-                  font-weight: 600;
-                ">
-                  ${count} ${count === 1 ? 'issue' : 'issues'}
+              </summary>
+              
+              <div style="padding: 16px;">
+                <div style="display: grid; gap: 8px;">
+                  ${items.map(item => `
+                    <div style="
+                      background: #0a0a0a;
+                      padding: 12px;
+                      border-radius: 6px;
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                    ">
+                      <div>
+                        <div style="color: #94a3b8; font-size: 13px;">
+                          ${item.function}
+                        </div>
+                        <div style="color: #64748b; font-size: 11px; margin-top: 2px;">
+                          ${item.file}
+                        </div>
+                      </div>
+                      ${item.hasValidation ? `
+                        <span style="color: #10b981; font-size: 12px;">✓ Validated</span>
+                      ` : `
+                        <span style="color: #ef4444; font-size: 12px;">⚠️ No validation</span>
+                      `}
+                    </div>
+                  `).join('')}
                 </div>
               </div>
-            `;
-          }).join('')}
-        </div>
+            </details>
+          `;
+        }).join('')}
       </div>
     `;
-  }
-  
-  function renderCriticalViolations(data) {
-    const critical = data.violations?.filter(v => v.severity === 'critical') || [];
-    
-    if (critical.length === 0) return '';
-    
-    return `
-      <div style="
-        background: #1a1a1a;
-        border: 1px solid #ef4444;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-      ">
-        <h3 style="color: #ef4444; margin: 0 0 16px 0;">
-          🚨 Critical Issues (${critical.length})
-        </h3>
-        
-        <div style="display: grid; gap: 12px;">
-          ${critical.slice(0, 5).map(v => `
-            <div style="
-              background: #ef444410;
-              border-left: 3px solid #ef4444;
-              padding: 12px;
-              border-radius: 0 8px 8px 0;
-            ">
-              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                <div style="color: #ef4444; font-weight: 500;">${v.rule}</div>
-                <div style="color: #64748b; font-size: 12px; font-family: monospace;">
-                  ${v.file.split('/').pop()}
-                </div>
-              </div>
-              <div style="color: #f8fafc; margin-bottom: 8px;">${v.message}</div>
-              <div style="color: #3b82f6; font-size: 13px; font-style: italic;">
-                💡 ${v.fix}
-              </div>
-            </div>
-          `).join('')}
-          
-          ${critical.length > 5 ? `
-            <div style="text-align: center; color: #64748b; font-size: 12px;">
-              ... and ${critical.length - 5} more critical issues
-            </div>
-          ` : ''}
-        </div>
-      </div>
-    `;
-  }
-  
-  function renderAllViolations(data) {
-    const warnings = data.violations?.filter(v => v.severity === 'warning') || [];
-    
-    if (warnings.length === 0) return '';
-    
-    return `
-      <div style="
-        background: #1a1a1a;
-        border: 1px solid #333;
-        border-radius: 12px;
-        padding: 20px;
-      ">
-        <h3 style="color: #f59e0b; margin: 0 0 16px 0;">
-          ⚠️ Warnings (${warnings.length})
-        </h3>
-        
-        <div style="display: grid; gap: 8px;">
-          ${warnings.map(v => `
-            <div style="
-              background: #0f0f0f;
-              padding: 12px;
-              border-radius: 8px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-            ">
-              <div>
-                <span style="color: #f59e0b;">${v.rule}:</span>
-                <span style="color: #94a3b8; margin-left: 8px;">${v.message}</span>
-              </div>
-              <div style="color: #64748b; font-size: 11px; font-family: monospace;">
-                ${v.file.split('/').pop()}
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  }
-  
-  // Analytics tab view
+  };
+
+  // Analytics View Functions
   window.loadAnalyticsView = async function() {
     const mainContent = document.getElementById('mainContent');
+    
     mainContent.innerHTML = `
       <div style="padding: 20px;">
         <div style="text-align: center; color: #9ca3af; margin: 40px 0;">
           <div style="font-size: 20px; margin-bottom: 16px;">⟳</div>
-          <div>Loading analytics data...</div>
+          <div>Loading analytics...</div>
         </div>
       </div>
     `;
     
     try {
-      // Fetch all data sources in parallel
       const [architectureResponse, contractResponse, nineRulesResponse] = await Promise.all([
         fetch('/api/analysis'),
         fetch('/api/contracts'),
@@ -1154,116 +544,56 @@
       mainContent.innerHTML = `
         <div style="padding: 20px;">
           <div style="
-            background: ${getThemeColor('gradients.purple', 'linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)')};
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 24px;
             color: white;
           ">
-            <h1 style="margin: 0 0 8px 0; display: flex; align-items: center; gap: 12px;">
-              📊 Analytics Dashboard
-            </h1>
-            <p style="margin: 0; opacity: 0.9; font-size: 14px;">
-              Comprehensive project health and metrics analysis
-            </p>
+            <h1 style="margin: 0 0 8px 0;">📈 Analytics Dashboard</h1>
+            <p style="margin: 0; opacity: 0.9;">Comprehensive codebase health metrics and insights</p>
           </div>
           
-          ${renderMetricsOverview(architectureData, contractData, nineRulesData)}
-          ${renderHealthTrends(architectureData, contractData, nineRulesData)}
-          ${renderCodeQualityBreakdown(nineRulesData)}
-          ${renderEntityDistribution(architectureData)}
+          ${window.renderMetricsOverview(architectureData, contractData, nineRulesData)}
+          ${window.renderHealthTrends(architectureData, contractData, nineRulesData)}
+          ${window.renderCodeQualityBreakdown(nineRulesData)}
+          ${window.renderEntityDistribution(architectureData)}
         </div>
       `;
-      
     } catch (error) {
-      console.error('Error loading analytics data:', error);
       mainContent.innerHTML = `
-        <div style="padding: 20px;">
-          <div style="text-align: center; color: #ef4444; margin: 40px 0;">
-            <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
-            <h2>Error Loading Analytics</h2>
-            <p style="color: #64748b;">Failed to load analytics data: ${error.message}</p>
-          </div>
+        <div style="text-align: center; color: #ef4444; margin: 40px 0;">
+          <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+          <h2>Error Loading Analytics</h2>
+          <p style="color: #64748b;">Failed to load analytics data: ${error.message}</p>
         </div>
       `;
     }
-  }
-  
+  };
+
   window.renderMetricsOverview = function(architectureData, contractData, nineRulesData) {
-    const totalEntities = (architectureData.types?.interfaces || []).length;
-    const totalViolations = (contractData.violations || []).length + (nineRulesData.criticalIssues || 0) + (nineRulesData.warnings || 0);
-    const healthScore = Math.round(((contractData.score || 0) + (nineRulesData.overallScore || 0)) / 2);
-    const codeQuality = nineRulesData.passedRules || 0;
-    
-    // Use configurable health scoring
-    const config = window.HealthScoringConfig || { thresholds: { healthy: 70, needsAttention: 40 }, colors: { healthy: '#10b981', warning: '#f59e0b', critical: '#ef4444' } };
-    const healthColor = healthScore >= config.thresholds.healthy ? config.colors.healthy : healthScore >= config.thresholds.needsAttention ? config.colors.warning : config.colors.critical;
-    
-    return `
-      <div style="
-        background: #1a1a1a;
-        border: 1px solid #333;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-      ">
-        <h2 style="color: #f8fafc; margin: 0 0 20px 0;">🎯 Key Metrics</h2>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="color: #3b82f6; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${totalEntities}</div>
-            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Total Entities</div>
-            <div style="color: #f8fafc; font-size: 13px;">Tables, Hooks, Components</div>
-          </div>
-          
-          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="color: ${healthColor}; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${healthScore}</div>
-            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Health Score</div>
-            <div style="color: #f8fafc; font-size: 13px;">Overall system health</div>
-          </div>
-          
-          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="color: ${totalViolations === 0 ? '#10b981' : totalViolations < 10 ? '#f59e0b' : '#ef4444'}; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${totalViolations}</div>
-            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Total Issues</div>
-            <div style="color: #f8fafc; font-size: 13px;">Contracts + Quality</div>
-          </div>
-          
-          <div style="background: #0f0f0f; padding: 20px; border-radius: 8px; text-align: center;">
-            <div style="color: #10b981; font-size: 28px; font-weight: bold; margin-bottom: 8px;">${codeQuality}/9</div>
-            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Quality Rules</div>
-            <div style="color: #f8fafc; font-size: 13px;">Passing standards</div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  
-  window.renderHealthTrends = function(architectureData, contractData, nineRulesData) {
+    const healthScore = architectureData.healthScore || 0;
     const contractScore = contractData.score || 0;
     const qualityScore = nineRulesData.overallScore || 0;
-    const overallScore = Math.round((contractScore + qualityScore) / 2);
+    const overallScore = Math.round((healthScore + contractScore + qualityScore) / 3);
     
-    // Use configurable health scoring
-    const config = window.HealthScoringConfig || { thresholds: { healthy: 70, needsAttention: 40 } };
+    const config = window.HealthScoringConfig || { thresholds: { healthy: 70, needsAttention: 40 }, colors: { healthy: '#10b981', warning: '#f59e0b', critical: '#ef4444' } };
+    const scoreColor = overallScore >= config.thresholds.healthy ? config.colors.healthy : 
+                      overallScore >= config.thresholds.needsAttention ? config.colors.warning : config.colors.critical;
     
-    // Calculate trend indicators using config thresholds
-    const contractTrend = contractScore >= config.thresholds.healthy ? '📈' : contractScore >= config.thresholds.needsAttention ? '📊' : '📉';
-    const qualityTrend = qualityScore >= config.thresholds.healthy ? '📈' : qualityScore >= config.thresholds.needsAttention ? '📊' : '📉';
-    const overallTrend = overallScore >= config.thresholds.healthy ? '📈' : overallScore >= config.thresholds.needsAttention ? '📊' : '📉';
-    
-    window.getHealthStatus = function(score) {
-      return score >= config.thresholds.healthy ? 'Healthy' : score >= config.thresholds.needsAttention ? 'Fair' : 'Needs Work';
-    }
+    const contractTrend = contractScore > 70 ? '📈' : contractScore > 40 ? '➡️' : '📉';
+    const qualityTrend = qualityScore > 70 ? '📈' : qualityScore > 40 ? '➡️' : '📉';
+    const healthTrend = healthScore > 70 ? '📈' : healthScore > 40 ? '➡️' : '📉';
     
     return `
       <div style="
         background: #1a1a1a;
         border: 1px solid #333;
         border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
+        padding: 24px;
+        margin-bottom: 24px;
       ">
-        <h2 style="color: #f8fafc; margin: 0 0 20px 0;">📈 Health Trends</h2>
+        <h2 style="color: #f8fafc; margin: 0 0 20px 0;">🎯 Key Metrics Overview</h2>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
           <div style="background: #0f0f0f; padding: 16px; border-radius: 8px;">
@@ -1281,14 +611,15 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: #3b82f6;
+                font-size: 16px;
                 font-weight: bold;
+                color: #3b82f6;
               ">
                 ${contractScore}
               </div>
               <div>
-                <div style="color: #f8fafc; font-size: 14px;">${(contractData.violations || []).length} violations</div>
-                <div style="color: #64748b; font-size: 12px;">Schema alignment</div>
+                <div style="color: #f8fafc; font-size: 14px;">${contractData.violations?.length || 0} violations</div>
+                <div style="color: #64748b; font-size: 12px;">${contractData.totalChecked || 0} entities checked</div>
               </div>
             </div>
           </div>
@@ -1308,298 +639,307 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: #10b981;
+                font-size: 16px;
                 font-weight: bold;
+                color: #10b981;
               ">
                 ${qualityScore}
               </div>
               <div>
-                <div style="color: #f8fafc; font-size: 14px;">${nineRulesData.passedRules || 0}/9 rules passed</div>
-                <div style="color: #64748b; font-size: 12px;">Nine rules validation</div>
+                <div style="color: #f8fafc; font-size: 14px;">${nineRulesData.passedRules || 0}/${nineRulesData.totalRules || 9} rules</div>
+                <div style="color: #64748b; font-size: 12px;">${nineRulesData.criticalIssues || 0} critical issues</div>
               </div>
             </div>
           </div>
           
           <div style="background: #0f0f0f; padding: 16px; border-radius: 8px;">
             <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 12px;">
-              <h3 style="color: #7c3aed; margin: 0; font-size: 16px;">Overall Health</h3>
-              <span style="font-size: 20px;">${overallTrend}</span>
+              <h3 style="color: #f59e0b; margin: 0; font-size: 16px;">System Health</h3>
+              <span style="font-size: 20px;">${healthTrend}</span>
             </div>
             <div style="display: flex; align-items: center; gap: 12px;">
               <div style="
                 width: 50px;
                 height: 50px;
                 border-radius: 50%;
-                background: #7c3aed20;
-                border: 2px solid #7c3aed;
+                background: #f59e0b20;
+                border: 2px solid #f59e0b;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: #7c3aed;
+                font-size: 16px;
                 font-weight: bold;
+                color: #f59e0b;
               ">
-                ${overallScore}
+                ${healthScore}
               </div>
               <div>
-                <div style="color: #f8fafc; font-size: 14px;">${getHealthStatus(overallScore)}</div>
-                <div style="color: #64748b; font-size: 12px;">Combined score</div>
+                <div style="color: #f8fafc; font-size: 14px;">${architectureData.issueCount || 0} issues</div>
+                <div style="color: #64748b; font-size: 12px;">${architectureData.componentCount || 0} components</div>
               </div>
             </div>
           </div>
         </div>
       </div>
     `;
-  }
-  
+  };
+
+  window.renderHealthTrends = function(architectureData, contractData, nineRulesData) {
+    const healthScore = architectureData.healthScore || 0;
+    const contractScore = contractData.score || 0;
+    const qualityScore = nineRulesData.overallScore || 0;
+    
+    const config = window.HealthScoringConfig || { thresholds: { healthy: 70, needsAttention: 40 } };
+    
+    window.getHealthStatus = function(score) {
+      if (score >= config.thresholds.healthy) return { text: 'Healthy', color: '#10b981', emoji: '🟢' };
+      if (score >= config.thresholds.needsAttention) return { text: 'Needs Attention', color: '#f59e0b', emoji: '🟡' };
+      return { text: 'Critical', color: '#ef4444', emoji: '🔴' };
+    };
+    
+    const healthStatus = window.getHealthStatus(healthScore);
+    const contractStatus = window.getHealthStatus(contractScore);
+    const qualityStatus = window.getHealthStatus(qualityScore);
+    
+    return `
+      <div style="
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+      ">
+        <h2 style="color: #f8fafc; margin: 0 0 20px 0;">📊 Health Status</h2>
+        
+        <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 120px; color: #94a3b8; font-size: 14px;">Architecture</div>
+            <div style="flex: 1; background: #0f0f0f; border-radius: 8px; overflow: hidden; height: 24px; position: relative;">
+              <div style="
+                width: ${healthScore}%;
+                height: 100%;
+                background: ${healthStatus.color};
+                transition: width 0.5s ease;
+              "></div>
+              <div style="
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: white;
+                font-size: 12px;
+                font-weight: 500;
+              ">
+                ${healthScore}%
+              </div>
+            </div>
+            <div style="width: 120px; text-align: right;">
+              <span style="color: ${healthStatus.color};">${healthStatus.emoji} ${healthStatus.text}</span>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 120px; color: #94a3b8; font-size: 14px;">Contracts</div>
+            <div style="flex: 1; background: #0f0f0f; border-radius: 8px; overflow: hidden; height: 24px; position: relative;">
+              <div style="
+                width: ${contractScore}%;
+                height: 100%;
+                background: ${contractStatus.color};
+                transition: width 0.5s ease;
+              "></div>
+              <div style="
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: white;
+                font-size: 12px;
+                font-weight: 500;
+              ">
+                ${contractScore}%
+              </div>
+            </div>
+            <div style="width: 120px; text-align: right;">
+              <span style="color: ${contractStatus.color};">${contractStatus.emoji} ${contractStatus.text}</span>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 120px; color: #94a3b8; font-size: 14px;">Code Quality</div>
+            <div style="flex: 1; background: #0f0f0f; border-radius: 8px; overflow: hidden; height: 24px; position: relative;">
+              <div style="
+                width: ${qualityScore}%;
+                height: 100%;
+                background: ${qualityStatus.color};
+                transition: width 0.5s ease;
+              "></div>
+              <div style="
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: white;
+                font-size: 12px;
+                font-weight: 500;
+              ">
+                ${qualityScore}%
+              </div>
+            </div>
+            <div style="width: 120px; text-align: right;">
+              <span style="color: ${qualityStatus.color};">${qualityStatus.emoji} ${qualityStatus.text}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
   window.renderCodeQualityBreakdown = function(nineRulesData) {
     const results = nineRulesData.results || [];
-    const passedRules = results.filter(r => r.status === 'pass').length;
-    const failedRules = results.filter(r => r.status === 'fail').length;
     
     return `
       <div style="
         background: #1a1a1a;
         border: 1px solid #333;
         border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
+        padding: 24px;
+        margin-bottom: 24px;
       ">
-        <h2 style="color: #f8fafc; margin: 0 0 20px 0;">🔍 Quality Analysis</h2>
+        <h2 style="color: #f8fafc; margin: 0 0 20px 0;">🎯 Code Quality Breakdown</h2>
         
-        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-          <div style="background: #0f0f0f; padding: 16px; border-radius: 8px;">
-            <h3 style="color: #f8fafc; margin: 0 0 16px 0; font-size: 16px;">Rule Summary</h3>
+        <div style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+          ${results.map((rule, index) => {
+            const passed = rule.status === 'pass';
+            const color = passed ? '#10b981' : '#ef4444';
+            const percentage = rule.score || 0;
             
-            <div style="margin-bottom: 16px;">
-              <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 8px;">
-                <span style="color: #64748b; font-size: 13px;">Passed Rules</span>
-                <span style="color: #10b981; font-weight: bold;">${passedRules}</span>
-              </div>
-              <div style="
-                width: 100%;
-                height: 6px;
-                background: var(--border-dark);
-                border-radius: 3px;
-                overflow: hidden;
-              ">
-                <div style="
-                  width: ${(passedRules / 9) * 100}%;
-                  height: 100%;
-                  background: #10b981;
-                "></div>
-              </div>
-            </div>
-            
-            <div style="margin-bottom: 16px;">
-              <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 8px;">
-                <span style="color: #64748b; font-size: 13px;">Failed Rules</span>
-                <span style="color: #ef4444; font-weight: bold;">${failedRules}</span>
-              </div>
-              <div style="
-                width: 100%;
-                height: 6px;
-                background: var(--border-dark);
-                border-radius: 3px;
-                overflow: hidden;
-              ">
-                <div style="
-                  width: ${(failedRules / 9) * 100}%;
-                  height: 100%;
-                  background: #ef4444;
-                "></div>
-              </div>
-            </div>
-            
-            <div>
-              <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Overall Score</div>
-              <div style="color: #f8fafc; font-size: 24px; font-weight: bold;">
-                ${nineRulesData.overallScore || 0}/100
-              </div>
-            </div>
-          </div>
-          
-          <div style="background: #0f0f0f; padding: 16px; border-radius: 8px;">
-            <h3 style="color: #f8fafc; margin: 0 0 16px 0; font-size: 16px;">Issue Distribution</h3>
-            
-            <div style="display: grid; gap: 12px;">
-              <div style="display: flex; justify-content: between; align-items: center;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <div style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></div>
-                  <span style="color: #f8fafc; font-size: 13px;">Critical Issues</span>
+            return `
+              <div style="background: #0f0f0f; padding: 12px 16px; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="color: ${color}; font-size: 14px;">
+                      ${passed ? '✅' : '❌'}
+                    </span>
+                    <span style="color: #f8fafc; font-size: 14px;">
+                      Rule ${index + 1}: ${rule.rule}
+                    </span>
+                  </div>
+                  <span style="
+                    background: ${color}20;
+                    color: ${color};
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    font-size: 11px;
+                  ">
+                    ${percentage}%
+                  </span>
                 </div>
-                <span style="color: #ef4444; font-weight: bold;">${nineRulesData.criticalIssues || 0}</span>
-              </div>
-              
-              <div style="display: flex; justify-content: between; align-items: center;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <div style="width: 12px; height: 12px; border-radius: 50%; background: #f59e0b;"></div>
-                  <span style="color: #f8fafc; font-size: 13px;">Warnings</span>
+                
+                <div style="background: #0a0a0a; height: 6px; border-radius: 3px; overflow: hidden;">
+                  <div style="
+                    width: ${percentage}%;
+                    height: 100%;
+                    background: ${color};
+                    transition: width 0.3s ease;
+                  "></div>
                 </div>
-                <span style="color: #f59e0b; font-weight: bold;">${nineRulesData.warnings || 0}</span>
+                
+                ${rule.issues && rule.issues.length > 0 ? `
+                  <div style="color: #ef4444; font-size: 11px; margin-top: 6px;">
+                    ${rule.issues.length} violation${rule.issues.length > 1 ? 's' : ''} found
+                  </div>
+                ` : ''}
               </div>
-              
-              <div style="display: flex; justify-content: between; align-items: center;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <div style="width: 12px; height: 12px; border-radius: 50%; background: #10b981;"></div>
-                  <span style="color: #f8fafc; font-size: 13px;">Passed Validations</span>
-                </div>
-                <span style="color: #10b981; font-weight: bold;">${passedRules}</span>
-              </div>
-            </div>
-            
-            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #252525;">
-              <div style="color: #64748b; font-size: 12px; margin-bottom: 8px;">Top Issues:</div>
-              ${results.filter(r => r.issues && r.issues.length > 0).slice(0, 2).map(rule => `
-                <div style="margin-bottom: 8px; padding: 8px; background: #ef444410; border-radius: 4px;">
-                  <div style="color: #ef4444; font-size: 12px; font-weight: 500;">${rule.rule}</div>
-                  <div style="color: #94a3b8; font-size: 11px;">${rule.issues.length} issue${rule.issues.length > 1 ? 's' : ''}</div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
+            `;
+          }).join('')}
         </div>
       </div>
     `;
-  }
-  
+  };
+
   window.renderEntityDistribution = function(architectureData) {
-    const interfaces = architectureData.types?.interfaces || [];
-    const databaseTypes = interfaces.filter(i => i.category === 'database').length;
-    const componentTypes = interfaces.filter(i => i.category === 'component').length;
-    const otherTypes = interfaces.length - databaseTypes - componentTypes;
+    const entities = {
+      'Tables': architectureData.tables?.length || 0,
+      'Hooks': architectureData.hooks?.length || 0,
+      'Components': architectureData.components?.length || 0,
+      'Pages': architectureData.pages?.length || 0,
+      'APIs': architectureData.apis?.length || 0
+    };
+    
+    const total = Object.values(entities).reduce((sum, val) => sum + val, 0);
+    
+    const colors = {
+      'Tables': '#ef4444',
+      'Hooks': '#3b82f6',
+      'Components': '#8b5cf6',
+      'Pages': '#10b981',
+      'APIs': '#f59e0b'
+    };
     
     return `
       <div style="
         background: #1a1a1a;
         border: 1px solid #333;
         border-radius: 12px;
-        padding: 20px;
+        padding: 24px;
       ">
-        <h2 style="color: #f8fafc; margin: 0 0 20px 0;">🏗️ Entity Distribution</h2>
+        <h2 style="color: #f8fafc; margin: 0 0 20px 0;">📦 Entity Distribution</h2>
         
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-          <div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
-              <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; text-align: center;">
-                <div style="color: #3b82f6; font-size: 24px; margin-bottom: 8px;">🗃️</div>
-                <div style="color: #3b82f6; font-size: 20px; font-weight: bold; margin-bottom: 4px;">${databaseTypes}</div>
-                <div style="color: #64748b; font-size: 12px;">Database Types</div>
-              </div>
-              
-              <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; text-align: center;">
-                <div style="color: #10b981; font-size: 24px; margin-bottom: 8px;">🧩</div>
-                <div style="color: #10b981; font-size: 20px; font-weight: bold; margin-bottom: 4px;">${componentTypes}</div>
-                <div style="color: #64748b; font-size: 12px;">Components</div>
-              </div>
-              
-              <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; text-align: center;">
-                <div style="color: #f59e0b; font-size: 24px; margin-bottom: 8px;">📦</div>
-                <div style="color: #f59e0b; font-size: 20px; font-weight: bold; margin-bottom: 4px;">${otherTypes}</div>
-                <div style="color: #64748b; font-size: 12px;">Other Types</div>
-              </div>
-            </div>
-          </div>
-          
-          <div style="background: #0f0f0f; padding: 16px; border-radius: 8px;">
-            <h3 style="color: #f8fafc; margin: 0 0 16px 0; font-size: 16px;">Architecture Health</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+          ${Object.entries(entities).map(([name, count]) => {
+            const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+            const color = colors[name];
             
-            <div style="margin-bottom: 16px;">
-              <div style="color: #64748b; font-size: 12px; margin-bottom: 8px;">
-                Type Coverage: ${Math.min(100, Math.max(60, interfaces.length * 2))}%
-              </div>
+            return `
               <div style="
-                width: 100%;
-                height: 8px;
-                background: var(--border-dark);
-                border-radius: 4px;
-                overflow: hidden;
+                background: #0f0f0f;
+                padding: 16px;
+                border-radius: 8px;
+                text-align: center;
+                border-top: 3px solid ${color};
               ">
                 <div style="
-                  width: ${Math.min(100, Math.max(60, interfaces.length * 2))}%;
-                  height: 100%;
-                  background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
-                "></div>
+                  width: 60px;
+                  height: 60px;
+                  border-radius: 50%;
+                  background: ${color}20;
+                  border: 2px solid ${color};
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin: 0 auto 12px auto;
+                ">
+                  <div style="
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: ${color};
+                  ">
+                    ${count}
+                  </div>
+                </div>
+                <div style="color: #f8fafc; font-size: 14px; margin-bottom: 4px;">
+                  ${name}
+                </div>
+                <div style="color: #64748b; font-size: 12px;">
+                  ${percentage}% of total
+                </div>
               </div>
+            `;
+          }).join('')}
+        </div>
+        
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #333;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="color: #94a3b8; font-size: 14px;">
+              Total Entities
             </div>
-            
-            <div style="margin-bottom: 16px;">
-              <div style="color: #64748b; font-size: 12px; margin-bottom: 8px;">
-                Relationship Depth: Good
-              </div>
-              <div style="
-                width: 100%;
-                height: 8px;
-                background: var(--border-dark);
-                border-radius: 4px;
-                overflow: hidden;
-              ">
-                <div style="
-                  width: 75%;
-                  height: 100%;
-                  background: linear-gradient(90deg, #7c3aed 0%, #10b981 100%);
-                "></div>
-              </div>
-            </div>
-            
-            <div style="color: #10b981; font-size: 12px; text-align: center; margin-top: 16px;">
-              ✅ Well-structured architecture
+            <div style="color: #f8fafc; font-size: 20px; font-weight: bold;">
+              ${total}
             </div>
           </div>
         </div>
       </div>
     `;
-  }
-  
-  // Show all violations function
-  window.showAllViolations = function(containerId, violations) {
-    // Find the violations container and expand it
-    const violationsList = document.querySelector('#contractViolationsList') || 
-                          document.querySelector('[style*="display: flex; flex-direction: column; gap: 12px;"]');
-    
-    if (violationsList && violations) {
-      // Re-render with all violations
-      violationsList.innerHTML = violations.map(violation => `
-        <div style="
-          background: #0f0f0f;
-          border-left: 4px solid #ef4444;
-          padding: 16px;
-          border-radius: 0 8px 8px 0;
-        ">
-          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-            <div style="color: #ef4444; font-weight: 500; margin-right: 12px;">
-              ${violation.entity}
-            </div>
-            <div style="
-              background: #ef444420;
-              color: #ef4444;
-              padding: 2px 8px;
-              border-radius: 12px;
-              font-size: 11px;
-              text-transform: uppercase;
-            ">
-              ${violation.type}
-            </div>
-          </div>
-          <div style="color: #f8fafc; margin-bottom: 8px; font-size: 14px;">
-            ${violation.message}
-          </div>
-          <div style="color: #64748b; font-size: 12px; font-family: monospace; margin-bottom: 8px;">
-            ${violation.location}
-          </div>
-          ${violation.suggestion ? `
-            <div style="color: #3b82f6; font-size: 13px; font-style: italic;">
-              💡 ${violation.suggestion}
-            </div>
-          ` : ''}
-        </div>
-      `).join('');
-      
-      // Hide the entire "Show All" button container
-      const showAllContainer = document.querySelector('button[onclick*="showAllViolations"]')?.parentElement;
-      if (showAllContainer) {
-        showAllContainer.style.display = 'none';
-      }
-    }
   };
 
 })();
