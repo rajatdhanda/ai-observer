@@ -819,6 +819,7 @@
           
           ${renderRulesScore(data)}
           ${renderRulesSummary(data)}
+          ${renderContractDetections(data)}
           ${renderCriticalViolations(data)}
           ${renderAllViolations(data)}
         </div>
@@ -884,6 +885,85 @@
     `;
   }
   
+  function renderContractDetections(data) {
+    if (!data.contractDetections) return '';
+    
+    const { summary, detections } = data.contractDetections;
+    if (!summary) return '';
+    
+    const hasDetections = summary.missing > 0 || summary.outdated > 0 || summary.unused > 0 || summary.mismatches > 0;
+    if (!hasDetections) return '';
+    
+    return `
+      <div style="
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+      ">
+        <h3 style="color: #f8fafc; margin: 0 0 20px 0;">🔍 Contract Detection Analysis</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+          ${summary.missing > 0 ? `
+            <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; border-left: 3px solid #ef4444;">
+              <div style="color: #ef4444; font-size: 24px; font-weight: bold;">${summary.missing}</div>
+              <div style="color: #94a3b8; font-size: 14px;">Missing Contracts</div>
+              <div style="color: #64748b; font-size: 12px; margin-top: 4px;">Entities without contracts</div>
+            </div>
+          ` : ''}
+          
+          ${summary.outdated > 0 ? `
+            <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; border-left: 3px solid #f59e0b;">
+              <div style="color: #f59e0b; font-size: 24px; font-weight: bold;">${summary.outdated}</div>
+              <div style="color: #94a3b8; font-size: 14px;">Outdated Contracts</div>
+              <div style="color: #64748b; font-size: 12px; margin-top: 4px;">New fields detected</div>
+            </div>
+          ` : ''}
+          
+          ${summary.unused > 0 ? `
+            <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; border-left: 3px solid #3b82f6;">
+              <div style="color: #3b82f6; font-size: 24px; font-weight: bold;">${summary.unused}</div>
+              <div style="color: #94a3b8; font-size: 14px;">Unused Contracts</div>
+              <div style="color: #64748b; font-size: 12px; margin-top: 4px;">Not used in code</div>
+            </div>
+          ` : ''}
+          
+          ${summary.mismatches > 0 ? `
+            <div style="background: #0f0f0f; padding: 16px; border-radius: 8px; border-left: 3px solid #ef4444;">
+              <div style="color: #ef4444; font-size: 24px; font-weight: bold;">${summary.mismatches}</div>
+              <div style="color: #94a3b8; font-size: 14px;">Naming Mismatches</div>
+              <div style="color: #64748b; font-size: 12px; margin-top: 4px;">snake_case vs camelCase</div>
+            </div>
+          ` : ''}
+        </div>
+        
+        ${detections && detections.filter(d => d.type === 'missing').length > 0 ? `
+          <div style="background: #0f0f0f; padding: 16px; border-radius: 8px;">
+            <h4 style="color: #ef4444; margin: 0 0 12px 0;">Missing Contracts Detected:</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              ${detections.filter(d => d.type === 'missing').slice(0, 10).map(d => `
+                <span style="
+                  background: #ef444420;
+                  color: #f87171;
+                  padding: 4px 12px;
+                  border-radius: 16px;
+                  font-size: 13px;
+                  border: 1px solid #ef444440;
+                ">
+                  ${d.entity}
+                </span>
+              `).join('')}
+            </div>
+            <div style="color: #64748b; font-size: 12px; margin-top: 12px;">
+              💡 Add these entities to contracts.yaml to define their data structure
+            </div>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+  
   function renderRulesSummary(data) {
     const rules = [
       { name: 'Type-Database Alignment', impact: '30%', description: 'All DB functions must parse with Zod' },
@@ -891,6 +971,7 @@
       { name: 'Error Handling', impact: '20%', description: 'Try-catch blocks and error states' },
       { name: 'Loading States', impact: '15%', description: 'Loading indicators in hooks' },
       { name: 'API Type Safety', impact: '10%', description: 'Parse all API inputs/outputs' },
+      { name: 'Contract Compliance', impact: '10%', description: 'Entities have defined contracts' },
       { name: 'Registry Usage', impact: '<5%', description: 'No raw route strings' },
       { name: 'Cache Invalidation', impact: '<5%', description: 'Mutations invalidate cache' },
       { name: 'Form Validation', impact: '<5%', description: 'Forms have validation' },
