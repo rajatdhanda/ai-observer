@@ -9,6 +9,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as ts from 'typescript';
 
+interface FileMetrics {
+  loc: number;  // Lines of code
+  functions: number;  // Number of functions
+  exports: number;  // Number of exports
+  imports: number;  // Number of imports
+  complexity: number;  // Cyclomatic complexity estimate
+}
+
 interface CodebaseMap {
   meta: {
     generated: string;
@@ -27,6 +35,7 @@ interface CodebaseMap {
     hasFormValidation?: number;
     mutations?: string[];
     invalidates?: string[];
+    metrics?: FileMetrics;
   }>;
 }
 
@@ -197,9 +206,35 @@ export class MapGenerator {
     return names;
   }
 
+  private calculateMetrics(content: string): FileMetrics {
+    const lines = content.split('\n');
+    const loc = lines.filter(l => l.trim() && !l.trim().startsWith('//')).length;
+    
+    // Count functions (simple regex-based)
+    const functionMatches = content.match(/function\s+\w+|=>\s*{|async\s+\w+|constructor\s*\(|class\s+\w+/g) || [];
+    const functions = functionMatches.length;
+    
+    // Count exports (already calculated elsewhere, but for metrics)
+    const exportMatches = content.match(/export\s+/g) || [];
+    const exports = exportMatches.length;
+    
+    // Count imports
+    const importMatches = content.match(/import\s+.+from/g) || [];
+    const imports = importMatches.length;
+    
+    // Estimate complexity (if statements, loops, switches)
+    const complexityPatterns = content.match(/if\s*\(|for\s*\(|while\s*\(|switch\s*\(|\?\s*:|&&|\|\|/g) || [];
+    const complexity = complexityPatterns.length + 1; // +1 base complexity
+    
+    return { loc, functions, exports, imports, complexity };
+  }
+  
   private analyzeFile(content: string, filePath: string): any {
     const analysis: any = {};
     const filename = path.basename(filePath);
+    
+    // Add file metrics
+    analysis.metrics = this.calculateMetrics(content);
     
     // Check for validation patterns
     if (content.includes('.parse(') || content.includes('.safeParse(')) {

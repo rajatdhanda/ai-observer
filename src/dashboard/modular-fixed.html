@@ -285,10 +285,8 @@
   <div class="tabs">
     <button class="tab active" onclick="switchTab('overview')">Overview</button>
     <button class="tab" onclick="switchTab('architecture')">Architecture</button>
-    <button class="tab" onclick="switchTab('validation')">Validation</button>
-    <button class="tab" onclick="switchTab('boundaries')">Boundaries</button>
-    <button class="tab" onclick="switchTab('analytics')">Analytics</button>
     <button class="tab" onclick="switchTab('9rules')">9 Rules</button>
+    <button class="tab" onclick="switchTab('files')">File Analysis</button>
   </div>
   
   <!-- Main Container -->
@@ -340,6 +338,7 @@
   <script src="/components/component-details-viewer.js"></script>
   <script src="/components/page-details-viewer.js"></script>
   <script src="/components/sidebar-navigator.js"></script>
+  <script src="/components/file-analysis-view.js"></script>
   <!-- Production Configuration -->
   <script>
     // AI Observer Production Configuration
@@ -711,20 +710,12 @@
           loadArchitectureView();
           break;
           
-        case 'validation':
-          loadValidationView();
-          break;
-          
-        case 'boundaries':
-          loadBoundariesView();
-          break;
-          
         case '9rules':
           loadNineRulesView();
           break;
           
-        case 'analytics':
-          loadAnalyticsView();
+        case 'files':
+          loadFileAnalysisView();
           break;
           
         default:

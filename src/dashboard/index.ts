@@ -2,7 +2,6 @@ import * as http from 'http';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ProjectAnalyzer } from '../analyzer';
-import { ProjectValidator } from '../validator';
 import { TableMapper } from '../validator/table-mapper';
 import { NineRulesValidator } from '../validator/nine-rules-validator';
 import { ContractValidator } from '../validator/contract-validator';
