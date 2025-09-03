@@ -782,6 +782,270 @@
     `;
   }
   
+  // 9 Rules View - Map-based validation
+  window.loadNineRulesView = async function() {
+    const mainContent = document.getElementById('mainContent');
+    mainContent.innerHTML = `
+      <div style="padding: 20px;">
+        <div style="text-align: center; color: #9ca3af; margin: 40px 0;">
+          <div style="font-size: 20px; margin-bottom: 16px;">⟳</div>
+          <div>Running 9 Core Validation Rules...</div>
+        </div>
+      </div>
+    `;
+    
+    try {
+      const response = await fetch('/api/map-validation');
+      if (!response.ok) throw new Error('Failed to fetch validation data');
+      
+      const data = await response.json();
+      
+      mainContent.innerHTML = `
+        <div style="padding: 20px;">
+          <div style="
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            color: white;
+          ">
+            <h1 style="margin: 0 0 8px 0; display: flex; align-items: center; gap: 12px;">
+              🎯 9 Core Validation Rules
+            </h1>
+            <p style="margin: 0; opacity: 0.9; font-size: 14px;">
+              Map-based validation covering 90% of production bugs
+            </p>
+          </div>
+          
+          ${renderRulesScore(data)}
+          ${renderRulesSummary(data)}
+          ${renderCriticalViolations(data)}
+          ${renderAllViolations(data)}
+        </div>
+      `;
+    } catch (error) {
+      console.error('Error loading 9 rules data:', error);
+      mainContent.innerHTML = `
+        <div style="padding: 20px;">
+          <div style="text-align: center; color: #ef4444; margin: 40px 0;">
+            <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+            <h2>Error Loading Validation</h2>
+            <p style="color: #64748b;">Failed to load validation data: ${error.message}</p>
+          </div>
+        </div>
+      `;
+    }
+  };
+  
+  function renderRulesScore(data) {
+    const score = data.score || 0;
+    const scoreColor = score >= 80 ? '#10b981' : score >= 50 ? '#f59e0b' : '#ef4444';
+    const scoreText = score >= 80 ? 'Excellent' : score >= 50 ? 'Needs Work' : 'Critical';
+    
+    return `
+      <div style="
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+      ">
+        <div style="display: flex; align-items: center; gap: 24px;">
+          <div style="
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: ${scoreColor}20;
+            border: 3px solid ${scoreColor};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+          ">
+            <div style="font-size: 32px; font-weight: bold; color: ${scoreColor};">${score}</div>
+            <div style="font-size: 11px; color: #64748b;">SCORE</div>
+          </div>
+          
+          <div style="flex: 1;">
+            <div style="font-size: 20px; color: ${scoreColor}; margin-bottom: 8px;">${scoreText}</div>
+            <div style="color: #94a3b8;">
+              ${data.violations?.length || 0} violations found across ${Object.keys(data.summary?.byRule || {}).length} rules
+            </div>
+            ${data.summary?.bySeverity ? `
+              <div style="display: flex; gap: 16px; margin-top: 12px;">
+                <span style="color: #ef4444;">⚫ Critical: ${data.summary.bySeverity.critical || 0}</span>
+                <span style="color: #f59e0b;">⚫ Warning: ${data.summary.bySeverity.warning || 0}</span>
+                <span style="color: #3b82f6;">⚫ Info: ${data.summary.bySeverity.info || 0}</span>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  function renderRulesSummary(data) {
+    const rules = [
+      { name: 'Type-Database Alignment', impact: '30%', description: 'All DB functions must parse with Zod' },
+      { name: 'Hook-Database Pattern', impact: '25%', description: 'Components → Hooks → DB only' },
+      { name: 'Error Handling', impact: '20%', description: 'Try-catch blocks and error states' },
+      { name: 'Loading States', impact: '15%', description: 'Loading indicators in hooks' },
+      { name: 'API Type Safety', impact: '10%', description: 'Parse all API inputs/outputs' },
+      { name: 'Registry Usage', impact: '<5%', description: 'No raw route strings' },
+      { name: 'Cache Invalidation', impact: '<5%', description: 'Mutations invalidate cache' },
+      { name: 'Form Validation', impact: '<5%', description: 'Forms have validation' },
+      { name: 'Auth Guards', impact: '<5%', description: 'Protected routes have auth' }
+    ];
+    
+    const violations = data.summary?.byRule || {};
+    
+    return `
+      <div style="
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+      ">
+        <h3 style="color: #f8fafc; margin: 0 0 20px 0;">📋 Rules Coverage</h3>
+        
+        <div style="display: grid; gap: 12px;">
+          ${rules.map((rule, index) => {
+            const count = violations[rule.name] || 0;
+            const status = count === 0 ? 'pass' : 'fail';
+            const color = status === 'pass' ? '#10b981' : '#ef4444';
+            
+            return `
+              <div style="
+                background: #0f0f0f;
+                padding: 16px;
+                border-radius: 8px;
+                border-left: 3px solid ${color};
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              ">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="color: ${color}; font-size: 18px;">
+                      ${status === 'pass' ? '✅' : '❌'}
+                    </span>
+                    <div>
+                      <div style="color: #f8fafc; font-weight: 500;">
+                        Rule ${index + 1}: ${rule.name}
+                      </div>
+                      <div style="color: #64748b; font-size: 12px;">
+                        ${rule.description} (${rule.impact} of bugs)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div style="
+                  background: ${color}20;
+                  color: ${color};
+                  padding: 4px 8px;
+                  border-radius: 12px;
+                  font-size: 12px;
+                  font-weight: 600;
+                ">
+                  ${count} ${count === 1 ? 'issue' : 'issues'}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+  
+  function renderCriticalViolations(data) {
+    const critical = data.violations?.filter(v => v.severity === 'critical') || [];
+    
+    if (critical.length === 0) return '';
+    
+    return `
+      <div style="
+        background: #1a1a1a;
+        border: 1px solid #ef4444;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+      ">
+        <h3 style="color: #ef4444; margin: 0 0 16px 0;">
+          🚨 Critical Issues (${critical.length})
+        </h3>
+        
+        <div style="display: grid; gap: 12px;">
+          ${critical.slice(0, 5).map(v => `
+            <div style="
+              background: #ef444410;
+              border-left: 3px solid #ef4444;
+              padding: 12px;
+              border-radius: 0 8px 8px 0;
+            ">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <div style="color: #ef4444; font-weight: 500;">${v.rule}</div>
+                <div style="color: #64748b; font-size: 12px; font-family: monospace;">
+                  ${v.file.split('/').pop()}
+                </div>
+              </div>
+              <div style="color: #f8fafc; margin-bottom: 8px;">${v.message}</div>
+              <div style="color: #3b82f6; font-size: 13px; font-style: italic;">
+                💡 ${v.fix}
+              </div>
+            </div>
+          `).join('')}
+          
+          ${critical.length > 5 ? `
+            <div style="text-align: center; color: #64748b; font-size: 12px;">
+              ... and ${critical.length - 5} more critical issues
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+  
+  function renderAllViolations(data) {
+    const warnings = data.violations?.filter(v => v.severity === 'warning') || [];
+    
+    if (warnings.length === 0) return '';
+    
+    return `
+      <div style="
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 20px;
+      ">
+        <h3 style="color: #f59e0b; margin: 0 0 16px 0;">
+          ⚠️ Warnings (${warnings.length})
+        </h3>
+        
+        <div style="display: grid; gap: 8px;">
+          ${warnings.map(v => `
+            <div style="
+              background: #0f0f0f;
+              padding: 12px;
+              border-radius: 8px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            ">
+              <div>
+                <span style="color: #f59e0b;">${v.rule}:</span>
+                <span style="color: #94a3b8; margin-left: 8px;">${v.message}</span>
+              </div>
+              <div style="color: #64748b; font-size: 11px; font-family: monospace;">
+                ${v.file.split('/').pop()}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+  
   // Analytics tab view
   window.loadAnalyticsView = async function() {
     const mainContent = document.getElementById('mainContent');

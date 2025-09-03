@@ -23,7 +23,12 @@
     "validate-contracts:streax": "ts-node src/cli/validate-contracts.ts test-projects/streax",
     "unified": "ts-node src/dashboard/unified-server.ts",
     "unified:here": "ts-node src/dashboard/unified-server.ts .",
-    "unified:streax": "ts-node src/dashboard/unified-server.ts test-projects/streax"
+    "unified:streax": "ts-node src/dashboard/unified-server.ts test-projects/streax",
+    "observer:map": "ts-node src/observer/map-generator.ts",
+    "observer:map:streax": "ts-node src/observer/map-generator.ts /Users/rajatdhanda/Tech/Projects/streax streax-map.json",
+    "observer:map:watch": "nodemon --exec ts-node src/observer/map-generator.ts --ext ts,tsx,js,jsx",
+    "observer:validate": "ts-node src/observer/validator-runner.ts",
+    "observer:validate:streax": "ts-node src/observer/validator-runner.ts streax-map.json"
   },
   "keywords": [],
   "author": "",

@@ -1,0 +1,1209 @@
+{
+  "meta": {
+    "generated": "2025-09-03T14:49:13.074Z",
+    "projectPath": "/Users/rajatdhanda/Tech/Projects/streax",
+    "fileCount": 54
+  },
+  "exports": {
+    "next.config.ts": [
+      {
+        "name": "nextConfig",
+        "line": 7
+      }
+    ],
+    "src/app/(main)/crm/page.tsx": [
+      {
+        "name": "CRMPage",
+        "line": 81
+      }
+    ],
+    "src/app/(main)/feed/page.tsx": [
+      {
+        "name": "FeedPage",
+        "line": 220
+      }
+    ],
+    "src/app/(main)/insurance/page.tsx": [
+      {
+        "name": "InsurancePage",
+        "line": 35
+      }
+    ],
+    "src/app/(main)/learning/page.tsx": [
+      {
+        "name": "LearningPage",
+        "line": 258
+      }
+    ],
+    "src/app/(main)/orders/cart/page.tsx": [
+      {
+        "name": "CartPage",
+        "line": 37
+      }
+    ],
+    "src/app/(main)/orders/order-history/page.tsx": [
+      {
+        "name": "OrderHistoryPage",
+        "line": 67
+      }
+    ],
+    "src/app/(main)/orders/page.tsx": [
+      {
+        "name": "OrdersPage",
+        "line": 48
+      }
+    ],
+    "src/app/layout.tsx": [
+      {
+        "name": "metadata",
+        "line": 15
+      },
+      {
+        "name": "RootLayout",
+        "line": 20
+      }
+    ],
+    "src/app/page.tsx": [
+      {
+        "name": "Home",
+        "line": 3
+      }
+    ],
+    "src/app/test/page.tsx": [
+      {
+        "name": "TestPage",
+        "line": 6
+      }
+    ],
+    "src/components/core/appointment-card.tsx": [
+      {
+        "name": "AppointmentCard",
+        "line": 13
+      }
+    ],
+    "src/components/core/avatar.tsx": [
+      {
+        "name": "Avatar",
+        "line": 19
+      }
+    ],
+    "src/components/core/badge.tsx": [
+      {
+        "name": "Badge",
+        "line": 16
+      }
+    ],
+    "src/components/core/bottom-nav.tsx": [
+      {
+        "name": "BottomNav",
+        "line": 50
+      }
+    ],
+    "src/components/core/button.tsx": [
+      {
+        "name": "Button",
+        "line": 15
+      }
+    ],
+    "src/components/core/card.tsx": [
+      {
+        "name": "Card",
+        "line": 18
+      }
+    ],
+    "src/components/core/category-card.tsx": [
+      {
+        "name": "CategoryCard",
+        "line": 14
+      }
+    ],
+    "src/components/core/client-card.tsx": [
+      {
+        "name": "ClientCard",
+        "line": 18
+      }
+    ],
+    "src/components/core/course-card.tsx": [
+      {
+        "name": "CourseCard",
+        "line": 30
+      }
+    ],
+    "src/components/core/image.tsx": [
+      {
+        "name": "Image",
+        "line": 18
+      }
+    ],
+    "src/components/core/index.ts": [
+      {
+        "name": "Card",
+        "line": 4
+      },
+      {
+        "name": "Button",
+        "line": 5
+      },
+      {
+        "name": "Input",
+        "line": 6
+      },
+      {
+        "name": "NavBar",
+        "line": 7
+      },
+      {
+        "name": "List",
+        "line": 8
+      },
+      {
+        "name": "Sheet",
+        "line": 9
+      },
+      {
+        "name": "Avatar",
+        "line": 10
+      },
+      {
+        "name": "Badge",
+        "line": 11
+      },
+      {
+        "name": "Image",
+        "line": 12
+      },
+      {
+        "name": "Skeleton",
+        "line": 13
+      }
+    ],
+    "src/components/core/input.tsx": [
+      {
+        "name": "Input",
+        "line": 17
+      }
+    ],
+    "src/components/core/list.tsx": [
+      {
+        "name": "List",
+        "line": 22
+      }
+    ],
+    "src/components/core/live-session-banner.tsx": [
+      {
+        "name": "LiveSessionBanner",
+        "line": 27
+      }
+    ],
+    "src/components/core/navbar.tsx": [
+      {
+        "name": "NavBar",
+        "line": 26
+      }
+    ],
+    "src/components/core/page-header.tsx": [
+      {
+        "name": "PageHeader",
+        "line": 17
+      }
+    ],
+    "src/components/core/post-card.tsx": [
+      {
+        "name": "PostCard",
+        "line": 18
+      }
+    ],
+    "src/components/core/post-composer.tsx": [
+      {
+        "name": "PostComposer",
+        "line": 17
+      }
+    ],
+    "src/components/core/product-card.tsx": [
+      {
+        "name": "ProductCard",
+        "line": 18
+      }
+    ],
+    "src/components/core/search-bar.tsx": [
+      {
+        "name": "SearchBar",
+        "line": 14
+      }
+    ],
+    "src/components/core/service-card.tsx": [
+      {
+        "name": "ServiceCard",
+        "line": 14
+      }
+    ],
+    "src/components/core/sheet.tsx": [
+      {
+        "name": "Sheet",
+        "line": 18
+      }
+    ],
+    "src/components/core/skeleton.tsx": [
+      {
+        "name": "Skeleton",
+        "line": 16
+      }
+    ],
+    "src/components/core/stats-card.tsx": [
+      {
+        "name": "StatsCard",
+        "line": 13
+      }
+    ],
+    "src/components/core/tabs.tsx": [
+      {
+        "name": "Tabs",
+        "line": 19
+      }
+    ],
+    "src/components/index.ts": [
+      {
+        "name": "AppointmentCard",
+        "line": 4
+      },
+      {
+        "name": "Avatar",
+        "line": 5
+      },
+      {
+        "name": "Badge",
+        "line": 6
+      },
+      {
+        "name": "BottomNav",
+        "line": 7
+      },
+      {
+        "name": "Button",
+        "line": 8
+      },
+      {
+        "name": "Card",
+        "line": 9
+      },
+      {
+        "name": "CategoryCard",
+        "line": 10
+      },
+      {
+        "name": "ClientCard",
+        "line": 11
+      },
+      {
+        "name": "CourseCard",
+        "line": 12
+      },
+      {
+        "name": "Input",
+        "line": 13
+      },
+      {
+        "name": "LiveSessionBanner",
+        "line": 14
+      },
+      {
+        "name": "NavBar",
+        "line": 15
+      },
+      {
+        "name": "PageHeader",
+        "line": 16
+      },
+      {
+        "name": "PostCard",
+        "line": 17
+      },
+      {
+        "name": "PostComposer",
+        "line": 18
+      },
+      {
+        "name": "ProductCard",
+        "line": 19
+      },
+      {
+        "name": "SearchBar",
+        "line": 20
+      },
+      {
+        "name": "ServiceCard",
+        "line": 21
+      },
+      {
+        "name": "Sheet",
+        "line": 22
+      },
+      {
+        "name": "Skeleton",
+        "line": 23
+      },
+      {
+        "name": "StatsCard",
+        "line": 24
+      },
+      {
+        "name": "Tabs",
+        "line": 25
+      }
+    ],
+    "src/hooks/useAuth.ts": [
+      {
+        "name": "useAuth",
+        "line": 7
+      }
+    ],
+    "src/hooks/useClients.ts": [
+      {
+        "name": "useClients",
+        "line": 7
+      }
+    ],
+    "src/hooks/useFeed.ts": [
+      {
+        "name": "useFeed",
+        "line": 7
+      }
+    ],
+    "src/hooks/useInsurance.ts": [
+      {
+        "name": "useInsurance",
+        "line": 7
+      }
+    ],
+    "src/hooks/useLearning.ts": [
+      {
+        "name": "useLearning",
+        "line": 7
+      }
+    ],
+    "src/hooks/useProducts.ts": [
+      {
+        "name": "useProducts",
+        "line": 7
+      }
+    ],
+    "src/lib/utils.ts": [
+      {
+        "name": "cn",
+        "line": 4
+      }
+    ],
+    "src/mocks/data.ts": [
+      {
+        "name": "mockUsers",
+        "line": 13
+      },
+      {
+        "name": "mockCurrentUser",
+        "line": 40
+      },
+      {
+        "name": "mockPosts",
+        "line": 45
+      },
+      {
+        "name": "mockLiveSessions",
+        "line": 96
+      },
+      {
+        "name": "mockProducts",
+        "line": 114
+      },
+      {
+        "name": "mockInsurancePolicy",
+        "line": 172
+      },
+      {
+        "name": "mockInsuranceClaims",
+        "line": 184
+      },
+      {
+        "name": "mockClients",
+        "line": 213
+      },
+      {
+        "name": "mockCourses",
+        "line": 261
+      },
+      {
+        "name": "getMockPostById",
+        "line": 318
+      },
+      {
+        "name": "getMockProductById",
+        "line": 319
+      },
+      {
+        "name": "getMockClientById",
+        "line": 320
+      },
+      {
+        "name": "getMockCourseById",
+        "line": 321
+      }
+    ],
+    "src/mocks/orders.ts": [
+      {
+        "name": "mockProducts",
+        "line": 6
+      },
+      {
+        "name": "mockOrders",
+        "line": 286
+      },
+      {
+        "name": "mockProfessional",
+        "line": 593
+      },
+      {
+        "name": "productCategories",
+        "line": 633
+      },
+      {
+        "name": "searchProducts",
+        "line": 643
+      },
+      {
+        "name": "getProductById",
+        "line": 665
+      },
+      {
+        "name": "getOrderById",
+        "line": 669
+      },
+      {
+        "name": "getOrdersByCustomer",
+        "line": 673
+      },
+      {
+        "name": "getActiveOrders",
+        "line": 677
+      },
+      {
+        "name": "calculateCartTotals",
+        "line": 684
+      }
+    ],
+    "src/mocks/products-db-aligned.ts": [
+      {
+        "name": "mockProductsDB",
+        "line": 5
+      },
+      {
+        "name": "systemCoupons",
+        "line": 578
+      },
+      {
+        "name": "calculatePriceWithPromotions",
+        "line": 671
+      },
+      {
+        "name": "findVariantByAttributes",
+        "line": 753
+      },
+      {
+        "name": "hasActiveFlashSale",
+        "line": 765
+      },
+      {
+        "name": "getBestDiscount",
+        "line": 777
+      },
+      {
+        "name": "getProductDisplayPrice",
+        "line": 799
+      },
+      {
+        "name": "getVariantStockStatus",
+        "line": 809
+      }
+    ],
+    "src/mocks/products-enhanced.ts": [
+      {
+        "name": "enhancedProducts",
+        "line": 168
+      },
+      {
+        "name": "activeFlashSales",
+        "line": 817
+      },
+      {
+        "name": "availableCoupons",
+        "line": 843
+      },
+      {
+        "name": "calculateVariantPrice",
+        "line": 888
+      },
+      {
+        "name": "findVariantByAttributes",
+        "line": 964
+      },
+      {
+        "name": "isOnFlashSale",
+        "line": 976
+      },
+      {
+        "name": "getBestDiscount",
+        "line": 981
+      }
+    ],
+    "tailwind.config.ts": [
+      {
+        "name": "config",
+        "line": 79
+      }
+    ]
+  },
+  "imports": {
+    "src/app/(main)/crm/page.tsx": [
+      "useState",
+      "Users",
+      "Calendar",
+      "Plus",
+      "Bell",
+      "Filter",
+      "Star",
+      "MessageCircle",
+      "Clock",
+      "BottomNav",
+      "AppointmentCard",
+      "SearchBar",
+      "Button",
+      "Card",
+      "Badge",
+      "Avatar"
+    ],
+    "src/app/(main)/feed/page.tsx": [
+      "useState",
+      "Camera",
+      "Video",
+      "HelpCircle",
+      "ArrowRight",
+      "BottomNav",
+      "PageHeader",
+      "PostCard",
+      "PostComposer",
+      "LiveSessionBanner",
+      "Button",
+      "Card"
+    ],
+    "src/app/(main)/insurance/page.tsx": [
+      "useState",
+      "MapPin",
+      "FileText",
+      "Phone",
+      "Pill",
+      "Shield",
+      "BottomNav",
+      "PageHeader",
+      "ServiceCard",
+      "Card",
+      "Button",
+      "Badge"
+    ],
+    "src/app/(main)/learning/page.tsx": [
+      "useState",
+      "Search",
+      "Bell",
+      "Home",
+      "ShoppingBag",
+      "Shield",
+      "Users",
+      "GraduationCap",
+      "Play",
+      "Clock",
+      "Award",
+      "TrendingUp",
+      "Star",
+      "BookOpen",
+      "Video",
+      "Card",
+      "Button",
+      "Badge",
+      "Avatar",
+      "BottomNav"
+    ],
+    "src/app/(main)/orders/cart/page.tsx": [
+      "useState",
+      "Link",
+      "ArrowLeft",
+      "Plus",
+      "Minus",
+      "Trash2",
+      "MapPin",
+      "CreditCard",
+      "Tag",
+      "ChevronRight",
+      "ShoppingCart",
+      "AlertCircle",
+      "BottomNav",
+      "Card",
+      "Button",
+      "Badge",
+      "mockProducts",
+      "mockProfessional",
+      "calculateCartTotals",
+      "getProductById"
+    ],
+    "src/app/(main)/orders/order-history/page.tsx": [
+      "useState",
+      "ArrowLeft",
+      "Package",
+      "Truck",
+      "CheckCircle",
+      "Clock",
+      "XCircle",
+      "ChevronRight",
+      "ChevronDown",
+      "ChevronUp",
+      "Filter",
+      "Download",
+      "RefreshCw",
+      "CreditCard",
+      "AlertCircle",
+      "MapPin",
+      "Calendar",
+      "Phone",
+      "Link",
+      "BottomNav",
+      "Card",
+      "Badge",
+      "Button",
+      "SearchBar",
+      "mockOrders",
+      "getProductById"
+    ],
+    "src/app/(main)/orders/page.tsx": [
+      "useState",
+      "useMemo",
+      "Link",
+      "ShoppingCart",
+      "Filter",
+      "Palette",
+      "Droplet",
+      "Sparkles",
+      "Scissors",
+      "Package",
+      "User",
+      "Zap",
+      "History",
+      "Search",
+      "X",
+      "ChevronRight",
+      "BottomNav",
+      "PageHeader",
+      "ProductCard",
+      "CategoryCard",
+      "SearchBar",
+      "Button",
+      "Card",
+      "Badge",
+      "mockProducts",
+      "productCategories",
+      "searchProducts",
+      "getActiveOrders"
+    ],
+    "src/app/layout.tsx": [
+      "Geist",
+      "Geist_Mono"
+    ],
+    "src/app/page.tsx": [
+      "Image"
+    ],
+    "src/app/test/page.tsx": [
+      "useState",
+      "useEffect"
+    ],
+    "src/components/core/appointment-card.tsx": [
+      "Card"
+    ],
+    "src/components/core/avatar.tsx": [
+      "React"
+    ],
+    "src/components/core/badge.tsx": [
+      "React"
+    ],
+    "src/components/core/bottom-nav.tsx": [
+      "Link",
+      "usePathname",
+      "Home",
+      "ShoppingBag",
+      "Shield",
+      "Users",
+      "GraduationCap"
+    ],
+    "src/components/core/button.tsx": [
+      "React"
+    ],
+    "src/components/core/card.tsx": [
+      "React"
+    ],
+    "src/components/core/category-card.tsx": [
+      "ReactNode",
+      "Card"
+    ],
+    "src/components/core/client-card.tsx": [
+      "Phone",
+      "Calendar",
+      "Clock",
+      "Card",
+      "Badge",
+      "Avatar"
+    ],
+    "src/components/core/course-card.tsx": [
+      "Clock",
+      "Star",
+      "Award",
+      "Play",
+      "Card",
+      "Badge",
+      "Button"
+    ],
+    "src/components/core/image.tsx": [
+      "useState",
+      "useEffect",
+      "useRef"
+    ],
+    "src/components/core/input.tsx": [
+      "React"
+    ],
+    "src/components/core/list.tsx": [
+      "React"
+    ],
+    "src/components/core/live-session-banner.tsx": [
+      "Play",
+      "Card",
+      "Button",
+      "Badge"
+    ],
+    "src/components/core/navbar.tsx": [
+      "React"
+    ],
+    "src/components/core/page-header.tsx": [
+      "ReactNode",
+      "Search",
+      "Bell",
+      "Plus",
+      "Button"
+    ],
+    "src/components/core/post-card.tsx": [
+      "Heart",
+      "MessageSquare",
+      "Share2",
+      "Bookmark",
+      "MoreVertical",
+      "CheckCircle",
+      "Avatar",
+      "Card"
+    ],
+    "src/components/core/post-composer.tsx": [
+      "Camera",
+      "Video",
+      "HelpCircle",
+      "BarChart",
+      "Avatar"
+    ],
+    "src/components/core/product-card.tsx": [
+      "Card",
+      "Button",
+      "Badge"
+    ],
+    "src/components/core/search-bar.tsx": [
+      "Search",
+      "Input"
+    ],
+    "src/components/core/service-card.tsx": [
+      "ReactNode",
+      "Card"
+    ],
+    "src/components/core/sheet.tsx": [
+      "useEffect",
+      "useRef"
+    ],
+    "src/components/core/skeleton.tsx": [
+      "React"
+    ],
+    "src/components/core/stats-card.tsx": [
+      "Card"
+    ],
+    "src/components/core/tabs.tsx": [
+      "ReactNode"
+    ],
+    "src/hooks/useAuth.ts": [
+      "useState",
+      "useEffect",
+      "mockCurrentUser"
+    ],
+    "src/hooks/useClients.ts": [
+      "useState",
+      "useEffect",
+      "mockClients"
+    ],
+    "src/hooks/useFeed.ts": [
+      "useState",
+      "useEffect",
+      "mockPosts",
+      "mockLiveSessions"
+    ],
+    "src/hooks/useInsurance.ts": [
+      "useState",
+      "useEffect",
+      "mockInsurancePolicy",
+      "mockInsuranceClaims"
+    ],
+    "src/hooks/useLearning.ts": [
+      "useState",
+      "useEffect",
+      "mockCourses"
+    ],
+    "src/hooks/useProducts.ts": [
+      "useState",
+      "useEffect",
+      "mockProducts"
+    ],
+    "src/lib/utils.ts": [
+      "clsx",
+      "type ClassValue",
+      "twMerge"
+    ],
+    "tailwind.config.ts": [
+      "tailwindcss-animate"
+    ]
+  },
+  "entryPoints": {
+    "/crm": {
+      "type": "page",
+      "protected": false
+    },
+    "/feed": {
+      "type": "page",
+      "protected": false
+    },
+    "/insurance": {
+      "type": "page",
+      "protected": false
+    },
+    "/learning": {
+      "type": "page",
+      "protected": false
+    },
+    "/orders/cart": {
+      "type": "page",
+      "protected": false
+    },
+    "/orders/order-history": {
+      "type": "page",
+      "protected": false
+    },
+    "/orders": {
+      "type": "page",
+      "protected": false
+    },
+    "/": {
+      "type": "page",
+      "protected": false
+    },
+    "/test": {
+      "type": "page",
+      "protected": false
+    }
+  },
+  "files": {
+    "next-env.d.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "next.config.js": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "next.config.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "postcss.config.js": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/(main)/crm/page.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/(main)/feed/page.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/(main)/insurance/page.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/(main)/learning/page.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/(main)/orders/cart/page.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/(main)/orders/order-history/page.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/(main)/orders/page.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/layout.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/page.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/test/page.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 1
+    },
+    "src/components/core/appointment-card.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/avatar.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/badge.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/bottom-nav.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/button.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/card.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/category-card.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/client-card.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/course-card.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/image.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/index.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/input.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/list.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/live-session-banner.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/navbar.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/page-header.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/post-card.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/post-composer.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/product-card.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/search-bar.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/service-card.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/sheet.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/skeleton.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/stats-card.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/core/tabs.tsx": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/components/index.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/hooks/useAuth.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0,
+      "hasLoadingState": 1,
+      "hasErrorState": 0
+    },
+    "src/hooks/useClients.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0,
+      "hasLoadingState": 1,
+      "hasErrorState": 0,
+      "mutations": [
+        "create",
+        "update"
+      ]
+    },
+    "src/hooks/useFeed.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 1,
+      "hasLoadingState": 1,
+      "hasErrorState": 1,
+      "mutations": [
+        "create",
+        "update"
+      ]
+    },
+    "src/hooks/useInsurance.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0,
+      "hasLoadingState": 1,
+      "hasErrorState": 0
+    },
+    "src/hooks/useLearning.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0,
+      "hasLoadingState": 1,
+      "hasErrorState": 0
+    },
+    "src/hooks/useProducts.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0,
+      "hasLoadingState": 1,
+      "hasErrorState": 0
+    },
+    "src/lib/utils.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/mocks/data.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/mocks/orders.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/mocks/products-db-aligned.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/mocks/products-enhanced.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/types/database.types.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/types/models.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "tailwind.config.ts": {
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    }
+  }
+}

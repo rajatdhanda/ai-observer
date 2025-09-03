@@ -129,6 +129,10 @@ class Dashboard {
         const boundaryResults = this.runBoundaryValidation();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(boundaryResults));
+      } else if (req.url === '/api/map-validation') {
+        const mapResults = this.runMapValidation();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(mapResults));
       } else if (req.url === '/api/versions') {
         const versionResults = this.runVersionValidation();
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -449,6 +453,32 @@ Available projects: ${this.availableProjects.length}
     }
   }
   
+  private runMapValidation() {
+    try {
+      // Generate or use existing map
+      const mapPath = path.join(__dirname, '..', '..', 'streax-map.json');
+      
+      if (!fs.existsSync(mapPath)) {
+        // Generate map first
+        const { MapGenerator } = require('../observer/map-generator');
+        const generator = new MapGenerator(this.projectPath);
+        generator.saveToFile(mapPath);
+      }
+      
+      // Run validators
+      const { ValidatorRunner } = require('../observer/validator-runner');
+      const runner = new ValidatorRunner(mapPath);
+      return runner.runAll();
+    } catch (error) {
+      console.error('Map validation error:', error);
+      return { 
+        violations: [], 
+        score: 0, 
+        summary: { error: (error as Error).message } 
+      };
+    }
+  }
+
   private runBoundaryValidation() {
     const validator = new BoundaryValidator(this.projectPath);
     const results = validator.analyze();
