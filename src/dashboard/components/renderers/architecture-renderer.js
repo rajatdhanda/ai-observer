@@ -18,9 +18,37 @@
     `;
     
     try {
-      // Get architecture data from existing endpoint
-      const response = await fetch('/api/analysis');
-      const data = await response.json();
+      // Fetch all entity types in parallel
+      const [tablesResp, hooksResp, componentsResp, pagesResp, apisResp] = await Promise.all([
+        fetch('/api/architecture-data?type=table'),
+        fetch('/api/architecture-data?type=hook'),
+        fetch('/api/architecture-data?type=component'),
+        fetch('/api/architecture-data?type=page'),
+        fetch('/api/architecture-data?type=api')
+      ]);
+      
+      const [tables, hooks, components, pages, apis] = await Promise.all([
+        tablesResp.json(),
+        hooksResp.json(),
+        componentsResp.json(),
+        pagesResp.json(),
+        apisResp.json()
+      ]);
+      
+      // Calculate aggregate metrics
+      const allItems = [...tables, ...hooks, ...components, ...pages, ...apis];
+      const data = {
+        tables,
+        hooks,
+        components,
+        pages,
+        apis,
+        healthScore: allItems.length > 0 
+          ? Math.round(allItems.reduce((sum, item) => sum + (item.healthScore || 0), 0) / allItems.length)
+          : 0,
+        issueCount: allItems.reduce((sum, item) => sum + (item.issueCount || 0), 0),
+        componentCount: components.length
+      };
       
       mainContent.innerHTML = `
         <div style="padding: 20px;">
