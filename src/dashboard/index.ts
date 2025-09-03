@@ -4,20 +4,12 @@ import * as path from 'path';
 import { EnhancedDataFlowAnalyzer } from '../analyzer/enhanced-data-flow';
 import { ProjectAnalyzer } from '../analyzer';
 import { BusinessLogicAnalyzer } from '../analyzer/business-logic-analyzer';
-import { renderBusinessView } from './components/business-view';
+// Removed unused component imports
 import { ProjectValidator } from '../validator';
-import { renderValidationView } from './components/validation-view';
 import { TableMapper } from '../validator/table-mapper';
-import { renderTableFlowView } from './components/table-flow-view';
-import { renderRegistryView } from './components/registry-view';
 import { NineRulesValidator } from '../validator/nine-rules-validator';
-import { renderNineRulesView } from './components/nine-rules-view';
-import { renderEnhancedNineRulesView } from './components/enhanced-nine-rules-view';
 import { DataFlowTracer } from '../validator/data-flow-tracer';
-import { renderDataFlowView } from './components/data-flow-view';
-import { renderEnhancedDataFlowView } from './components/enhanced-data-flow-view';
-import { renderDataFlowWithTabs } from './components/data-flow-tabs';
-import { renderContractView, parseContractErrors, ContractValidationResult } from './components/contract-view';
+import { parseContractErrors } from './types';
 import { ContractValidator } from '../validator/contract-validator';
 import { FileWatcher } from '../utils/file-watcher';
 import { BoundaryValidator } from '../validator/boundary-validator';
@@ -25,7 +17,7 @@ import { VersionValidator } from '../validator/version-validator';
 import { DesignSystemValidator } from '../validator/design-system-validator';
 import { TableContractValidator } from '../validator/table-contract-validator';
 import { ContractTestRunner } from '../validator/contract-test-runner';
-import { getUnifiedReport } from './components/unified-dashboard';
+// Dashboard components are now served as static JS files
 
 const PORT = 3001;
 
@@ -154,24 +146,24 @@ class Dashboard {
         res.end(JSON.stringify(business));
       } else if (req.url === '/api/business-view') {
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(renderBusinessView(this.businessData));
+        res.end('<div>Business view deprecated - use /modular-fixed</div>');
       } else if (req.url === '/api/validate') {
         const validation = await this.runValidation();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(validation));
       } else if (req.url === '/api/validation-view') {
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(renderValidationView(this.validationResults));
+        res.end('<div>Validation view deprecated - use /modular-fixed</div>');
       } else if (req.url === '/api/table-mapping') {
         const mapping = await this.mapTables();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(mapping));
       } else if (req.url === '/api/table-flow-view') {
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(renderTableFlowView(this.tableMappingResults));
+        res.end('<div>Table flow view deprecated - use /modular-fixed</div>');
       } else if (req.url === '/api/registry-view') {
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(renderRegistryView(this.validationResults));
+        res.end('<div>Registry view deprecated - use /modular-fixed</div>');
       } else if (req.url === '/api/nine-rules') {
         const results = await this.runNineRulesValidation();
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -199,17 +191,19 @@ class Dashboard {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(results));
       } else if (req.url === '/api/unified-report') {
+        // Import getUnifiedReport when needed
+        const { getUnifiedReport } = require('./components/unified-dashboard');
         const report = await getUnifiedReport(this.projectPath);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(report));
       } else if (req.url === '/api/nine-rules-view') {
-        const html = renderNineRulesView(this.nineRulesResults);
+        const html = '<div>Nine rules view deprecated - use /modular-fixed</div>';
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(html);
       } else if (req.url?.startsWith('/api/nine-rules-enhanced')) {
         const url = new URL(req.url, `http://localhost:${PORT}`);
         const groupBy = url.searchParams.get('groupBy') || 'rule';
-        const html = renderEnhancedNineRulesView(this.nineRulesResults, groupBy);
+        const html = '<div>Enhanced nine rules view deprecated - use /modular-fixed</div>';
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(html);
       } else if (req.url === '/api/data-flow') {
@@ -217,7 +211,7 @@ class Dashboard {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(results));
       } else if (req.url === '/api/data-flow-view') {
-        const html = renderDataFlowWithTabs(this.dataFlowResults);
+        const html = '<div>Data flow view deprecated - use /modular-fixed</div>';
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(html);
       } else if (req.url === '/api/contracts') {
@@ -229,16 +223,8 @@ class Dashboard {
         const groupBy = url.searchParams.get('groupBy') || 'table';
         const results = await this.runContractValidation();
         
-        // Convert to our structured format
-        const contractResult: ContractValidationResult = {
-          violations: parseContractErrors(results.violations || []),
-          totalChecked: results.totalChecked || 0,
-          passed: results.passed || 0,
-          failed: results.failed || results.violations?.length || 0,
-          timestamp: new Date()
-        };
-        
-        const html = renderContractView(contractResult, groupBy);
+        // No longer needed - redirect to modular-fixed
+        const html = '<div>Contract view deprecated - use /modular-fixed</div>';
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(html);
       } else if (req.url === '/api/file-changes') {
@@ -262,15 +248,13 @@ class Dashboard {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(designResults));
       } else if (req.url === '/enhanced') {
-        const enhancedPath = path.join(__dirname, 'enhanced.html');
-        const html = fs.readFileSync(enhancedPath, 'utf-8');
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(html);
+        // Redirect to modular-fixed
+        res.writeHead(302, { 'Location': '/modular-fixed' });
+        res.end();
       } else if (req.url === '/modular') {
-        const modularPath = path.join(__dirname, 'modular.html');
-        const html = fs.readFileSync(modularPath, 'utf-8');
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(html);
+        // Redirect to modular-fixed
+        res.writeHead(302, { 'Location': '/modular-fixed' });
+        res.end();
       } else if (req.url === '/api/project-info') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -388,11 +372,9 @@ class Dashboard {
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(html);
       } else if (req.url === '/working') {
-        // Serve the ACTUALLY WORKING dashboard
-        const workingPath = path.join(__dirname, 'working.html');
-        const html = fs.readFileSync(workingPath, 'utf-8');
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(html);
+        // Redirect to modular-fixed
+        res.writeHead(302, { 'Location': '/modular-fixed' });
+        res.end();
       } else if (req.url === '/modular-fixed') {
         // Serve the fixed modular dashboard
         const modularFixedPath = path.join(__dirname, 'modular-fixed.html');
@@ -405,6 +387,17 @@ class Dashboard {
         const css = fs.readFileSync(cssPath, 'utf-8');
         res.writeHead(200, { 'Content-Type': 'text/css' });
         res.end(css);
+      } else if (req.url === '/theme-config.js') {
+        // Serve theme configuration
+        const themePath = path.join(__dirname, 'theme-config.js');
+        if (fs.existsSync(themePath)) {
+          const js = fs.readFileSync(themePath, 'utf-8');
+          res.writeHead(200, { 'Content-Type': 'application/javascript' });
+          res.end(js);
+        } else {
+          res.writeHead(404);
+          res.end();
+        }
       } else if (req.url?.startsWith('/components/') && req.url?.endsWith('.js')) {
         // Serve component JavaScript files
         const componentName = req.url.replace('/components/', '');
@@ -418,11 +411,9 @@ class Dashboard {
           res.end();
         }
       } else if (req.url === '/') {
-        // Serve enhanced dashboard by default
-        const enhancedPath = path.join(__dirname, 'enhanced.html');
-        const html = fs.readFileSync(enhancedPath, 'utf-8');
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(html);
+        // Redirect to modular-fixed as the default
+        res.writeHead(302, { 'Location': '/modular-fixed' });
+        res.end();
       } else {
         res.writeHead(404);
         res.end();
