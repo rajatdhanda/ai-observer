@@ -1,7 +1,24 @@
 /**
  * Component Registry & Index
+ * ==========================
  * Organized component management following Postman's design patterns
  * Central place to register and manage all dashboard components
+ * 
+ * ARCHITECTURE OVERVIEW:
+ * ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+ * │   Scripts       │───▶│   Components    │───▶│   Dashboard     │
+ * │ (Business Logic)│    │ (Presentation)  │    │   (UI Layer)    │
+ * └─────────────────┘    └─────────────────┘    └─────────────────┘
+ * 
+ * SCRIPTS: Handle data fetching, processing, state management
+ * COMPONENTS: Handle UI rendering, user interactions, display logic  
+ * DASHBOARD: Orchestrates everything together (modular-fixed.html)
+ * 
+ * CURRENT HANDLERS:
+ * - Contracts: ContractValidator (/api/contracts endpoint)
+ * - 9 Quality Rules: NineRulesValidator (/api/nine-rules endpoint)
+ * - Architecture Data: ProjectAnalyzer (/api/architecture endpoint)
+ * - Health Scoring: Built into ValidationService + SeverityBadge
  */
 
 // Component registry for easy reference and loading

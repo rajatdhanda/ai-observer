@@ -27,7 +27,6 @@ class PageDetailsViewer {
         ${this.renderPageInfo(pageData)}
         ${this.renderRouting(pageData)}
         ${this.renderComponents(pageData)}
-        ${this.renderSEO(pageData)}
         ${this.renderViolations(violations)}
         ${this.renderRecommendations(pageData, violations)}
       </div>
@@ -292,54 +291,6 @@ class PageDetailsViewer {
     `;
   }
 
-  renderSEO(data) {
-    return `
-      <div style="
-        background: #1a1a1a;
-        border: 1px solid #333;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-      ">
-        <h3 style="color: #f8fafc; margin: 0 0 16px 0;">SEO & Meta</h3>
-        
-        <div style="display: grid; gap: 12px;">
-          <div style="background: #0f0f0f; padding: 16px; border-radius: 8px;">
-            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Page Title</div>
-            <div style="color: #f8fafc; font-size: 14px;">
-              ${data.title || 'Not specified'}
-            </div>
-          </div>
-          
-          <div style="background: #0f0f0f; padding: 16px; border-radius: 8px;">
-            <div style="color: #64748b; font-size: 12px; margin-bottom: 4px;">Meta Description</div>
-            <div style="color: #f8fafc; font-size: 14px; line-height: 1.4;">
-              ${data.description || 'Not specified'}
-            </div>
-          </div>
-          
-          ${data.keywords?.length > 0 ? `
-            <div style="background: #0f0f0f; padding: 16px; border-radius: 8px;">
-              <div style="color: #64748b; font-size: 12px; margin-bottom: 8px;">Keywords</div>
-              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                ${data.keywords.map(keyword => `
-                  <span style="
-                    background: #252525;
-                    padding: 2px 6px;
-                    border-radius: 3px;
-                    font-size: 11px;
-                    color: #94a3b8;
-                  ">
-                    ${keyword}
-                  </span>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-        </div>
-      </div>
-    `;
-  }
 
   renderViolations(violations) {
     if (this.validationService) {
