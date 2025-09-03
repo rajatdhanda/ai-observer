@@ -40,9 +40,12 @@ export class ZodSchemaGenerator {
       const content = fs.readFileSync(contractsPath, 'utf-8');
       const contracts = yaml.load(content) as Record<string, Contract>;
       
-      for (const [name, contract] of Object.entries(contracts)) {
-        this.contracts.set(name, contract);
-        this.generateZodSchema(name, contract);
+      // Check if contracts is valid before iterating
+      if (contracts && typeof contracts === 'object') {
+        for (const [name, contract] of Object.entries(contracts)) {
+          this.contracts.set(name, contract);
+          this.generateZodSchema(name, contract);
+        }
       }
     } catch (error) {
       console.error('Error loading contracts:', error);
@@ -53,6 +56,11 @@ export class ZodSchemaGenerator {
     const schemaFields: Record<string, z.ZodTypeAny> = {};
     const mapperFields: Record<string, z.ZodTypeAny> = {};
     const transformMap: Record<string, string> = {};
+
+    if (!contract.schema) {
+      console.warn(`Contract ${name} has no schema defined`);
+      return { schema: z.object(schemaFields), mapper: null };
+    }
 
     for (const [field, definition] of Object.entries(contract.schema)) {
       const fieldSchema = this.createFieldSchema(field, definition);

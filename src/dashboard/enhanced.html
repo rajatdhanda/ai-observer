@@ -603,6 +603,9 @@
       <button class="action-btn" onclick="exportReport()" style="padding: 6px 12px; font-size: 13px;">
         <span>📊</span> Export
       </button>
+      <button class="action-btn" onclick="runContractTests()" style="padding: 6px 12px; font-size: 13px; background: #8b5cf6;">
+        <span>🧪</span> Test Contracts
+      </button>
       <button class="action-btn" onclick="viewChanges()" style="padding: 6px 12px; font-size: 13px;">
         <span>📝</span> Changes
       </button>
@@ -642,10 +645,12 @@
     <!-- Main Views -->
     <div class="tab-group">
       <div class="tab active" onclick="switchTab('overview')">🏠 Overview</div>
+      <div class="tab" onclick="switchTab('unified')" style="background: #8b5cf6;">🎯 Unified</div>
       <div class="tab" onclick="switchTab('code-quality')">✅ Code Quality</div>
       <div class="tab" onclick="switchTab('contracts')">📋 Contracts</div>
       <div class="tab" onclick="switchTab('business')">🧠 Business Logic</div>
       <div class="tab" onclick="switchTab('design')">🎨 Design System</div>
+      <div class="tab" onclick="switchTab('contract-tests')">🧪 Tests</div>
       <div class="tab" onclick="switchTab('export')">📤 Export</div>
     </div>
   </div>
@@ -752,6 +757,98 @@
     let autoRefreshEnabled = false;
     let fileChanges = 0;
     let lastChangeTime = null;
+    
+    // ============= SHARED COMPONENT FUNCTIONS =============
+    // These reduce code duplication throughout the dashboard
+    
+    // Render severity counts with CORRECT labels
+    function renderSeverityCounts(criticalCount, warningCount, infoCount) {
+      return `
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+          <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #ef4444;">
+            <div style="color: #ef4444; font-size: 36px; font-weight: bold;">
+              ${criticalCount}
+            </div>
+            <div style="color: #fca5a5; font-size: 13px; margin-top: 4px;">
+              CRITICAL - Will Break Code
+            </div>
+            <div style="color: #64748b; font-size: 11px; margin-top: 8px;">
+              Type errors, contract violations, missing imports
+            </div>
+          </div>
+          
+          <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <div style="color: #f59e0b; font-size: 36px; font-weight: bold;">
+              ${warningCount}
+            </div>
+            <div style="color: #fcd34d; font-size: 13px; margin-top: 4px;">
+              WARNINGS - Should Fix
+            </div>
+            <div style="color: #64748b; font-size: 11px; margin-top: 8px;">
+              Missing error handling, no loading states
+            </div>
+          </div>
+          
+          <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <div style="color: #3b82f6; font-size: 36px; font-weight: bold;">
+              ${infoCount}
+            </div>
+            <div style="color: #93bbfe; font-size: 13px; margin-top: 4px;">
+              INFO - Nice to Have
+            </div>
+            <div style="color: #64748b; font-size: 11px; margin-top: 8px;">
+              Optimizations, code style improvements
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    // Calculate health score with CORRECT weights
+    function calculateHealthScore(criticalCount, warningCount, infoCount = 0) {
+      let score = 100;
+      score -= criticalCount * 30;  // Critical issues = major penalty
+      score -= warningCount * 10;   // Warnings = minor penalty  
+      score -= infoCount * 2;        // Info = tiny penalty
+      return Math.max(0, score);
+    }
+    
+    // Get color based on health score
+    function getHealthColor(score) {
+      if (score >= 90) return '#10b981';  // Green
+      if (score >= 70) return '#f59e0b';  // Yellow
+      if (score >= 50) return '#ef4444';  // Red
+      return '#991b1b';  // Dark red
+    }
+    
+    // Render health score circle
+    function renderHealthScore(score, size = 80) {
+      const color = getHealthColor(score);
+      return `
+        <div style="text-align: center;">
+          <div style="
+            width: ${size}px;
+            height: ${size}px;
+            border-radius: 50%;
+            background: ${color}20;
+            border: 3px solid ${color};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: ${size * 0.3}px;
+            font-weight: bold;
+            color: ${color};
+          ">
+            ${score}%
+          </div>
+          <div style="color: #94a3b8; font-size: 12px; margin-top: 8px;">
+            Health Score
+          </div>
+        </div>
+      `;
+    }
+    
+    // ============= END SHARED COMPONENTS =============
     let lastRunTime = null;
     let isRunning = false;
     let autoRunTimer = null;
@@ -971,6 +1068,448 @@
         }
       } catch (error) {
         console.error('Error loading validation scores:', error);
+      }
+    }
+
+    // Contract Testing Functions
+    async function runContractTests() {
+      showLogPanel('Running contract tests...');
+      
+      try {
+        const response = await fetch('/api/run-tests');
+        const results = await response.json();
+        
+        showLogPanel(`Tests completed: ${results.summary.passed}/${results.summary.total} passed`);
+        
+        // Show results in main panel
+        displayContractTestResults(results);
+        
+        // Switch to tests tab
+        switchTab('contract-tests');
+        
+      } catch (error) {
+        showLogPanel(`Error running tests: ${error.message}`, 'error');
+      }
+    }
+    
+    function displayContractTestResults(results) {
+      const mainContent = document.getElementById('mainContent');
+      
+      const summaryColor = results.summary.passed === results.summary.total ? '#10b981' :
+                          results.summary.passed > results.summary.total / 2 ? '#f59e0b' : '#ef4444';
+      
+      mainContent.innerHTML = `
+        <div style="padding: 20px;">
+          <h2 style="color: #f8fafc; margin-bottom: 20px;">🧪 Contract Test Results</h2>
+          
+          <!-- Summary -->
+          <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+              <div style="text-align: center;">
+                <div style="font-size: 36px; font-weight: bold; color: ${summaryColor};">
+                  ${results.summary.passed}/${results.summary.total}
+                </div>
+                <div style="color: #64748b; font-size: 12px;">Tests Passed</div>
+              </div>
+              <div style="flex: 1;">
+                <div style="display: flex; gap: 20px; margin-bottom: 10px;">
+                  <span style="color: #10b981;">✅ Passed: ${results.summary.passed}</span>
+                  <span style="color: #ef4444;">❌ Failed: ${results.summary.failed}</span>
+                  <span style="color: #64748b;">⏭️ Skipped: ${results.summary.skipped}</span>
+                </div>
+                <div style="color: #64748b; font-size: 12px;">Duration: ${results.summary.duration}ms</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Recommendations -->
+          ${results.recommendations.length > 0 ? `
+            <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h3 style="color: #f8fafc; margin-bottom: 15px;">📋 Recommendations</h3>
+              ${results.recommendations.map(rec => `
+                <div style="padding: 8px 0; color: #e2e8f0; font-size: 14px;">
+                  ${rec}
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+          
+          <!-- Test Suites -->
+          ${results.suites.map(suite => `
+            <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h3 style="color: #f8fafc; margin-bottom: 15px;">${suite.name}</h3>
+              ${suite.results.map(test => `
+                <div style="padding: 10px; margin-bottom: 10px; background: #0a0a0a; border-radius: 4px; border-left: 3px solid ${
+                  test.status === 'pass' ? '#10b981' : 
+                  test.status === 'fail' ? '#ef4444' : 
+                  test.status === 'skip' ? '#64748b' : '#f59e0b'
+                };">
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="color: #f8fafc; font-weight: 500;">${test.name}</span>
+                    <span style="color: ${
+                      test.status === 'pass' ? '#10b981' : 
+                      test.status === 'fail' ? '#ef4444' : 
+                      test.status === 'skip' ? '#64748b' : '#f59e0b'
+                    }; font-size: 12px;">
+                      ${test.status.toUpperCase()} (${test.duration}ms)
+                    </span>
+                  </div>
+                  ${test.error ? `
+                    <div style="color: #ef4444; font-size: 12px; margin-top: 8px;">
+                      Error: ${test.error}
+                    </div>
+                  ` : ''}
+                  ${test.assertions && test.assertions.length > 0 ? `
+                    <div style="margin-top: 10px;">
+                      ${test.assertions.filter(a => !a.passed).map(assertion => `
+                        <div style="padding: 8px; background: #1a1a1a; border-radius: 4px; margin-top: 5px;">
+                          <div style="color: #ef4444; font-size: 11px;">
+                            ❌ ${assertion.description}
+                          </div>
+                          <div style="color: #64748b; font-size: 11px; margin-top: 4px;">
+                            Expected: ${JSON.stringify(assertion.expected)} | Actual: ${JSON.stringify(assertion.actual)}
+                          </div>
+                          ${assertion.message ? `
+                            <div style="color: #94a3b8; font-size: 11px; margin-top: 4px;">
+                              ${assertion.message}
+                            </div>
+                          ` : ''}
+                        </div>
+                      `).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+    
+    async function loadUnifiedView() {
+      showLogPanel('Loading unified report...');
+      
+      try {
+        const response = await fetch('/api/unified-report');
+        const report = await response.json();
+        
+        const mainContent = document.getElementById('mainContent');
+        const healthColor = report.healthScore >= 90 ? '#10b981' :
+                           report.healthScore >= 70 ? '#f59e0b' : '#ef4444';
+        const healthLabel = report.healthScore >= 90 ? 'Healthy' :
+                           report.healthScore >= 70 ? 'Needs Attention' :
+                           report.healthScore >= 50 ? 'Critical Issues' :
+                           'BROKEN - Fix Immediately!';
+        
+        mainContent.innerHTML = `
+          <div style="padding: 20px; max-width: 1400px; margin: 0 auto;">
+            <!-- Main Status Banner -->
+            <div style="background: ${report.summary.willBreak ? '#7f1d1d' : '#1a1a1a'}; 
+                        padding: 30px; 
+                        border-radius: 12px; 
+                        margin-bottom: 30px;
+                        border: 2px solid ${report.summary.willBreak ? '#ef4444' : '#333'};">
+              
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <h1 style="color: #f8fafc; margin: 0; font-size: 32px;">
+                    ${report.summary.willBreak ? '🚨 YOUR CODE WILL BREAK!' : '✅ Code is Stable'}
+                  </h1>
+                  <p style="color: ${report.summary.willBreak ? '#fca5a5' : '#94a3b8'}; 
+                            margin-top: 10px; 
+                            font-size: 18px;">
+                    ${report.summary.topPriority}
+                  </p>
+                </div>
+                
+                <div style="text-align: center;">
+                  <div style="font-size: 48px; 
+                              font-weight: bold; 
+                              color: ${healthColor};">
+                    ${report.healthScore}%
+                  </div>
+                  <div style="color: #94a3b8; font-size: 14px;">${healthLabel}</div>
+                </div>
+              </div>
+
+              <!-- Quick Stats -->
+              <div style="display: grid; 
+                          grid-template-columns: repeat(3, 1fr); 
+                          gap: 20px; 
+                          margin-top: 30px;">
+                
+                <div style="background: rgba(239, 68, 68, 0.1); 
+                            padding: 15px; 
+                            border-radius: 8px; 
+                            border: 1px solid rgba(239, 68, 68, 0.3);">
+                  <div style="color: #ef4444; font-size: 24px; font-weight: bold;">
+                    ${report.summary.criticalCount}
+                  </div>
+                  <div style="color: #fca5a5; font-size: 12px;">
+                    WILL BREAK CODE
+                  </div>
+                </div>
+
+                <div style="background: rgba(245, 158, 11, 0.1); 
+                            padding: 15px; 
+                            border-radius: 8px; 
+                            border: 1px solid rgba(245, 158, 11, 0.3);">
+                  <div style="color: #f59e0b; font-size: 24px; font-weight: bold;">
+                    ${report.summary.warningCount}
+                  </div>
+                  <div style="color: #fcd34d; font-size: 12px;">
+                    Should Fix
+                  </div>
+                </div>
+
+                <div style="background: rgba(59, 130, 246, 0.1); 
+                            padding: 15px; 
+                            border-radius: 8px; 
+                            border: 1px solid rgba(59, 130, 246, 0.3);">
+                  <div style="color: #3b82f6; font-size: 24px; font-weight: bold;">
+                    ${report.summary.infoCount}
+                  </div>
+                  <div style="color: #93bbfe; font-size: 12px;">
+                    Nice to Have
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Critical Issues (if any) -->
+            ${report.criticalIssues.length > 0 ? `
+              <div style="background: #1a1a1a; 
+                          padding: 20px; 
+                          border-radius: 8px; 
+                          margin-bottom: 20px;
+                          border-left: 4px solid #ef4444;">
+                <h2 style="color: #ef4444; margin: 0 0 20px 0;">
+                  🚨 Critical Issues - FIX IMMEDIATELY
+                </h2>
+                
+                ${report.criticalIssues.slice(0, 10).map(issue => `
+                  <div style="background: #0a0a0a; 
+                              padding: 15px; 
+                              border-radius: 6px; 
+                              margin-bottom: 10px;">
+                    <div style="display: flex; 
+                                align-items: start; 
+                                justify-content: space-between;">
+                      <div style="flex: 1;">
+                        <div style="color: #f8fafc; 
+                                    font-weight: 500; 
+                                    margin-bottom: 5px;">
+                          ${issue.message}
+                        </div>
+                        <div style="color: #64748b; 
+                                    font-size: 12px; 
+                                    font-family: monospace;">
+                          ${issue.file}${issue.line ? ':' + issue.line : ''}
+                        </div>
+                        ${issue.fix ? `
+                          <div style="color: #10b981; 
+                                      font-size: 13px; 
+                                      margin-top: 8px;">
+                            💡 Fix: ${issue.fix}
+                          </div>
+                        ` : ''}
+                      </div>
+                      <span style="background: #ef4444; 
+                                   color: white; 
+                                   padding: 2px 8px; 
+                                   border-radius: 4px; 
+                                   font-size: 11px;">
+                        ${issue.source.toUpperCase()}
+                      </span>
+                    </div>
+                  </div>
+                `).join('')}
+                
+                ${report.criticalIssues.length > 10 ? `
+                  <div style="color: #ef4444; 
+                              text-align: center; 
+                              margin-top: 10px; 
+                              font-size: 14px;">
+                    ... and ${report.criticalIssues.length - 10} more critical issues
+                  </div>
+                ` : ''}
+              </div>
+            ` : ''}
+
+            <!-- Warnings -->
+            ${report.warnings.length > 0 ? `
+              <div style="background: #1a1a1a; 
+                          padding: 20px; 
+                          border-radius: 8px; 
+                          margin-bottom: 20px;
+                          border-left: 4px solid #f59e0b;">
+                <h2 style="color: #f59e0b; margin: 0 0 20px 0;">
+                  ⚠️ Warnings - Should Fix
+                </h2>
+                
+                ${report.warnings.slice(0, 5).map(issue => `
+                  <div style="background: #0a0a0a; 
+                              padding: 12px; 
+                              border-radius: 6px; 
+                              margin-bottom: 8px;">
+                    <div style="color: #e2e8f0; font-size: 14px;">
+                      ${issue.message}
+                    </div>
+                    <div style="color: #64748b; 
+                                font-size: 11px; 
+                                margin-top: 4px;">
+                      ${issue.file}
+                    </div>
+                  </div>
+                `).join('')}
+                
+                ${report.warnings.length > 5 ? `
+                  <div style="color: #94a3b8; 
+                              text-align: center; 
+                              margin-top: 10px; 
+                              font-size: 13px;">
+                    + ${report.warnings.length - 5} more warnings
+                  </div>
+                ` : ''}
+              </div>
+            ` : ''}
+
+            <!-- Action Button -->
+            <div style="text-align: center; margin-top: 30px;">
+              ${report.summary.willBreak ? `
+                <button onclick="alert('Auto-fix not yet implemented')" 
+                        style="padding: 15px 30px; 
+                               background: #ef4444; 
+                               border: none; 
+                               border-radius: 8px; 
+                               color: white; 
+                               font-size: 16px; 
+                               font-weight: bold; 
+                               cursor: pointer;">
+                  🔧 Auto-Fix Critical Issues
+                </button>
+              ` : `
+                <button onclick="runAllValidations()" 
+                        style="padding: 15px 30px; 
+                               background: #10b981; 
+                               border: none; 
+                               border-radius: 8px; 
+                               color: white; 
+                               font-size: 16px; 
+                               cursor: pointer;">
+                  ✅ All Good - Run Full Check
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+        
+        showLogPanel('Unified report loaded');
+      } catch (error) {
+        showLogPanel(`Error loading unified report: ${error.message}`, 'error');
+        const mainContent = document.getElementById('mainContent');
+        mainContent.innerHTML = `
+          <div style="padding: 20px; color: #ef4444;">
+            <h2>Error Loading Unified Report</h2>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    async function loadContractTests() {
+      showLogPanel('Loading contract test results...');
+      
+      try {
+        // Load table-contract validation
+        const validationResponse = await fetch('/api/table-contract-validation');
+        const validationData = await validationResponse.json();
+        
+        const mainContent = document.getElementById('mainContent');
+        mainContent.innerHTML = `
+          <div style="padding: 20px;">
+            <h2 style="color: #f8fafc; margin-bottom: 20px;">📋 Table-Contract Validation</h2>
+            
+            <!-- Summary -->
+            <div style="background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;">
+                <div style="text-align: center;">
+                  <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${validationData.summary.totalTables}</div>
+                  <div style="color: #64748b; font-size: 12px;">Total Tables</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 24px; font-weight: bold; color: #10b981;">${validationData.summary.tablesWithContracts}</div>
+                  <div style="color: #64748b; font-size: 12px;">With Contracts</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">${validationData.summary.tablesWithoutContracts}</div>
+                  <div style="color: #64748b; font-size: 12px;">Missing Contracts</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 24px; font-weight: bold; color: ${
+                    validationData.summary.overallScore >= 80 ? '#10b981' :
+                    validationData.summary.overallScore >= 60 ? '#f59e0b' : '#ef4444'
+                  };">${validationData.summary.overallScore}%</div>
+                  <div style="color: #64748b; font-size: 12px;">Overall Score</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Table Details -->
+            <div style="background: #1a1a1a; padding: 20px; border-radius: 8px;">
+              <h3 style="color: #f8fafc; margin-bottom: 15px;">Table Validation Details</h3>
+              ${validationData.results.sort((a, b) => a.score - b.score).map(result => `
+                <div style="padding: 15px; margin-bottom: 10px; background: #0a0a0a; border-radius: 4px; border-left: 3px solid ${
+                  result.score >= 80 ? '#10b981' :
+                  result.score >= 60 ? '#f59e0b' : '#ef4444'
+                };">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: #f8fafc; font-weight: 500; font-size: 16px;">${result.table}</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <span style="color: #64748b; font-size: 12px;">Contract: ${result.contract}</span>
+                      <span style="color: ${
+                        result.score >= 80 ? '#10b981' :
+                        result.score >= 60 ? '#f59e0b' : '#ef4444'
+                      }; font-weight: bold;">${result.score}%</span>
+                    </div>
+                  </div>
+                  ${result.recommendation ? `
+                    <div style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">
+                      💡 ${result.recommendation}
+                    </div>
+                  ` : ''}
+                  ${result.validations.filter(v => v.status !== 'pass').slice(0, 3).map(validation => `
+                    <div style="padding: 8px; background: #1a1a1a; border-radius: 4px; margin-top: 5px;">
+                      <span style="color: ${validation.status === 'fail' ? '#ef4444' : '#f59e0b'}; font-size: 11px;">
+                        ${validation.status === 'fail' ? '❌' : '⚠️'} ${validation.message}
+                      </span>
+                      ${validation.details ? `
+                        <div style="color: #64748b; font-size: 10px; margin-top: 4px;">
+                          ${validation.details.suggestion || ''}
+                        </div>
+                      ` : ''}
+                    </div>
+                  `).join('')}
+                  ${result.validations.filter(v => v.status !== 'pass').length > 3 ? `
+                    <div style="color: #64748b; font-size: 11px; margin-top: 5px;">
+                      ... and ${result.validations.filter(v => v.status !== 'pass').length - 3} more issues
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+              <button onclick="runContractTests()" style="padding: 10px 20px; background: #8b5cf6; border: none; border-radius: 6px; color: white; cursor: pointer;">
+                🧪 Run Full Test Suite
+              </button>
+            </div>
+          </div>
+        `;
+        
+        showLogPanel('Contract validation loaded');
+      } catch (error) {
+        showLogPanel(`Error loading contract tests: ${error.message}`, 'error');
       }
     }
 
@@ -2103,7 +2642,7 @@
       }
     }
 
-    function loadOverview(showDataFlow = false) {
+    async function loadOverview(showDataFlow = false) {
       const mainContent = document.getElementById('mainContent');
       const sidebar = document.getElementById('sidebar');
       
@@ -2133,41 +2672,92 @@
         return;
       }
       
-      mainContent.innerHTML = `
-        <h2 style="margin-bottom: 20px;">Project Overview</h2>
+      // Fetch unified report for CORRECT severity data
+      try {
+        const response = await fetch('/api/unified-report');
+        const report = await response.json();
         
-        <div class="section">
-          <div class="section-title">📊 Summary</div>
-          <div class="usage-grid">
-            <div class="usage-stat">
-              <div class="usage-number">${Object.keys(tableMapping.tables || {}).length}</div>
-              <div class="usage-label">Tables</div>
+        const hasBreaking = report.summary.criticalCount > 0;
+        const score = Math.max(0, 100 - (report.summary.criticalCount * 30) - (report.summary.warningCount * 10));
+        const scoreColor = score >= 90 ? '#10b981' : score >= 70 ? '#f59e0b' : '#ef4444';
+        
+        mainContent.innerHTML = `
+          <div style="padding: 20px;">
+            <!-- Main Status with CORRECT severity -->
+            <div style="
+              background: ${hasBreaking ? 'linear-gradient(135deg, #7f1d1d, #991b1b)' : '#1a1a1a'};
+              padding: 30px;
+              border-radius: 12px;
+              margin-bottom: 24px;
+              border: 2px solid ${hasBreaking ? '#ef4444' : '#333'};
+            ">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <h1 style="color: #f8fafc; margin: 0; font-size: 32px;">
+                    ${hasBreaking ? '🚨 Critical Issues Found!' : '✅ No Critical Issues'}
+                  </h1>
+                  <p style="color: ${hasBreaking ? '#fca5a5' : '#94a3b8'}; margin-top: 10px; font-size: 16px;">
+                    ${report.summary.topPriority}
+                  </p>
+                </div>
+                
+                ${renderHealthScore(score)}
+              </div>
             </div>
-            <div class="usage-stat">
-              <div class="usage-number">${tableMapping.summary?.fullyMapped || 0}</div>
-              <div class="usage-label">Fully Mapped</div>
+            
+            <!-- Issue Counts with CORRECT labels - using shared function -->
+            ${renderSeverityCounts(report.summary.criticalCount, report.summary.warningCount, report.summary.infoCount)}
+            
+            <!-- Tables Summary -->
+            <div class="section">
+              <div class="section-title">📊 Database Tables</div>
+              <div class="usage-grid">
+                <div class="usage-stat">
+                  <div class="usage-number">${Object.keys(tableMapping.tables || {}).length}</div>
+                  <div class="usage-label">Total Tables</div>
+                </div>
+                <div class="usage-stat">
+                  <div class="usage-number">${tableMapping.summary?.fullyMapped || 0}</div>
+                  <div class="usage-label">Fully Mapped</div>
+                </div>
+                <div class="usage-stat">
+                  <div class="usage-number">${tableMapping.summary?.partiallyMapped || 0}</div>
+                  <div class="usage-label">Partial</div>
+                </div>
+                <div class="usage-stat">
+                  <div class="usage-number">${tableMapping.summary?.unmapped || 0}</div>
+                  <div class="usage-label">Unmapped</div>
+                </div>
+              </div>
             </div>
-            <div class="usage-stat">
-              <div class="usage-number">${tableMapping.summary?.partiallyMapped || 0}</div>
-              <div class="usage-label">Partial</div>
-            </div>
-            <div class="usage-stat">
-              <div class="usage-number">${tableMapping.summary?.unmapped || 0}</div>
-              <div class="usage-label">Unmapped</div>
-            </div>
+            
+            <!-- Top Critical Issues -->
+            ${report.criticalIssues && report.criticalIssues.length > 0 ? `
+              <div class="section">
+                <div class="section-title">🚨 Top Critical Issues</div>
+                ${report.criticalIssues.slice(0, 5).map(issue => `
+                  <div class="relationship-item">
+                    <span style="color: #ef4444;">❌</span>
+                    <span>${issue.message || issue.issue}</span>
+                    <span style="color: #64748b; font-size: 11px; margin-left: 8px;">
+                      ${issue.file || issue.location || ''}
+                    </span>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
           </div>
-        </div>
-        
-        <div class="section">
-          <div class="section-title">🚨 Critical Issues</div>
-          ${(tableMapping.issues || []).filter(i => i.type === 'critical').slice(0, 5).map(issue => `
-            <div class="relationship-item">
-              <span style="color: #ef4444;">❌</span>
-              <span>${issue.table}: ${issue.issue}</span>
-            </div>
-          `).join('') || '<div style="color: #64748b;">No critical issues found</div>'}
-        </div>
-      `;
+        `;
+      } catch (error) {
+        console.error('Failed to load unified report:', error);
+        // Fallback to old overview
+        mainContent.innerHTML = `
+          <h2 style="margin-bottom: 20px;">Project Overview</h2>
+          <div style="color: #ef4444; padding: 20px;">
+            Failed to load overview data: ${error.message}
+          </div>
+        `;
+      }
       
       // Clear query panel
       document.getElementById('queryContent').innerHTML = `
@@ -2993,6 +3583,9 @@
         case 'overview':
           loadOverview();
           break;
+        case 'unified':
+          loadUnifiedView();
+          break;
         case 'code-quality':
           loadCodeQuality();
           break;
@@ -3004,6 +3597,9 @@
           break;
         case 'design':
           loadDesignSystem();
+          break;
+        case 'contract-tests':
+          loadContractTests();
           break;
         case 'export':
           loadExportView();

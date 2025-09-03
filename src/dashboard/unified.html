@@ -1,841 +1,357 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Observer - Unified Control Center</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-            color: #e2e8f0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .header {
-            background: rgba(15, 15, 25, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .project-info {
-            text-align: right;
-            font-size: 0.9rem;
-            color: #94a3b8;
-        }
-
-        /* Welcome Banner */
-        .welcome-banner {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 12px;
-            padding: 2rem;
-            margin: 2rem;
-            text-align: center;
-        }
-
-        .welcome-banner h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .welcome-banner p {
-            font-size: 1.1rem;
-            color: #cbd5e1;
-            margin-bottom: 2rem;
-        }
-
-        /* Mode Selector */
-        .mode-selector {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
-        }
-
-        .mode-card {
-            background: rgba(30, 30, 40, 0.6);
-            border: 2px solid rgba(59, 130, 246, 0.2);
-            border-radius: 16px;
-            padding: 2rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            min-width: 280px;
-            text-align: center;
-        }
-
-        .mode-card:hover {
-            border-color: rgba(59, 130, 246, 0.5);
-            transform: translateY(-4px);
-        }
-
-        .mode-card.active {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .mode-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 1.8rem;
-        }
-
-        .mode-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .mode-card p {
-            color: #94a3b8;
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-        }
-
-        .mode-features {
-            list-style: none;
-            text-align: left;
-            font-size: 0.85rem;
-            color: #cbd5e1;
-        }
-
-        .mode-features li {
-            padding: 0.25rem 0;
-        }
-
-        .mode-features li:before {
-            content: "✓ ";
-            color: #10b981;
-            font-weight: bold;
-        }
-
-        /* Dashboard Content */
-        .dashboard-content {
-            display: none;
-            padding: 2rem;
-        }
-
-        .dashboard-content.active {
-            display: block;
-        }
-
-        /* Quick Stats */
-        .quick-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: rgba(30, 30, 40, 0.6);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #3b82f6;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: #94a3b8;
-            font-size: 0.9rem;
-        }
-
-        /* Action Panels */
-        .action-panels {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 2rem;
-        }
-
-        .action-panel {
-            background: rgba(30, 30, 40, 0.6);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-
-        .panel-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        .panel-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-        }
-
-        /* Buttons */
-        .btn {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border: none;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-secondary {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        /* Command Runner */
-        .command-input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 8px;
-            padding: 0.75rem;
-            color: #e2e8f0;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            margin-bottom: 1rem;
-        }
-
-        .command-output {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.9rem;
-            max-height: 200px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-
-        .preset-commands {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .preset-cmd {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 6px;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .preset-cmd:hover {
-            background: rgba(59, 130, 246, 0.2);
-        }
-
-        /* Progress Indicators */
-        .progress-list {
-            list-style: none;
-        }
-
-        .progress-item {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .progress-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .status-good {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-        }
-
-        .status-warning {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-        }
-
-        .status-error {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-
-        /* Health Score */
-        .health-score-display {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(30, 30, 40, 0.6);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 12px;
-            margin-bottom: 2rem;
-        }
-
-        .health-score-number {
-            font-size: 4rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #10b981, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-        }
-
-        .health-score-label {
-            font-size: 1.2rem;
-            color: #94a3b8;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .mode-selector {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .action-panels {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Observer - Unified Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f0f0f;
+      color: #e2e8f0;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #1a1a1a;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #4a5568;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #667eea;
+    }
+    
+    /* Loading animation */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #333;
+      border-radius: 50%;
+      border-top-color: #667eea;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    /* Button animations */
+    .action-btn {
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .action-btn:active {
+      transform: translateY(0);
+    }
+    
+    /* Card animations */
+    .card {
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Responsive design */
+    @media (max-width: 1200px) {
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100% !important;
+        height: 200px !important;
+      }
+      
+      .right-panel {
+        display: none !important;
+      }
+    }
+    
+    /* Accessibility */
+    .tab:focus,
+    .action-btn:focus {
+      outline: 2px solid #667eea;
+      outline-offset: 2px;
+    }
+    
+    /* Print styles */
+    @media print {
+      .header,
+      .mode-bar,
+      .tabs,
+      .sidebar {
+        display: none !important;
+      }
+      
+      .main-container {
+        height: auto !important;
+      }
+      
+      .content-area {
+        padding: 0 !important;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">
-            <div class="logo-icon">🔍</div>
-            <div>AI Observer</div>
-        </div>
-        <div class="project-info">
-            <div><strong id="project-name">Loading...</strong></div>
-            <div>Unified Control Center</div>
-        </div>
+  <!-- Loading indicator -->
+  <div id="loadingOverlay" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0f0f0f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  ">
+    <div style="text-align: center; color: #9ca3af;">
+      <div class="loading" style="margin-bottom: 16px;"></div>
+      <div>Loading AI Observer Dashboard...</div>
     </div>
+  </div>
 
-    <!-- Welcome Screen -->
-    <div id="welcome-screen">
-        <div class="welcome-banner">
-            <h2>Welcome to AI Observer</h2>
-            <p>Your intelligent development companion that helps you code better, faster, and safer</p>
-            
-            <div class="mode-selector">
-                <div class="mode-card" onclick="selectMode('plan')">
-                    <div class="mode-icon">📋</div>
-                    <h3>PLAN Mode</h3>
-                    <p>Before you start coding</p>
-                    <ul class="mode-features">
-                        <li>Analyze current codebase health</li>
-                        <li>Identify potential risks</li>
-                        <li>Set validation baselines</li>
-                        <li>Plan architecture changes</li>
-                    </ul>
-                </div>
-                
-                <div class="mode-card" onclick="selectMode('code')">
-                    <div class="mode-icon">💻</div>
-                    <h3>CODE Mode</h3>
-                    <p>While you're actively coding</p>
-                    <ul class="mode-features">
-                        <li>Real-time validation</li>
-                        <li>Live error detection</li>
-                        <li>Performance monitoring</li>
-                        <li>Quick command access</li>
-                    </ul>
-                </div>
-                
-                <div class="mode-card" onclick="selectMode('review')">
-                    <div class="mode-icon">🔍</div>
-                    <h3>REVIEW Mode</h3>
-                    <p>After coding, before deployment</p>
-                    <ul class="mode-features">
-                        <li>Comprehensive code analysis</li>
-                        <li>Drift detection</li>
-                        <li>Impact assessment</li>
-                        <li>Deployment readiness</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+  <!-- Component Scripts (Load in correct order) -->
+  <script src="/components/index.js"></script>
+  <script src="/components/validation-service.js"></script>
+  <script src="/components/severity-badge.js"></script>
+  <script src="/components/entity-data-provider.js"></script>
+  <script src="/components/sidebar-navigator.js"></script>
+  <script src="/components/control-bar.js"></script>
+  <script src="/components/table-details-viewer.js"></script>
+  <script src="/components/hook-details-viewer.js"></script>
+  <script src="/components/overview-component.js"></script>
+  <script src="/components/unified-dashboard.js"></script>
 
-    <!-- Plan Mode -->
-    <div id="plan-mode" class="dashboard-content">
-        <div class="health-score-display">
-            <div class="health-score-number" id="plan-health-score">--</div>
-            <div class="health-score-label">Current Codebase Health</div>
-        </div>
+  <script>
+    // Global error handler
+    window.addEventListener('error', (event) => {
+      console.error('Dashboard Error:', event.error);
+      
+      // Show error message to user
+      const errorDiv = document.createElement('div');
+      errorDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #ef4444;
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        z-index: 10000;
+        max-width: 300px;
+      `;
+      errorDiv.innerHTML = `
+        <div style="font-weight: 500; margin-bottom: 4px;">Error</div>
+        <div style="font-size: 12px;">${event.error?.message || 'Unknown error'}</div>
+        <button onclick="this.parentElement.remove()" style="
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          background: none;
+          border: none;
+          color: white;
+          cursor: pointer;
+          font-size: 16px;
+        ">×</button>
+      `;
+      
+      document.body.appendChild(errorDiv);
+      
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        if (errorDiv.parentElement) {
+          errorDiv.remove();
+        }
+      }, 5000);
+    });
+
+    // Global function to load current data (used by control bar)
+    window.loadCurrentData = async function() {
+      try {
+        // Reload sidebar data
+        if (window.sidebarNavigatorInstance) {
+          await window.sidebarNavigatorInstance.loadData();
+        }
         
-        <div class="quick-stats">
-            <div class="stat-card">
-                <div class="stat-value" id="plan-files">--</div>
-                <div class="stat-label">Files Analyzed</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="plan-issues">--</div>
-                <div class="stat-label">Issues Found</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="plan-coverage">--</div>
-                <div class="stat-label">Test Coverage</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="plan-complexity">--</div>
-                <div class="stat-label">Avg Complexity</div>
-            </div>
-        </div>
-
-        <div class="action-panels">
-            <div class="action-panel">
-                <div class="panel-header">
-                    <div class="panel-icon">🎯</div>
-                    Baseline Analysis
-                </div>
-                <p style="color: #94a3b8; margin-bottom: 1rem;">Establish current state before making changes</p>
-                <button class="btn" onclick="runBaselineAnalysis()">
-                    <span>🔍</span> Run Full Analysis
-                </button>
-                <div style="margin-top: 1rem;">
-                    <div class="preset-commands">
-                        <span class="preset-cmd" onclick="runQuickCheck()">Quick Check</span>
-                        <span class="preset-cmd" onclick="runSecurityScan()">Security Scan</span>
-                        <span class="preset-cmd" onclick="runPerformanceCheck()">Performance</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="action-panel">
-                <div class="panel-header">
-                    <div class="panel-icon">⚠️</div>
-                    Risk Assessment
-                </div>
-                <ul class="progress-list" id="risk-list">
-                    <li class="progress-item">
-                        <span>Loading risk analysis...</span>
-                        <span class="progress-status status-warning">Analyzing</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Code Mode -->
-    <div id="code-mode" class="dashboard-content">
-        <div class="health-score-display">
-            <div class="health-score-number" id="code-health-score">--</div>
-            <div class="health-score-label">Real-time Health Score</div>
-        </div>
-
-        <div class="action-panels">
-            <div class="action-panel">
-                <div class="panel-header">
-                    <div class="panel-icon">⚡</div>
-                    Quick Commands
-                </div>
-                <div class="preset-commands">
-                    <span class="preset-cmd" onclick="runCommand('npm test')">Run Tests</span>
-                    <span class="preset-cmd" onclick="runCommand('npm run build')">Build</span>
-                    <span class="preset-cmd" onclick="runCommand('npm run lint')">Lint</span>
-                    <span class="preset-cmd" onclick="runCommand('git status')">Git Status</span>
-                </div>
-                <input type="text" class="command-input" id="custom-command" placeholder="Type custom command..." onkeypress="handleCommandKeypress(event)">
-                <button class="btn" onclick="runCustomCommand()">
-                    <span>▶️</span> Execute
-                </button>
-                <div class="command-output" id="command-output">Ready to execute commands...</div>
-            </div>
-
-            <div class="action-panel">
-                <div class="panel-header">
-                    <div class="panel-icon">🔄</div>
-                    Live Monitoring
-                </div>
-                <ul class="progress-list" id="monitoring-list">
-                    <li class="progress-item">
-                        <span>File watcher</span>
-                        <span class="progress-status status-good">Active</span>
-                    </li>
-                    <li class="progress-item">
-                        <span>Type checking</span>
-                        <span class="progress-status status-good">Passing</span>
-                    </li>
-                    <li class="progress-item">
-                        <span>Validation rules</span>
-                        <span class="progress-status status-good">9/9 Pass</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Review Mode -->
-    <div id="review-mode" class="dashboard-content">
-        <div class="health-score-display">
-            <div class="health-score-number" id="review-health-score">--</div>
-            <div class="health-score-label">Final Review Score</div>
-        </div>
-
-        <div class="action-panels">
-            <div class="action-panel">
-                <div class="panel-header">
-                    <div class="panel-icon">📊</div>
-                    Change Impact Analysis
-                </div>
-                <p style="color: #94a3b8; margin-bottom: 1rem;">Compare changes against baseline</p>
-                <button class="btn" onclick="runDriftAnalysis()">
-                    <span>🔍</span> Analyze Changes
-                </button>
-                <ul class="progress-list" id="drift-list" style="margin-top: 1rem;">
-                    <li class="progress-item">
-                        <span>Click "Analyze Changes" to start</span>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="action-panel">
-                <div class="panel-header">
-                    <div class="panel-icon">✅</div>
-                    Deployment Readiness
-                </div>
-                <ul class="progress-list" id="deployment-checklist">
-                    <li class="progress-item">
-                        <span>Tests passing</span>
-                        <span class="progress-status status-warning">Checking</span>
-                    </li>
-                    <li class="progress-item">
-                        <span>Build successful</span>
-                        <span class="progress-status status-warning">Checking</span>
-                    </li>
-                    <li class="progress-item">
-                        <span>No security issues</span>
-                        <span class="progress-status status-warning">Checking</span>
-                    </li>
-                    <li class="progress-item">
-                        <span>Performance acceptable</span>
-                        <span class="progress-status status-warning">Checking</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let currentMode = 'welcome';
-        let ws = null;
-        let healthData = {};
-
-        // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            loadProjectInfo();
-            connectWebSocket();
-            // Load initial data after a short delay
-            setTimeout(loadInitialData, 1000);
-        });
-
-        function loadProjectInfo() {
-            fetch('/api/project-info')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('project-name').textContent = data.name || 'Unknown Project';
-                })
-                .catch(console.error);
+        // Reload current tab content
+        if (window.unifiedDashboard) {
+          await window.unifiedDashboard.loadCurrentTab();
         }
+      } catch (error) {
+        console.error('Error loading current data:', error);
+      }
+    };
 
-        function selectMode(mode) {
-            currentMode = mode;
-            
-            // Hide welcome screen
-            document.getElementById('welcome-screen').style.display = 'none';
-            
-            // Hide all mode contents
-            document.querySelectorAll('.dashboard-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // Show selected mode
-            document.getElementById(mode + '-mode').classList.add('active');
-            
-            // Load mode-specific data
-            loadModeData(mode);
-        }
+    // Global function for selecting items (used by sidebar)
+    window.selectItem = async function(name, type) {
+      try {
+        const mainContent = document.getElementById('mainContent');
+        if (!mainContent) return;
 
-        function loadInitialData() {
-            // Load health scores for all modes
-            Promise.all([
-                fetch('/api/health-score').then(r => r.json()).catch(() => ({score: 85})),
-                fetch('/api/project-stats').then(r => r.json()).catch(() => ({}))
-            ]).then(([health, stats]) => {
-                updateHealthScores(health.score || 85);
-                updateProjectStats(stats);
-            });
-        }
+        // Show loading state
+        mainContent.innerHTML = `
+          <div style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            color: #9ca3af;
+          ">
+            <div style="text-align: center;">
+              <div class="loading" style="margin-bottom: 16px;"></div>
+              <div>Loading ${type}: ${name}...</div>
+            </div>
+          </div>
+        `;
 
-        function loadModeData(mode) {
-            switch(mode) {
-                case 'plan':
-                    loadPlanData();
-                    break;
-                case 'code':
-                    loadCodeData();
-                    break;
-                case 'review':
-                    loadReviewData();
-                    break;
+        // Load entity data
+        const response = await fetch('/api/entity-data');
+        const data = await response.json();
+        
+        // Load validation data
+        const validationResponse = await fetch('/api/validation-summary');
+        const validationData = await validationResponse.json();
+
+        // Render based on type
+        switch(type) {
+          case 'table':
+            if (window.tableDetailsViewer) {
+              window.tableDetailsViewer.render(name, data.tables[name], validationData);
             }
-        }
-
-        function loadPlanData() {
-            // Load baseline data
-            Promise.all([
-                fetch('/api/baseline').then(r => r.json()).catch(() => ({})),
-                fetch('/api/risk-analysis').then(r => r.json()).catch(() => ({risks: []}))
-            ]).then(([baseline, risks]) => {
-                updatePlanStats(baseline);
-                updateRiskList(risks.risks || []);
-            });
-        }
-
-        function loadCodeData() {
-            // Real-time data is handled by WebSocket
-            updateMonitoringStatus();
-        }
-
-        function loadReviewData() {
-            updateDeploymentChecklist();
-        }
-
-        function updateHealthScores(score) {
-            document.getElementById('plan-health-score').textContent = score;
-            document.getElementById('code-health-score').textContent = score;
-            document.getElementById('review-health-score').textContent = score;
-        }
-
-        function updateProjectStats(stats) {
-            document.getElementById('plan-files').textContent = stats.files || '156';
-            document.getElementById('plan-issues').textContent = stats.issues || '3';
-            document.getElementById('plan-coverage').textContent = (stats.coverage || '78') + '%';
-            document.getElementById('plan-complexity').textContent = stats.complexity || '2.4';
-        }
-
-        function updateRiskList(risks) {
-            const riskList = document.getElementById('risk-list');
-            if (risks.length === 0) {
-                riskList.innerHTML = `
-                    <li class="progress-item">
-                        <span>No high-risk issues detected</span>
-                        <span class="progress-status status-good">Good</span>
-                    </li>
-                `;
-            } else {
-                riskList.innerHTML = risks.map(risk => `
-                    <li class="progress-item">
-                        <span>${risk.description}</span>
-                        <span class="progress-status ${risk.level === 'high' ? 'status-error' : 'status-warning'}">${risk.level}</span>
-                    </li>
-                `).join('');
-            }
-        }
-
-        function updateMonitoringStatus() {
-            // This would be updated via WebSocket in real implementation
-        }
-
-        function updateDeploymentChecklist() {
-            const checklist = document.getElementById('deployment-checklist');
-            // Simulate checking deployment readiness
-            setTimeout(() => {
-                checklist.innerHTML = `
-                    <li class="progress-item">
-                        <span>Tests passing</span>
-                        <span class="progress-status status-good">✓ Pass</span>
-                    </li>
-                    <li class="progress-item">
-                        <span>Build successful</span>
-                        <span class="progress-status status-good">✓ Pass</span>
-                    </li>
-                    <li class="progress-item">
-                        <span>No security issues</span>
-                        <span class="progress-status status-good">✓ Pass</span>
-                    </li>
-                    <li class="progress-item">
-                        <span>Performance acceptable</span>
-                        <span class="progress-status status-warning">⚠ Review</span>
-                    </li>
-                `;
-            }, 2000);
-        }
-
-        // Command execution
-        function runCommand(command) {
-            const output = document.getElementById('command-output');
-            output.textContent = `Running: ${command}\n`;
+            break;
             
-            fetch('/api/run-command', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ command })
-            })
-            .then(response => response.text())
-            .then(result => {
-                output.textContent += result;
-            })
-            .catch(error => {
-                output.textContent += `Error: ${error.message}`;
-            });
-        }
-
-        function runCustomCommand() {
-            const command = document.getElementById('custom-command').value;
-            if (command.trim()) {
-                runCommand(command);
-                document.getElementById('custom-command').value = '';
+          case 'hook':
+            if (window.hookDetailsViewer) {
+              window.hookDetailsViewer.render(name, data.hooks[name], validationData);
             }
-        }
-
-        function handleCommandKeypress(event) {
-            if (event.key === 'Enter') {
-                runCustomCommand();
-            }
-        }
-
-        // Quick actions
-        function runBaselineAnalysis() {
-            fetch('/api/baseline', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    alert('Baseline analysis started! Check the monitoring panel for results.');
-                })
-                .catch(console.error);
-        }
-
-        function runQuickCheck() {
-            runCommand('npm run observer');
-        }
-
-        function runSecurityScan() {
-            runCommand('npm audit');
-        }
-
-        function runPerformanceCheck() {
-            runCommand('npm run build');
-        }
-
-        function runDriftAnalysis() {
-            const driftList = document.getElementById('drift-list');
-            driftList.innerHTML = `
-                <li class="progress-item">
-                    <span>Analyzing changes...</span>
-                    <span class="progress-status status-warning">Processing</span>
-                </li>
+            break;
+            
+          case 'component':
+          case 'page':
+            // Handle component/page viewing
+            mainContent.innerHTML = `
+              <div style="padding: 20px;">
+                <h2 style="color: #f8fafc; margin-bottom: 16px;">${type}: ${name}</h2>
+                <div style="color: #9ca3af;">
+                  Detailed ${type} viewer coming soon...
+                </div>
+              </div>
             `;
+            break;
             
-            fetch('/api/drift-analysis')
-                .then(response => response.json())
-                .then(data => {
-                    setTimeout(() => {
-                        driftList.innerHTML = `
-                            <li class="progress-item">
-                                <span>Files modified: ${data.modifiedFiles || 5}</span>
-                                <span class="progress-status status-good">Normal</span>
-                            </li>
-                            <li class="progress-item">
-                                <span>New complexity: +${data.complexityIncrease || 0.2}</span>
-                                <span class="progress-status status-warning">Monitor</span>
-                            </li>
-                            <li class="progress-item">
-                                <span>Test coverage: ${data.coverageDelta || '+2%'}</span>
-                                <span class="progress-status status-good">Improved</span>
-                            </li>
-                        `;
-                    }, 2000);
-                })
-                .catch(console.error);
+          default:
+            mainContent.innerHTML = `
+              <div style="padding: 20px; color: #9ca3af;">
+                Unknown entity type: ${type}
+              </div>
+            `;
         }
 
-        // WebSocket connection
-        function connectWebSocket() {
-            try {
-                ws = new WebSocket('ws://localhost:3002');
-                
-                ws.onmessage = function(event) {
-                    const data = JSON.parse(event.data);
-                    if (data.type === 'health-update') {
-                        updateHealthScores(data.score);
-                    }
-                };
-                
-                ws.onerror = function(error) {
-                    console.log('WebSocket error:', error);
-                };
-            } catch (error) {
-                console.log('WebSocket not available:', error);
-            }
+        // Show query panel for tables
+        const queryPanel = document.getElementById('queryPanel');
+        if (queryPanel && type === 'table') {
+          queryPanel.style.display = 'block';
+          // Load query information here if available
         }
-    </script>
+
+      } catch (error) {
+        console.error('Error selecting item:', error);
+        
+        const mainContent = document.getElementById('mainContent');
+        if (mainContent) {
+          mainContent.innerHTML = `
+            <div style="
+              background: #ef444410;
+              border: 1px solid #ef444430;
+              border-radius: 8px;
+              padding: 20px;
+              color: #ef4444;
+              text-align: center;
+            ">
+              <div style="font-size: 24px; margin-bottom: 12px;">⚠️</div>
+              <div>Failed to load ${type}: ${name}</div>
+              <div style="font-size: 12px; margin-top: 8px; color: #9ca3af;">
+                ${error.message}
+              </div>
+            </div>
+          `;
+        }
+      }
+    };
+
+    // Initialize viewers after components load
+    window.addEventListener('load', () => {
+      // Initialize detail viewers
+      if (window.TableDetailsViewer) {
+        window.tableDetailsViewer = new window.TableDetailsViewer('mainContent');
+      }
+      
+      if (window.HookDetailsViewer) {
+        window.hookDetailsViewer = new window.HookDetailsViewer('mainContent');
+      }
+
+      // Hide loading overlay
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      if (loadingOverlay) {
+        loadingOverlay.style.opacity = '0';
+        setTimeout(() => loadingOverlay.remove(), 300);
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (event) => {
+      // Alt/Cmd + number to switch tabs
+      if ((event.altKey || event.metaKey) && event.key >= '1' && event.key <= '8') {
+        event.preventDefault();
+        const tabIndex = parseInt(event.key) - 1;
+        const tabs = ['overview', 'unified', 'code-quality', 'contracts', 'business', 'design', 'contract-tests', 'export'];
+        if (tabs[tabIndex] && window.unifiedDashboard) {
+          window.unifiedDashboard.switchTab(tabs[tabIndex]);
+        }
+      }
+      
+      // Ctrl/Cmd + R to run analysis
+      if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+        event.preventDefault();
+        if (window.controlBar) {
+          window.controlBar.triggerRun();
+        }
+      }
+    });
+
+    // Theme detection
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      // Add light theme support if needed
+      console.log('Light theme preference detected');
+    }
+  </script>
 </body>
 </html>

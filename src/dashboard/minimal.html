@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Observer - Minimal Modular Dashboard</title>
+  <link rel="stylesheet" href="design-system.css">
+  <script src="dashboard-loader.js"></script>
+</head>
+<body>
+  <div class="dashboard-header">
+    <h1>🔬 AI Observer Dashboard</h1>
+    <div id="projectInfo">Loading...</div>
+  </div>
+  
+  <div class="control-bar">
+    <button class="btn btn-primary" onclick="runValidations()">🔄 Run Validations</button>
+    <div id="lastRun">Never</div>
+  </div>
+  
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab" onclick="switchTab('architecture')">Architecture</button>
+    <button class="tab" onclick="switchTab('validation')">Validation</button>
+  </div>
+  
+  <div class="main-container">
+    <div class="sidebar" id="sidebar">
+      <input type="text" class="search-box" placeholder="Search..." onkeyup="filterItems(event)">
+      <div id="sidebarContent"></div>
+    </div>
+    
+    <div class="content-area" id="mainContent">
+      <div class="card">Loading...</div>
+    </div>
+    
+    <div class="right-panel" id="rightPanel">
+      <div class="card">
+        <h3>Query Inspector</h3>
+        <div id="queryContent">Select an item</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize dashboard with minimal code
+    const app = {
+      loader: new DashboardLoader(),
+      state: { tables: {}, hooks: [], components: [], pages: [], validationData: null },
+      
+      async init() {
+        try {
+          // Load entity data provider
+          app.loader.entityData = await app.loader.loadEntityData();
+          
+          // Load all data
+          const [project, tables, architecture, contracts, nineRules] = await Promise.all([
+            fetch('/api/project-info').then(r => r.json()),
+            fetch('/api/table-mapping').then(r => r.json()),
+            fetch('/api/architecture-data').then(r => r.json()),
+            fetch('/api/contracts').then(r => r.json()),
+            fetch('/api/nine-rules').then(r => r.json())
+          ]);
+          
+          app.state.validationData = { contracts, nineRules };
+          
+          // Process tables
+          for (const [name, data] of Object.entries(tables.tables || {})) {
+            app.state.tables[name] = app.loader.entityData.enrichTableData(name, data);
+          }
+          
+          // Extract architecture items
+          app.extractArchitecture();
+          
+          // Update UI
+          document.getElementById('projectInfo').textContent = 
+            `${project.name} • ${Object.keys(app.state.tables).length} tables`;
+          
+          app.renderSidebar();
+          
+          // Select first table
+          const firstTable = Object.keys(app.state.tables)[0];
+          if (firstTable) app.selectItem(firstTable, 'table');
+          
+        } catch (error) {
+          console.error('Init error:', error);
+          document.getElementById('mainContent').innerHTML = 
+            `<div class="card error">Error: ${error.message}</div>`;
+        }
+      },
+      
+      extractArchitecture() {
+        Object.values(app.state.tables).forEach(table => {
+          // Extract hooks
+          if (table.hooks) {
+            table.hooks.forEach(h => {
+              const name = typeof h === 'string' ? h : h.hookName;
+              if (name && !app.state.hooks.find(x => x === name || x.hookName === name)) {
+                app.state.hooks.push(h);
+              }
+            });
+          }
+          
+          // Extract components
+          if (table.components) {
+            table.components.forEach(c => {
+              const name = typeof c === 'string' ? c : c.componentName || c.name;
+              if (name && !app.state.components.includes(name)) {
+                app.state.components.push(name);
+              }
+            });
+          }
+        });
+        
+        // Add pages
+        app.state.pages = [
+          'src/app/(main)/feed/page.tsx',
+          'src/app/(main)/crm/page.tsx',
+          'src/app/(main)/orders/page.tsx'
+        ];
+      },
+      
+      renderSidebar() {
+        const html = `
+          <div class="entity-list">
+            <h3>Tables (${Object.keys(app.state.tables).length})</h3>
+            ${Object.keys(app.state.tables).map(name => `
+              <div class="entity-item" onclick="app.selectItem('${name}', 'table')">
+                📊 ${name}
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="entity-list">
+            <h3>Hooks (${app.state.hooks.length})</h3>
+            ${app.state.hooks.map(h => {
+              const name = typeof h === 'string' ? h : h.hookName;
+              return `
+                <div class="entity-item" onclick="app.selectItem('${name}', 'hook')">
+                  🔗 ${name}
+                </div>
+              `;
+            }).join('')}
+          </div>
+          
+          <div class="entity-list">
+            <h3>Components (${app.state.components.length})</h3>
+            ${app.state.components.slice(0, 10).map(name => `
+              <div class="entity-item" onclick="app.selectItem('${name}', 'component')">
+                🧩 ${name}
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="entity-list">
+            <h3>Pages (${app.state.pages.length})</h3>
+            ${app.state.pages.map(p => `
+              <div class="entity-item" onclick="app.selectItem('${p}', 'page')">
+                📄 ${app.formatPageName(p)}
+              </div>
+            `).join('')}
+          </div>
+        `;
+        
+        document.getElementById('sidebarContent').innerHTML = html;
+      },
+      
+      formatPageName(path) {
+        if (path.includes('(main)')) {
+          const parts = path.split('/');
+          const mainIdx = parts.findIndex(p => p === '(main)');
+          if (mainIdx >= 0 && mainIdx < parts.length - 1) {
+            return `(main) > ${parts[mainIdx + 1]}`;
+          }
+        }
+        return path.split('/').pop()?.replace('.tsx', '') || path;
+      },
+      
+      selectItem(name, type) {
+        // Update selection
+        document.querySelectorAll('.entity-item').forEach(el => {
+          el.classList.remove('selected');
+        });
+        event?.currentTarget?.classList.add('selected');
+        
+        // Render content using loader
+        if (type === 'table') {
+          const table = app.state.tables[name];
+          document.getElementById('mainContent').innerHTML = app.renderTable(name, table);
+        } else if (type === 'hook') {
+          const hook = app.state.hooks.find(h => 
+            (typeof h === 'string' ? h : h.hookName) === name
+          );
+          document.getElementById('mainContent').innerHTML = 
+            app.loader.renderHookDetails(hook || name, app.state.validationData);
+        } else if (type === 'component') {
+          document.getElementById('mainContent').innerHTML = 
+            app.loader.renderComponentDetails(name, app.state.validationData);
+        } else if (type === 'page') {
+          document.getElementById('mainContent').innerHTML = app.renderPage(name);
+        }
+      },
+      
+      renderTable(name, table) {
+        const props = table.properties || [];
+        const rels = table.relationships || [];
+        
+        return `
+          <h2>📊 ${name}</h2>
+          <div class="card">
+            <h3>Properties (${props.length})</h3>
+            ${props.length > 0 ? `
+              <div class="property-grid">
+                ${props.slice(0, 20).map(p => `
+                  <div class="property-item">
+                    <span>${p.name}${p.required ? '*' : ''}</span>
+                    <span class="type-badge">${p.type}</span>
+                  </div>
+                `).join('')}
+              </div>
+            ` : '<p>No properties</p>'}
+          </div>
+          
+          ${rels.length > 0 ? `
+            <div class="card">
+              <h3>Relationships</h3>
+              ${rels.map(r => `
+                <div>${name} → ${r.type} ${r.target}</div>
+              `).join('')}
+            </div>
+          ` : ''}
+        `;
+      },
+      
+      renderPage(path) {
+        const name = app.formatPageName(path);
+        const violations = app.loader.getViolationsForItem(path, 'page', app.state.validationData);
+        
+        return `
+          <h2>📄 ${name}</h2>
+          <div class="path">${path}</div>
+          ${app.loader.renderViolations(violations)}
+        `;
+      }
+    };
+    
+    // Global functions
+    window.runValidations = () => {
+      document.getElementById('lastRun').textContent = new Date().toLocaleTimeString();
+    };
+    
+    window.switchTab = (tab) => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    };
+    
+    window.filterItems = (event) => {
+      const search = event.target.value.toLowerCase();
+      document.querySelectorAll('.entity-item').forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(search) ? 'block' : 'none';
+      });
+    };
+    
+    // Start
+    app.init();
+  </script>
+</body>
+</html>

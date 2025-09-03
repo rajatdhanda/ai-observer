@@ -25,6 +25,7 @@ import { VersionValidator } from '../validator/version-validator';
 import { DesignSystemValidator } from '../validator/design-system-validator';
 import { TableContractValidator } from '../validator/table-contract-validator';
 import { ContractTestRunner } from '../validator/contract-test-runner';
+import { getUnifiedReport } from './components/unified-dashboard';
 
 const PORT = 3001;
 
@@ -52,7 +53,8 @@ class Dashboard {
   constructor() {
     // Get project path from environment or command line
     // Default to test-projects/streax for testing
-    this.projectPath = process.argv[2] || process.env.OBSERVER_PROJECT_PATH || path.join(process.cwd(), 'test-projects', 'streax');
+    // Default to current directory if no path specified
+    this.projectPath = process.argv[2] || process.env.OBSERVER_PROJECT_PATH || process.cwd();
     this.scanForProjects();
     
     // Initialize file watcher
@@ -196,6 +198,10 @@ class Dashboard {
         const results = await runner.runAll();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(results));
+      } else if (req.url === '/api/unified-report') {
+        const report = await getUnifiedReport(this.projectPath);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(report));
       } else if (req.url === '/api/nine-rules-view') {
         const html = renderNineRulesView(this.nineRulesResults);
         res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -260,6 +266,157 @@ class Dashboard {
         const html = fs.readFileSync(enhancedPath, 'utf-8');
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(html);
+      } else if (req.url === '/modular') {
+        const modularPath = path.join(__dirname, 'modular.html');
+        const html = fs.readFileSync(modularPath, 'utf-8');
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/api/project-info') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          path: this.projectPath,
+          name: path.basename(this.projectPath)
+        }));
+      } else if (req.url === '/api/overview-data') {
+        // Serve the overview component
+        const { OverviewComponent } = require('./components/overview-component');
+        const { getUnifiedReport } = require('./components/unified-dashboard');
+        
+        // Get real data from the server
+        const [unified, tables] = await Promise.all([
+          getUnifiedReport(this.projectPath),
+          this.tableMappingResults || { tables: {} }
+        ]);
+        
+        const data = {
+          tables: Object.values(tables.tables || {}),
+          hooks: [],
+          components: [],
+          apis: [],
+          pages: [],
+          validation: {
+            criticalCount: unified.summary?.criticalCount || 0,
+            warningCount: unified.summary?.warningCount || 0,
+            infoCount: unified.summary?.infoCount || 0,
+            topIssues: unified.criticalIssues?.slice(0, 5).map((issue: any) => ({
+              message: issue.message || issue.issue,
+              file: issue.file || issue.location,
+              severity: 'critical'
+            })) || []
+          }
+        };
+        
+        const html = OverviewComponent.render(data);
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/api/unified-data') {
+        // Serve the unified component
+        const { UnifiedComponent } = require('./components/unified-component');
+        const { getUnifiedReport } = require('./components/unified-dashboard');
+        
+        const report = await getUnifiedReport(this.projectPath);
+        const html = UnifiedComponent.render(report);
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/api/code-quality-data') {
+        // Serve code quality component
+        const { ComponentLoader } = require('./components/component-loader');
+        const html = await ComponentLoader.loadComponent('code-quality');
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/api/contracts-data') {
+        // Serve contracts component
+        const { ComponentLoader } = require('./components/component-loader');
+        const html = await ComponentLoader.loadComponent('contracts');
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/api/business-data') {
+        // Serve business logic component
+        const { ComponentLoader } = require('./components/component-loader');
+        const html = await ComponentLoader.loadComponent('business');
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/api/tests-data') {
+        // Serve tests component
+        const { ComponentLoader } = require('./components/component-loader');
+        const html = await ComponentLoader.loadComponent('tests');
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/api/architecture-explorer') {
+        // Serve architecture explorer component
+        const { ArchitectureExplorer } = require('./components/architecture-explorer');
+        
+        // Get all architecture data
+        const [tables, hooks, components, apis, pages] = await Promise.all([
+          this.getArchitectureData('table'),
+          this.getArchitectureData('hook'),
+          this.getArchitectureData('component'),
+          this.getArchitectureData('api'),
+          this.getArchitectureData('page')
+        ]);
+        
+        // Calculate summary
+        const allItems = [...tables, ...hooks, ...components, ...apis, ...pages];
+        const summary = {
+          totalItems: allItems.length,
+          healthyItems: allItems.filter((i: any) => i.healthScore >= 80).length,
+          criticalItems: allItems.filter((i: any) => i.errorCount > 0).length,
+          warningItems: allItems.filter((i: any) => i.warningCount > 0 && i.errorCount === 0).length,
+          averageHealth: allItems.length > 0 
+            ? Math.round(allItems.reduce((sum: number, i: any) => sum + i.healthScore, 0) / allItems.length)
+            : 100
+        };
+        
+        const data = { tables, hooks, components, apis, pages, summary };
+        const html = ArchitectureExplorer.render(data);
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/architecture') {
+        const architecturePath = path.join(__dirname, 'architecture.html');
+        const html = fs.readFileSync(architecturePath, 'utf-8');
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/overview') {
+        const overviewPath = path.join(__dirname, 'overview-only.html');
+        const html = fs.readFileSync(overviewPath, 'utf-8');
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/enhanced-overview') {
+        // Serve the complete self-contained enhanced overview
+        const enhancedCompletePath = path.join(__dirname, 'enhanced-complete.html');
+        const html = fs.readFileSync(enhancedCompletePath, 'utf-8');
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/working') {
+        // Serve the ACTUALLY WORKING dashboard
+        const workingPath = path.join(__dirname, 'working.html');
+        const html = fs.readFileSync(workingPath, 'utf-8');
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/modular-fixed') {
+        // Serve the fixed modular dashboard
+        const modularFixedPath = path.join(__dirname, 'modular-fixed.html');
+        const html = fs.readFileSync(modularFixedPath, 'utf-8');
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+      } else if (req.url === '/design-system.css') {
+        // Serve the design system CSS
+        const cssPath = path.join(__dirname, 'design-system.css');
+        const css = fs.readFileSync(cssPath, 'utf-8');
+        res.writeHead(200, { 'Content-Type': 'text/css' });
+        res.end(css);
+      } else if (req.url?.startsWith('/components/') && req.url?.endsWith('.js')) {
+        // Serve component JavaScript files
+        const componentName = req.url.replace('/components/', '');
+        const componentPath = path.join(__dirname, 'components', componentName);
+        if (fs.existsSync(componentPath)) {
+          const js = fs.readFileSync(componentPath, 'utf-8');
+          res.writeHead(200, { 'Content-Type': 'application/javascript' });
+          res.end(js);
+        } else {
+          res.writeHead(404);
+          res.end();
+        }
       } else if (req.url === '/') {
         // Serve enhanced dashboard by default
         const enhancedPath = path.join(__dirname, 'enhanced.html');
@@ -486,11 +643,54 @@ Available projects: ${this.availableProjects.length}
     return files;
   }
 
-  private async getArchitectureData(type: 'hook' | 'component' | 'api' | 'page'): Promise<any[]> {
+  private async getArchitectureData(type: 'table' | 'hook' | 'component' | 'api' | 'page'): Promise<any[]> {
     try {
       // Get validation results (same logic as working tabs)
       const nineRulesData = this.nineRulesResults || await this.runNineRulesValidation();
       const contractsData = this.contractResults || await this.runContractValidation();
+      
+      // Handle table type differently
+      if (type === 'table') {
+        // Get tables from table mapping results
+        if (!this.tableMappingResults) {
+          await this.mapTables();
+        }
+        
+        const tables = Object.entries(this.tableMappingResults?.tables || {}).map(([name, table]: [string, any]) => {
+          // Count contract violations for this table
+          const tableContractViolations = contractsData.violations?.filter((violation: any) => 
+            violation.table === name || violation.location?.includes(name)
+          ) || [];
+          const contractErrors = tableContractViolations.filter((v: any) => v.type === 'error').length;
+          const contractWarnings = tableContractViolations.filter((v: any) => v.type === 'warning').length;
+
+          // For tables, we don't have nine-rules issues
+          const codeQualityErrors = 0;
+          const codeQualityWarnings = 0;
+
+          const totalErrors = contractErrors + codeQualityErrors;
+          const totalWarnings = contractWarnings + codeQualityWarnings;
+          const totalIssues = totalErrors + totalWarnings;
+          
+          return {
+            name,
+            file: table.schemaFile || 'prisma/schema.prisma',
+            type: 'table',
+            errorCount: totalErrors,
+            warningCount: totalWarnings,
+            contractErrors,
+            contractWarnings,
+            codeQualityErrors,
+            codeQualityWarnings,
+            contractViolations: contractErrors + contractWarnings,
+            codeQualityIssues: 0,
+            issueCount: totalIssues,
+            healthScore: this.calculateHealthScore(totalErrors, totalWarnings)
+          };
+        });
+        
+        return tables.sort((a, b) => a.name.localeCompare(b.name));
+      }
       
       // Get all files for this type - fix plural mismatch
       const typeMap = {
