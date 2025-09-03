@@ -179,16 +179,13 @@ export class MapGenerator {
     // ES6 imports
     while ((match = importRegex.exec(content)) !== null) {
       const importPath = match[1];
-      // Extract just the module names, not paths
-      const names = this.extractImportNames(match[0]);
-      imports.push(...names);
+      imports.push(importPath);
     }
     
     // CommonJS requires
     while ((match = requireRegex.exec(content)) !== null) {
       const importPath = match[1];
-      const moduleName = path.basename(importPath);
-      imports.push(moduleName);
+      imports.push(importPath);
     }
     
     return [...new Set(imports)]; // Remove duplicates
