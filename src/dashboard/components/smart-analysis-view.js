@@ -82,7 +82,9 @@ class SmartAnalysisView {
 
   renderAnalysis(analysis) {
     const stats = analysis.stats || {};
-    const groups = analysis.fix_groups || [];
+    const buckets = analysis.issue_buckets || [];
+    const groups = analysis.fix_groups || []; // Fallback for old format
+    const hasBuckets = buckets.length > 0;
     
     return `
       <div style="padding: 20px;">
@@ -92,6 +94,7 @@ class SmartAnalysisView {
             <div style="display: flex; align-items: center; gap: 12px;">
               <span id="refreshStatus" style="color: #10b981; font-size: 11px;">🟢 Live</span>
               <span style="color: #64748b; font-size: 11px;">Smart refresh enabled</span>
+              ${hasBuckets ? '<span style="color: #3b82f6; font-size: 11px;">🆕 Enhanced with buckets</span>' : ''}
             </div>
             <button onclick="window.smartRefreshManager?.forceRefresh()" style="
               background: #1e293b; color: #94a3b8; border: 1px solid #334155;
@@ -102,15 +105,23 @@ class SmartAnalysisView {
             </button>
           </div>
           <div style="color: #94a3b8; font-size: 12px;">
-            [${new Date(analysis.generated).toLocaleTimeString()}] Checking... 
-            ✅ Found ${stats.total_issues || stats.total_issues_found || 0} issues 
-            (${groups.length} groups)
+            [${new Date(analysis.generated).toLocaleTimeString()}] Analysis complete... 
+            ✅ Found ${stats.total_issues || stats.total_issues_found || 0} issues
+            ${hasBuckets ? `(${buckets.length} buckets)` : `(${groups.length} groups)`}
+            ${stats.visibility_percentage ? `📈 ${stats.visibility_percentage}% visible` : ''}
           </div>
-          ${groups.map(g => `
-            <div style="color: #64748b; font-size: 11px; margin-left: 20px;">
-              └─ Group ${g.group}: ${g.fixes.length} ${g.title.toLowerCase()}
-            </div>
-          `).join('')}
+          ${hasBuckets ? 
+            buckets.map(b => `
+              <div style="color: ${b.color}; font-size: 11px; margin-left: 20px;">
+                └─ ${b.name}: ${b.count} issues - ${b.title}
+              </div>
+            `).join('') :
+            groups.map(g => `
+              <div style="color: #64748b; font-size: 11px; margin-left: 20px;">
+                └─ Group ${g.group}: ${g.fixes.length} ${g.title.toLowerCase()}
+              </div>
+            `).join('')
+          }
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
@@ -127,20 +138,20 @@ class SmartAnalysisView {
           <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
                       padding: 20px; border-radius: 12px;">
             <div style="font-size: 32px; font-weight: bold; color: white;">
-              ${stats.critical_shown || groups.reduce((sum, g) => sum + g.fixes.length, 0) || 0}
+              ${hasBuckets ? (stats.issues_shown || 0) : (stats.critical_shown || groups.reduce((sum, g) => sum + g.fixes.length, 0) || 0)}
             </div>
             <div style="color: rgba(255,255,255,0.9); font-size: 13px; margin-top: 4px;">
-              Critical Issues to Fix
+              ${hasBuckets ? 'Issues Visible' : 'Critical Issues to Fix'}
             </div>
           </div>
           
           <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
                       padding: 20px; border-radius: 12px;">
             <div style="font-size: 32px; font-weight: bold; color: white;">
-              ${stats.groups_shown || groups.length || 0}
+              ${hasBuckets ? (stats.visibility_percentage || 100) : (stats.groups_shown || groups.length || 0)}%
             </div>
             <div style="color: rgba(255,255,255,0.9); font-size: 13px; margin-top: 4px;">
-              Fix Groups
+              ${hasBuckets ? 'Visibility' : 'Fix Groups'}
             </div>
           </div>
           
@@ -170,8 +181,11 @@ class SmartAnalysisView {
           </div>
         </div>
 
-        <!-- Fix Groups -->
-        ${groups.map(group => this.renderGroup(group)).join('')}
+        <!-- Issue Buckets (Enhanced) or Fix Groups (Legacy) -->
+        ${hasBuckets ? 
+          buckets.map(bucket => this.renderBucket(bucket)).join('') :
+          groups.map(group => this.renderGroup(group)).join('')
+        }
 
         <!-- File Location -->
         <div style="margin-top: 32px; padding: 16px; background: #0f0f0f; 
@@ -198,6 +212,73 @@ class SmartAnalysisView {
         ${value}
       </div>
     `).join('');
+  }
+
+  renderBucket(bucket) {
+    return `
+      <div style="background: #1a1a1a; border: 1px solid ${bucket.color}; border-radius: 12px; 
+                  padding: 20px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <div style="background: ${bucket.color}; 
+                      width: 40px; height: 40px; border-radius: 8px; 
+                      display: flex; align-items: center; justify-content: center; 
+                      color: white; font-weight: bold; font-size: 14px;">
+            ${bucket.name.charAt(0)}
+          </div>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <h3 style="color: #f8fafc; margin: 0; font-size: 18px;">${bucket.title}</h3>
+              <span style="background: ${bucket.color}; color: white; padding: 2px 8px; 
+                           border-radius: 12px; font-size: 11px; font-weight: bold;">
+                ${bucket.count} issues
+              </span>
+            </div>
+            <div style="color: #94a3b8; font-size: 12px; margin-bottom: 8px;">
+              ${bucket.description}
+            </div>
+            <div style="color: ${bucket.color}; font-size: 11px; font-weight: 500;">
+              Priority ${bucket.priority} • ${bucket.name}
+            </div>
+          </div>
+        </div>
+        
+        <div style="space-y: 8px;">
+          ${bucket.issues.map(issue => this.renderBucketIssue(issue, bucket.color)).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  renderBucketIssue(issue, bucketColor) {
+    return `
+      <div style="background: #0f0f0f; padding: 12px; border-radius: 8px; 
+                  margin-bottom: 8px; border-left: 3px solid ${bucketColor};">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="background: ${bucketColor}; color: white; padding: 1px 6px; 
+                           border-radius: 4px; font-size: 10px; font-weight: bold;">
+                ${issue.rule || issue.type}
+              </span>
+              <span style="color: #64748b; font-size: 11px;">
+                ${issue.severity}
+              </span>
+            </div>
+            <div style="color: #ef4444; font-size: 13px; margin-bottom: 4px;">
+              ❌ ${issue.message}
+            </div>
+            <div style="color: #3b82f6; font-family: monospace; font-size: 11px; margin-bottom: 8px;">
+              📁 ${issue.file}${issue.line ? `:${issue.line}` : ''}
+            </div>
+            <div style="background: #065f46; padding: 8px; border-radius: 4px; margin-top: 8px;">
+              <code style="color: #10b981; font-size: 12px;">
+                ✅ Fix: ${issue.fix}
+              </code>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   renderGroup(group) {
