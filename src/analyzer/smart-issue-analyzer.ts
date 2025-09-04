@@ -281,7 +281,7 @@ export class SmartIssueAnalyzer {
     // BLOCKERS: Critical runtime issues that prevent the app from working
     if (issue.severity === 'critical') {
       return (
-        issue.rule === 'Error Handling' ||
+        issue.rule === 'Contract Compliance' ||
         issue.rule === 'Type-Database Alignment' ||
         issue.type === 'missing_contracts' ||
         issue.type === 'typescript_error' ||
@@ -295,7 +295,7 @@ export class SmartIssueAnalyzer {
   private isStructuralIssue(issue: Issue): boolean {
     // STRUCTURAL: Important architectural issues affecting maintainability
     return (
-      issue.rule === 'Contract Compliance' ||
+      issue.rule === 'Error Handling' ||
       issue.rule === 'Cache Invalidation' ||
       issue.rule === 'Hook-Database Pattern' ||
       issue.rule === 'API Type Safety' ||
