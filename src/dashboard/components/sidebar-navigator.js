@@ -100,7 +100,7 @@ class SidebarNavigator {
           <h3 style="margin: 0; font-size: 13px; color: #94a3b8; text-transform: uppercase; font-weight: 600;">📊 Tables</h3>
           <span style="background: #252525; padding: 2px 8px; border-radius: 12px; font-size: 11px; color: #64748b;">${count}</span>
         </div>
-        <div id="tablesList" style="max-height: 300px; overflow-y: auto;">
+        <div id="tablesList">
           ${count === 0 ? this.renderEmptyState('tables') : 
             tables.map(([name, data]) => this.renderTableItem(name, data)).join('')}
         </div>
@@ -146,7 +146,7 @@ class SidebarNavigator {
           <h3 style="margin: 0; font-size: 13px; color: #94a3b8; text-transform: uppercase; font-weight: 600;">🔗 Hooks</h3>
           <span style="background: #252525; padding: 2px 8px; border-radius: 12px; font-size: 11px; color: #64748b;">${count}</span>
         </div>
-        <div id="hooksList" style="max-height: 200px; overflow-y: auto;">
+        <div id="hooksList">
           ${count === 0 ? this.renderEmptyState('hooks') : 
             this.data.hooks.slice(0, 15).map(hook => 
               this.renderSimpleItem(this.extractHookName(hook), 'hook', '🔗')
@@ -166,7 +166,7 @@ class SidebarNavigator {
           <h3 style="margin: 0; font-size: 13px; color: #94a3b8; text-transform: uppercase; font-weight: 600;">🧩 Components</h3>
           <span style="background: #252525; padding: 2px 8px; border-radius: 12px; font-size: 11px; color: #64748b;">${count}</span>
         </div>
-        <div id="componentsList" style="max-height: 200px; overflow-y: auto;">
+        <div id="componentsList">
           ${count === 0 ? this.renderEmptyState('components') : 
             this.data.components.slice(0, 15).map(comp => 
               this.renderSimpleItem(comp, 'component', '🧩')
@@ -186,7 +186,7 @@ class SidebarNavigator {
           <h3 style="margin: 0; font-size: 13px; color: #94a3b8; text-transform: uppercase; font-weight: 600;">📄 Pages</h3>
           <span style="background: #252525; padding: 2px 8px; border-radius: 12px; font-size: 11px; color: #64748b;">${count}</span>
         </div>
-        <div id="pagesList" style="max-height: 200px; overflow-y: auto;">
+        <div id="pagesList">
           ${count === 0 ? this.renderEmptyState('pages') : 
             this.data.pages.slice(0, 15).map(page => {
               const displayName = this.formatPageName(page);
@@ -246,13 +246,13 @@ class SidebarNavigator {
     }
   }
 
-  // Calculate entity health based on validation violations
+  // Calculate entity health based on REAL breaking issues (not contract compliance)
   getEntityHealth(entityName, entityType) {
     if (!this.validationData || !this.validationData.violations) {
       return { score: 100, color: '#10b981', severity: 'healthy' }; // Default green
     }
 
-    let criticalIssues = 0;
+    let realCriticalIssues = 0;
     let warningIssues = 0;
     
     // Map entity names to file patterns
@@ -277,7 +277,7 @@ class SidebarNavigator {
         filePatterns = [];
     }
 
-    // Count violations for this entity
+    // Count REAL breaking violations (not contract issues)
     this.validationData.violations.forEach(violation => {
       const matchesEntity = filePatterns.some(pattern => 
         violation.file.includes(pattern) || 
@@ -285,18 +285,31 @@ class SidebarNavigator {
       );
       
       if (matchesEntity) {
-        if (violation.severity === 'critical') criticalIssues++;
-        else if (violation.severity === 'warning') warningIssues++;
+        // Only count REAL breaking issues, not "missing contract" issues
+        const isRealBreakingIssue = violation.severity === 'critical' && 
+          !violation.message.includes('contract') && 
+          !violation.message.includes('Contract') &&
+          (violation.message.includes('error') || 
+           violation.message.includes('missing') || 
+           violation.message.includes('type') ||
+           violation.rule === 'Error Handling' ||
+           violation.rule === 'Type-Database Alignment');
+        
+        if (isRealBreakingIssue) {
+          realCriticalIssues++;
+        } else if (violation.severity === 'warning') {
+          warningIssues++;
+        }
       }
     });
 
-    // Calculate health score and color
-    if (criticalIssues > 0) {
-      return { score: 0, color: '#ef4444', severity: 'critical', issues: { critical: criticalIssues, warning: warningIssues } };
+    // Calculate health score and color - be more conservative
+    if (realCriticalIssues > 0) {
+      return { score: 0, color: '#ef4444', severity: 'critical', issues: { critical: realCriticalIssues, warning: warningIssues } };
     } else if (warningIssues > 0) {
-      return { score: 60, color: '#f59e0b', severity: 'warning', issues: { critical: criticalIssues, warning: warningIssues } };
+      return { score: 60, color: '#f59e0b', severity: 'warning', issues: { critical: realCriticalIssues, warning: warningIssues } };
     } else {
-      return { score: 100, color: '#10b981', severity: 'healthy', issues: { critical: criticalIssues, warning: warningIssues } };
+      return { score: 100, color: '#10b981', severity: 'healthy', issues: { critical: realCriticalIssues, warning: warningIssues } };
     }
   }
   
