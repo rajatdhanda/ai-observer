@@ -118,7 +118,7 @@ function hasFileChanged(filePath) {
   return true;
 }
 
-// Analysis function
+// Analysis function - uses smart analyzer logic
 async function analyze() {
   const now = Date.now();
   
@@ -148,65 +148,59 @@ async function analyze() {
   logger.info('Running analysis...', 'analyzer');
   
   try {
-    const issues = [];
+    // Run the smart analyzer and get its results
+    const smartAnalyzerPath = path.join(__dirname, '..', 'dist', 'cli', 'analyze-smart.js');
+    const smartResult = execSync(`node "${smartAnalyzerPath}"`, {
+      cwd: projectPath,
+      stdio: 'pipe',
+      timeout: 30000,
+      env: { ...process.env, OBSERVER_PROJECT_PATH: projectPath }
+    }).toString();
     
-    // 1. Check contracts
-    if (!fs.existsSync(path.join(observerDir, 'contracts.json'))) {
-      issues.push({
-        file: '.observer/contracts.json:0',
-        issue: 'No contracts defined',
-        fix: 'Create contracts.json'
-      });
-      logger.warning('No contracts defined', 'analyzer');
+    // Read the generated fixes.json from src/contracts
+    const contractsDir = path.join(projectPath, 'src', 'contracts');
+    const fixesPath = path.join(contractsDir, 'fixes.json');
+    
+    let smartData = { issues: [], buckets: [] };
+    if (fs.existsSync(fixesPath)) {
+      smartData = JSON.parse(fs.readFileSync(fixesPath, 'utf8'));
     }
     
-    // 2. Run TypeScript check (incremental)
-    if (fs.existsSync(path.join(projectPath, 'tsconfig.json'))) {
-      try {
-        execSync('npx tsc --noEmit --incremental', { 
-          cwd: projectPath, 
-          stdio: 'pipe',
-          timeout: 15000 
-        });
-      } catch (e) {
-        const output = e.stdout?.toString() || '';
-        const lines = output.split('\n').slice(0, 20);
-        
-        lines.forEach(line => {
-          const match = line.match(/(.+)\((\d+),\d+\):\s+error\s+TS\d+:\s+(.+)/);
-          if (match) {
-            issues.push({
-              file: `${match[1].replace(projectPath + '/', '')}:${match[2]}`,
-              issue: match[3].trim(),
-              fix: 'Fix TypeScript error'
-            });
-          }
-        });
-      }
-    }
-    
-    // Group issues
+    // Convert smart analyzer format to observer format
     const groups = [];
-    if (issues.length > 0) {
-      const critical = issues.filter(i => i.file.includes('contracts') || i.file.includes('.env'));
-      if (critical.length > 0) {
-        groups.push({
-          group: 1,
-          title: 'Critical setup issues',
-          why: 'Must fix before anything else',
-          fixes: critical
-        });
-      }
-      
-      const tsErrors = issues.filter(i => !critical.includes(i));
-      if (tsErrors.length > 0) {
-        groups.push({
-          group: groups.length + 1,
-          title: 'TypeScript errors',
-          why: 'Code won\'t build',
-          fixes: tsErrors.slice(0, 10)
-        });
-      }
+    let totalIssues = 0;
+    
+    if (smartData.buckets && smartData.buckets.length > 0) {
+      smartData.buckets.forEach((bucket, index) => {
+        if (bucket.issues && bucket.issues.length > 0) {
+          groups.push({
+            group: index + 1,
+            title: bucket.name,
+            why: bucket.description || 'Requires attention',
+            fixes: bucket.issues.map(issue => ({
+              file: `${issue.file}:${issue.line || 0}`,
+              issue: issue.description,
+              fix: issue.suggestion || 'Review and fix'
+            }))
+          });
+          totalIssues += bucket.issues.length;
+        }
+      });
+    }
+    
+    // Fallback: if no buckets, check for raw issues
+    if (groups.length === 0 && smartData.issues && smartData.issues.length > 0) {
+      groups.push({
+        group: 1,
+        title: 'Issues found',
+        why: 'Requires attention',
+        fixes: smartData.issues.slice(0, 20).map(issue => ({
+          file: `${issue.file}:${issue.line || 0}`,
+          issue: issue.description,
+          fix: issue.suggestion || 'Review and fix'
+        }))
+      });
+      totalIssues = smartData.issues.length;
     }
     
     // Write FIX_THIS.json
@@ -217,7 +211,7 @@ async function analyze() {
       project: projectPath,
       fix_groups: groups,
       stats: {
-        total_issues: issues.length,
+        total_issues: totalIssues,
         groups_count: groups.length,
         mode: USE_REALTIME ? 'real-time' : 'interval',
         check_count: checkCount
@@ -228,9 +222,9 @@ async function analyze() {
     
     const duration = Date.now() - startTime;
     
-    if (issues.length > 0) {
-      console.log(`✅ Found ${issues.length} issues (${groups.length} groups) [${duration}ms]`);
-      logger.success(`Found ${issues.length} issues in ${groups.length} groups`, 'analyzer', { duration, issueCount: issues.length });
+    if (totalIssues > 0) {
+      console.log(`✅ Found ${totalIssues} issues (${groups.length} groups) [${duration}ms]`);
+      logger.success(`Found ${totalIssues} issues in ${groups.length} groups`, 'analyzer', { duration, issueCount: totalIssues });
       groups.forEach(g => {
         console.log(`   └─ Group ${g.group}: ${g.fixes.length} ${g.title.toLowerCase()}`);
       });
