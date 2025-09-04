@@ -29,7 +29,7 @@ export class ContractDetector {
 
   constructor(
     private mapPath: string,
-    private contractsPath: string
+    private projectPath?: string
   ) {
     this.loadData();
   }
@@ -41,13 +41,57 @@ export class ContractDetector {
       this.mapData = JSON.parse(mapContent);
     }
 
-    // Load contracts.yaml
-    if (fs.existsSync(this.contractsPath)) {
-      const contractContent = fs.readFileSync(this.contractsPath, 'utf-8');
-      const data = yaml.load(contractContent) as any;
-      this.contracts = data.contracts || {};
+    // Determine project path
+    const basePath = this.projectPath || path.dirname(this.mapPath);
+    
+    // Look for contracts in standard location: /src/contracts
+    const contractPaths = [
+      path.join(basePath, 'src/contracts'),
+      path.join(basePath, 'contracts') // fallback
+    ];
+
+    // Load all contract files (schemas, golden-examples, ai-fixes)
+    for (const contractPath of contractPaths) {
+      if (fs.existsSync(contractPath)) {
+        this.loadContractsFromDirectory(contractPath);
+        break; // Use first found
+      }
     }
   }
+
+  private loadContractsFromDirectory(dir: string) {
+    // Load contracts.yaml
+    const contractsFile = path.join(dir, 'contracts.yaml');
+    if (fs.existsSync(contractsFile)) {
+      const content = fs.readFileSync(contractsFile, 'utf-8');
+      const data = yaml.load(content) as any;
+      this.contracts = data.contracts || data;
+    }
+
+    // Load golden.examples.json
+    const goldenFile = path.join(dir, 'golden.examples.json');
+    if (fs.existsSync(goldenFile)) {
+      const content = fs.readFileSync(goldenFile, 'utf-8');
+      const examples = JSON.parse(content);
+      // Merge examples into contracts
+      for (const [entity, exampleData] of Object.entries(examples)) {
+        if (!this.contracts[entity]) {
+          this.contracts[entity] = {};
+        }
+        this.contracts[entity].examples = exampleData;
+      }
+    }
+
+    // Load fixes.json (AI error fixes)
+    const fixesFile = path.join(dir, 'fixes.json');
+    if (fs.existsSync(fixesFile)) {
+      // Store fixes separately for reference
+      const content = fs.readFileSync(fixesFile, 'utf-8');
+      this.aiFixes = JSON.parse(content);
+    }
+  }
+
+  private aiFixes: any = {};
 
   /**
    * Main detection method

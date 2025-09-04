@@ -767,10 +767,41 @@ export class SmartIssueAnalyzer {
       }
     };
     
-    // Write the enhanced file
+    // Write the enhanced file to .observer
     fs.writeFileSync(
       path.join(outputDir, 'FIX_THIS.json'),
       JSON.stringify(enhancedFixFile, null, 2)
+    );
+    
+    // Also save to src/contracts/fixes.json for new project structure
+    const contractsDir = path.join(this.projectPath, 'src', 'contracts');
+    if (!fs.existsSync(contractsDir)) {
+      fs.mkdirSync(contractsDir, { recursive: true });
+    }
+    fs.writeFileSync(
+      path.join(contractsDir, 'fixes.json'),
+      JSON.stringify(enhancedFixFile, null, 2)
+    );
+    
+    // Save context.json with essential project info for AI
+    const contextFile = {
+      analyzed_at: new Date().toISOString(),
+      project_path: this.projectPath,
+      total_files: this.issues.filter((i, idx, arr) => 
+        arr.findIndex(x => x.file === i.file) === idx
+      ).length,
+      framework: this.detectFramework(),
+      entry_points: this.findEntryPoints(),
+      api_routes: this.findApiRoutes(),
+      database_type: this.detectDatabase(),
+      key_dependencies: this.getKeyDependencies(),
+      environment_vars: this.detectEnvVars(),
+      build_commands: this.getBuildCommands()
+    };
+    
+    fs.writeFileSync(
+      path.join(contractsDir, 'context.json'),
+      JSON.stringify(contextFile, null, 2)
     );
     
     // Save current state for next run
@@ -801,5 +832,135 @@ export class SmartIssueAnalyzer {
       byRule[rule] = (byRule[rule] || 0) + 1;
     }
     return byRule;
+  }
+
+  private detectFramework(): string {
+    const packagePath = path.join(this.projectPath, 'package.json');
+    if (fs.existsSync(packagePath)) {
+      const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
+      const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+      if (deps.next) return 'Next.js';
+      if (deps.react) return 'React';
+      if (deps.vue) return 'Vue';
+      if (deps.express) return 'Express';
+      if (deps.fastify) return 'Fastify';
+    }
+    return 'Unknown';
+  }
+
+  private findEntryPoints(): string[] {
+    const entries = [];
+    const patterns = [
+      'src/index.ts', 'src/main.ts', 'src/app.ts',
+      'src/app/page.tsx', 'src/app/layout.tsx',
+      'pages/index.tsx', 'pages/_app.tsx'
+    ];
+    
+    for (const pattern of patterns) {
+      const fullPath = path.join(this.projectPath, pattern);
+      if (fs.existsSync(fullPath)) {
+        entries.push(pattern);
+      }
+    }
+    return entries;
+  }
+
+  private findApiRoutes(): string[] {
+    const routes = [];
+    const apiDirs = [
+      path.join(this.projectPath, 'src/app/api'),
+      path.join(this.projectPath, 'pages/api'),
+      path.join(this.projectPath, 'api')
+    ];
+    
+    for (const dir of apiDirs) {
+      if (fs.existsSync(dir)) {
+        this.walkDir(dir, (file) => {
+          if (file.endsWith('.ts') || file.endsWith('.tsx') || file.endsWith('.js')) {
+            routes.push(file.replace(this.projectPath, ''));
+          }
+        });
+      }
+    }
+    return routes;
+  }
+
+  private detectDatabase(): string {
+    const packagePath = path.join(this.projectPath, 'package.json');
+    if (fs.existsSync(packagePath)) {
+      const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
+      const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+      if (deps.prisma || deps['@prisma/client']) return 'Prisma/PostgreSQL';
+      if (deps.mongoose) return 'MongoDB';
+      if (deps.pg) return 'PostgreSQL';
+      if (deps.mysql2) return 'MySQL';
+      if (deps.sqlite3) return 'SQLite';
+    }
+    return 'None detected';
+  }
+
+  private getKeyDependencies(): Record<string, string> {
+    const packagePath = path.join(this.projectPath, 'package.json');
+    if (fs.existsSync(packagePath)) {
+      const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
+      const important = ['next', 'react', 'typescript', 'prisma', '@prisma/client', 
+                        'tailwindcss', 'zod', 'express', 'fastify'];
+      const result: Record<string, string> = {};
+      
+      for (const dep of important) {
+        if (pkg.dependencies?.[dep]) result[dep] = pkg.dependencies[dep];
+        if (pkg.devDependencies?.[dep]) result[dep] = pkg.devDependencies[dep];
+      }
+      return result;
+    }
+    return {};
+  }
+
+  private detectEnvVars(): string[] {
+    const envExample = path.join(this.projectPath, '.env.example');
+    const envLocal = path.join(this.projectPath, '.env.local.example');
+    const vars = new Set<string>();
+    
+    for (const file of [envExample, envLocal]) {
+      if (fs.existsSync(file)) {
+        const content = fs.readFileSync(file, 'utf-8');
+        const matches = content.match(/^([A-Z_]+)=/gm);
+        if (matches) {
+          matches.forEach(m => vars.add(m.replace('=', '')));
+        }
+      }
+    }
+    
+    return Array.from(vars);
+  }
+
+  private getBuildCommands(): Record<string, string> {
+    const packagePath = path.join(this.projectPath, 'package.json');
+    if (fs.existsSync(packagePath)) {
+      const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
+      const important = ['dev', 'build', 'start', 'test', 'lint', 'typecheck'];
+      const result: Record<string, string> = {};
+      
+      for (const script of important) {
+        if (pkg.scripts?.[script]) {
+          result[script] = pkg.scripts[script];
+        }
+      }
+      return result;
+    }
+    return {};
+  }
+
+  private walkDir(dir: string, callback: (file: string) => void): void {
+    const files = fs.readdirSync(dir);
+    files.forEach(file => {
+      const fullPath = path.join(dir, file);
+      const stat = fs.statSync(fullPath);
+      if (stat.isDirectory() && !file.startsWith('.')) {
+        this.walkDir(fullPath, callback);
+      } else {
+        callback(fullPath);
+      }
+    });
   }
 }
