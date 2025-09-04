@@ -1,9 +1,28 @@
 #!/usr/bin/env node
 
-// Simple wrapper to run the smart analyzer
 const path = require('path');
-const projectPath = process.argv[2] || process.cwd();
+const { spawn } = require('child_process');
 
-// Set environment variable and run the compiled analyzer
-process.env.OBSERVER_PROJECT_PATH = projectPath;
-require(path.join(__dirname, '..', 'dist', 'cli', 'analyze-smart.js'));
+// Check if user wants continuous monitoring
+const args = process.argv.slice(2);
+const watchMode = args.includes('--watch') || args.includes('-w');
+const projectPath = args.find(arg => !arg.startsWith('-')) || process.cwd();
+
+if (watchMode) {
+  // Run the observer for continuous monitoring
+  console.log('🔍 Starting continuous monitoring...');
+  const observerPath = path.join(__dirname, 'ai-observe');
+  const child = spawn('node', [observerPath], {
+    stdio: 'inherit',
+    cwd: projectPath,
+    env: { ...process.env, OBSERVER_PROJECT_PATH: projectPath }
+  });
+  
+  child.on('exit', (code) => {
+    process.exit(code || 0);
+  });
+} else {
+  // Run one-time analysis
+  process.env.OBSERVER_PROJECT_PATH = projectPath;
+  require(path.join(__dirname, '..', 'dist', 'cli', 'analyze-smart.js'));
+}
