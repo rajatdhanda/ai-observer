@@ -124,7 +124,7 @@ class SmartAnalysisView {
           }
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
           <h2 style="color: #f8fafc; margin: 0;">
             🤖 Smart Analysis Results
           </h2>
@@ -132,6 +132,52 @@ class SmartAnalysisView {
             Last Check: ${new Date(analysis.generated).toLocaleString()}
           </div>
         </div>
+
+        <!-- Filter Bar -->
+        ${hasBuckets ? `
+        <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; margin-bottom: 20px;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <!-- Bucket Filters -->
+            <div style="display: flex; gap: 8px;">
+              <button onclick="filterSmartIssues('all')" id="filter-all" style="
+                background: #3b82f6; color: white; border: none; padding: 6px 12px;
+                border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;
+              ">
+                All (${stats.total_issues_found || 0})
+              </button>
+              ${buckets.map(b => `
+                <button onclick="filterSmartIssues('${b.name}')" id="filter-${b.name}" style="
+                  background: #1e293b; color: ${b.color}; border: 1px solid ${b.color}40;
+                  padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;
+                  font-weight: 500; transition: all 0.2s;
+                " onmouseover="this.style.background='${b.color}20'" onmouseout="this.style.background='#1e293b'">
+                  ${b.name} (${b.count})
+                </button>
+              `).join('')}
+            </div>
+            
+            <!-- Search Box -->
+            <div style="flex: 1; min-width: 200px;">
+              <input type="text" id="smartSearchBox" placeholder="🔍 Search issues..." 
+                oninput="searchSmartIssues(this.value)"
+                style="
+                  width: 100%; background: #1e293b; color: #e2e8f0; border: 1px solid #334155;
+                  padding: 6px 12px; border-radius: 4px; font-size: 12px;
+                ">
+            </div>
+            
+            <!-- Quick Stats -->
+            <div style="display: flex; gap: 16px; margin-left: auto;">
+              ${stats.by_severity ? Object.entries(stats.by_severity).filter(([k,v]) => v > 0).map(([severity, count]) => `
+                <div style="font-size: 11px; color: #94a3b8;">
+                  <span style="color: ${severity === 'critical' ? '#ef4444' : severity === 'high' ? '#f59e0b' : '#3b82f6'};">●</span>
+                  ${severity}: ${count}
+                </div>
+              `).join('') : ''}
+            </div>
+          </div>
+        </div>
+        ` : ''}
 
         <!-- Summary Cards -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
@@ -216,7 +262,7 @@ class SmartAnalysisView {
 
   renderBucket(bucket) {
     return `
-      <div style="background: #1a1a1a; border: 1px solid ${bucket.color}; border-radius: 12px; 
+      <div class="issue-bucket" data-bucket="${bucket.name}" style="background: #1a1a1a; border: 1px solid ${bucket.color}; border-radius: 12px; 
                   padding: 20px; margin-bottom: 16px;">
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
           <div style="background: ${bucket.color}; 
@@ -228,7 +274,7 @@ class SmartAnalysisView {
           <div style="flex: 1;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
               <h3 style="color: #f8fafc; margin: 0; font-size: 18px;">${bucket.title}</h3>
-              <span style="background: ${bucket.color}; color: white; padding: 2px 8px; 
+              <span class="bucket-count" style="background: ${bucket.color}; color: white; padding: 2px 8px; 
                            border-radius: 12px; font-size: 11px; font-weight: bold;">
                 ${bucket.count} issues
               </span>
@@ -251,7 +297,7 @@ class SmartAnalysisView {
 
   renderBucketIssue(issue, bucketColor) {
     return `
-      <div style="background: #0f0f0f; padding: 12px; border-radius: 8px; 
+      <div class="issue-item" style="background: #0f0f0f; padding: 12px; border-radius: 8px; 
                   margin-bottom: 8px; border-left: 3px solid ${bucketColor};">
         <div style="display: flex; justify-content: space-between; align-items: start;">
           <div style="flex: 1;">
@@ -387,6 +433,85 @@ window.stopAutoRefresh = function() {
     clearInterval(window.autoRefreshInterval);
     window.autoRefreshInterval = null;
   }
+};
+
+// Filter functionality for Smart Analysis
+window.filterSmartIssues = function(bucket) {
+  // Update button states
+  document.querySelectorAll('[id^="filter-"]').forEach(btn => {
+    btn.style.background = '#1e293b';
+    btn.style.color = btn.id === 'filter-all' ? '#94a3b8' : btn.style.color;
+  });
+  
+  const activeBtn = document.getElementById('filter-' + bucket);
+  if (activeBtn) {
+    activeBtn.style.background = bucket === 'all' ? '#3b82f6' : activeBtn.style.borderColor + '20';
+    activeBtn.style.color = bucket === 'all' ? 'white' : activeBtn.style.color;
+  }
+  
+  // Show/hide buckets
+  const buckets = document.querySelectorAll('.issue-bucket');
+  buckets.forEach(b => {
+    if (bucket === 'all' || b.dataset.bucket === bucket) {
+      b.style.display = 'block';
+    } else {
+      b.style.display = 'none';
+    }
+  });
+  
+  // Clear search box when filtering
+  const searchBox = document.getElementById('smartSearchBox');
+  if (searchBox && bucket !== 'all') {
+    searchBox.value = '';
+  }
+};
+
+// Search functionality for Smart Analysis
+window.searchSmartIssues = function(query) {
+  const lowerQuery = query.toLowerCase();
+  const buckets = document.querySelectorAll('.issue-bucket');
+  
+  if (!query) {
+    // Show all buckets and issues
+    buckets.forEach(b => {
+      b.style.display = 'block';
+      b.querySelectorAll('.issue-item').forEach(item => {
+        item.style.display = 'block';
+      });
+    });
+    return;
+  }
+  
+  // Search through issues
+  buckets.forEach(bucket => {
+    const issues = bucket.querySelectorAll('.issue-item');
+    let hasVisibleIssue = false;
+    
+    issues.forEach(issue => {
+      const text = issue.textContent.toLowerCase();
+      if (text.includes(lowerQuery)) {
+        issue.style.display = 'block';
+        hasVisibleIssue = true;
+      } else {
+        issue.style.display = 'none';
+      }
+    });
+    
+    // Show/hide bucket based on whether it has visible issues
+    bucket.style.display = hasVisibleIssue ? 'block' : 'none';
+    
+    // Update bucket count
+    if (hasVisibleIssue) {
+      const visibleCount = Array.from(issues).filter(i => i.style.display !== 'none').length;
+      const countSpan = bucket.querySelector('.bucket-count');
+      if (countSpan) {
+        countSpan.textContent = `${visibleCount} issues`;
+      }
+    }
+  });
+  
+  // Reset filter buttons to 'all'
+  document.getElementById('filter-all')?.click();
 };
 
 // Export for use
