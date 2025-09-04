@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Observer - Modular Dashboard</title>
+  
+  <!-- Load theme configuration first -->
+  <script src="/theme-config.js"></script>
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    /* CSS Variables from Theme Configuration */
+    :root {
+      /* Brand Colors */
+      --brand-primary: #8b5cf6;
+      --brand-secondary: #7c3aed;
+      --brand-accent: #3b82f6;
+      
+      /* Status Colors */
+      --status-success: #10b981;
+      --status-warning: #f59e0b;
+      --status-error: #ef4444;
+      --status-info: #3b82f6;
+      --status-critical: #ef4444;
+      
+      /* Background Colors */
+      --bg-dark: #0a0a0a;
+      --bg-card: #1a1a1a;
+      --bg-card-dark: #0f0f0f;
+      --border: #333;
+      --border-dark: #252525;
+      
+      /* Text Colors */
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-accent: #9ca3af;
+      
+      /* Gradients */
+      --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      --gradient-accent: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      --gradient-error: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-card-dark);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* Subtle scrollbars */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .sidebar::-webkit-scrollbar-track {
+      background: var(--bg-card);
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+    
+    .dashboard-header {
+      background: var(--gradient-primary);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .control-bar {
+      background: var(--bg-card);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .tabs {
+      background: var(--bg-dark);
+      padding: 0 20px;
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--border-dark);
+    }
+    
+    .tab {
+      padding: 10px 16px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    
+    .tab:hover { color: var(--text-primary); }
+    .tab.active {
+      color: var(--text-primary);
+      border-bottom-color: var(--brand-primary);
+    }
+    
+    .btn {
+      background: var(--brand-primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    
+    .btn:hover { background: var(--brand-secondary); }
+    
+    .main-container {
+      display: flex;
+      height: calc(100vh - 150px);
+    }
+    
+    .sidebar {
+      width: 300px;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      height: 100%;
+    }
+    
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    
+    .right-panel {
+      width: 400px;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      padding: 20px;
+    }
+    
+    
+    .entity-list {
+      padding: 15px;
+      border-bottom: 1px solid var(--border-dark);
+    }
+    
+    .entity-list h3 {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    
+    .entity-item {
+      padding: 8px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    
+    .entity-item:hover {
+      background: var(--border-dark);
+    }
+    
+    .entity-item.selected {
+      background: var(--border-dark);
+      border-left: 3px solid var(--brand-primary);
+    }
+    
+    .health-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    
+    .health-good { background: var(--status-success); }
+    .health-warning { background: var(--status-warning); }
+    .health-error { background: var(--status-error); }
+    
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .property-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    
+    .property-item {
+      background: var(--bg-card-dark);
+      padding: 12px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .type-badge {
+      background: var(--border-dark);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <!-- Initialize Theme Variables from Config -->
+  <script>
+    // Apply theme configuration to CSS variables if available
+    if (window.AI_OBSERVER_THEME) {
+      const root = document.documentElement;
+      const theme = window.AI_OBSERVER_THEME;
+      
+      // Map theme config to CSS variables
+      const themeMap = {
+        '--brand-primary': theme.brand.primary,
+        '--brand-secondary': theme.brand.secondary,
+        '--brand-accent': theme.brand.accent,
+        '--status-success': theme.status.success,
+        '--status-warning': theme.status.warning,
+        '--status-error': theme.status.error,
+        '--status-info': theme.status.info,
+        '--status-critical': theme.status.critical,
+        '--bg-dark': theme.background.dark,
+        '--bg-card': theme.background.card,
+        '--bg-card-dark': theme.background.cardDark,
+        '--border': theme.background.border,
+        '--border-dark': theme.background.borderDark,
+        '--text-primary': theme.text.primary,
+        '--text-secondary': theme.text.secondary,
+        '--text-muted': theme.text.muted,
+        '--text-accent': theme.text.accent,
+        '--gradient-primary': theme.gradients.primary,
+        '--gradient-accent': theme.gradients.accent,
+        '--gradient-success': theme.gradients.success,
+        '--gradient-error': theme.gradients.error
+      };
+      
+      // Apply all theme variables
+      Object.entries(themeMap).forEach(([varName, value]) => {
+        if (value) root.style.setProperty(varName, value);
+      });
+      
+      console.log('✨ Theme configuration applied');
+    }
+  </script>
+  
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1 style="margin: 0; color: white;">🔬 AI Observer Dashboard</h1>
+    <div id="projectInfo" style="color: rgba(255,255,255,0.9);">Loading...</div>
+  </div>
+
+  <!-- Control Bar -->
+  <div id="controlBarContainer"></div>
+  
+  <!-- Original Control Bar -->
+  <div class="control-bar">
+    <div style="display: flex; gap: 12px;">
+      <button class="btn" onclick="runValidations()">🔄 Run Validations</button>
+      <button class="btn" onclick="exportReport()">📊 Export Report</button>
+    </div>
+    <div id="lastRun" style="color: var(--text-muted); font-size: 13px;">
+      Last run: Never
+    </div>
+  </div>
+  
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab" onclick="switchTab('architecture')">Architecture</button>
+    <button class="tab" onclick="switchTab('9rules')">9 Rules</button>
+    <button class="tab" onclick="switchTab('files')">File Analysis</button>
+    <button class="tab" onclick="switchTab('smart')">🤖 Smart Analysis</button>
+  </div>
+  
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div id="sidebarContent">
+        <!-- Dynamic sidebar content -->
+      </div>
+    </div>
+    
+    <!-- Content Area -->
+    <div class="content-area" id="mainContent">
+      <!-- Dynamic main content -->
+    </div>
+    
+    <!-- Right Panel -->
+    <div class="right-panel" id="rightPanel">
+      <div class="card">
+        <h3 style="color: var(--text-primary); margin-bottom: 16px;">🔍 Query Inspector</h3>
+        <div id="queryContent" style="color: var(--text-muted);">
+          Select an item to view queries
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Theme Configuration (must load first) -->
+  <script src="/theme-config.js"></script>
+  
+  <!-- Component Registry & Services -->
+  <script src="/components/index.js"></script>
+  <script src="/components/validation-service.js"></script>
+  
+  <!-- Business Logic Scripts (Postman approach) -->
+  <script src="/components/scripts/api-client.js"></script>
+  <script src="/components/scripts/data-processor.js"></script>
+  
+  <!-- Enhanced Components -->
+  <script src="/components/severity-badge.js"></script>
+  <script src="/components/control-bar.js"></script>
+  <script src="/components/self-test.js"></script>
+  
+  <!-- Existing Components -->
+  <script src="/components/entity-data-provider.js"></script>
+  <script src="/components/hook-details-viewer.js"></script>
+  <script src="/components/table-details-viewer.js"></script>
+  <script src="/components/component-details-viewer.js"></script>
+  <script src="/components/page-details-viewer.js"></script>
+  <script src="/components/sidebar-navigator.js"></script>
+  <script src="/components/file-analysis-view.js"></script>
+  <script src="/components/smart-analysis-view.js"></script>
+  <script src="/components/smart-refresh-manager.js"></script>
+  <script src="/components/live-log-panel.js"></script>
+  <!-- Production Configuration -->
+  <script>
+    // AI Observer Production Configuration
+    window.AI_OBSERVER_CONFIG = window.AI_OBSERVER_CONFIG || {
+      // Asset paths (configurable for different deployments)  
+      basePath: '/components',
+      
+      // Pagination settings
+      violationsPagination: {
+        itemsPerPage: 10,
+        showPaginationAfter: 10
+      },
+      
+      // Performance settings
+      maxDisplayItems: 100
+    };
+  </script>
+  
+  <script>
+    // Theme helper function to get colors from theme config
+    function getThemeColor(path, fallback = '#666') {
+      if (!window.AI_OBSERVER_THEME) return fallback;
+      const keys = path.split('.');
+      let value = window.AI_OBSERVER_THEME;
+      for (const key of keys) {
+        value = value[key];
+        if (!value) return fallback;
+      }
+      return value;
+    }
+    
+    // Dashboard state
+    let state = {
+      tables: {},
+      hooks: [],
+      components: [],
+      pages: [],
+      validationData: null,
+      selectedItem: null,
+      selectedType: null
+    };
+    
+    // Component instances
+    let entityProvider = null;
+    let hookViewer = null;
+    let tableViewer = null;
+    let sidebarNav = null;
+    
+    // Initialize components and dashboard
+    async function init() {
+      try {
+        // Initialize components
+        entityProvider = new EntityDataProvider();
+        hookViewer = new HookDetailsViewer('mainContent');
+        tableViewer = new TableDetailsViewer('mainContent');
+        sidebarNav = new SidebarNavigator('sidebarContent');
+        
+        // Load data
+        const responses = await Promise.all([
+          fetch('/api/project-info'),
+          fetch('/api/table-mapping'),
+          fetch('/api/architecture-data'),
+          fetch('/api/contracts'),
+          fetch('/api/nine-rules'),
+          fetch('/api/boundaries')
+        ]);
+        
+        const [project, tables, architecture, contracts, nineRules, boundaries] = await Promise.all(
+          responses.map(r => r.json())
+        );
+        
+        // Update state - keep old structure for compatibility
+        state.validationData = { 
+          contracts: contracts,  // Keep full contracts object for existing code
+          contractViolations: contracts.violations,  // Also expose violations directly
+          nineRules,
+          boundaries: boundaries.boundaries,
+          criticalBoundaries: boundaries.critical
+        };
+        
+        // Enrich tables
+        for (const [name, data] of Object.entries(tables.tables || {})) {
+          state.tables[name] = entityProvider.enrichTableData(name, data);
+        }
+        
+        // Extract hooks and components
+        extractArchitecture();
+        
+        // Update UI
+        updateProjectInfo(project);
+        
+        // Store sidebar navigator globally for expand/collapse
+        window.sidebarNavigatorInstance = sidebarNav;
+        
+        // Render sidebar with navigation
+        sidebarNav.render({
+          tables: state.tables,
+          hooks: state.hooks,
+          components: state.components,
+          pages: state.pages
+        });
+        
+        // Select first table
+        const firstTable = Object.keys(state.tables)[0];
+        if (firstTable) selectItem(firstTable, 'table');
+        
+      } catch (error) {
+        console.error('Init failed:', error);
+        document.getElementById('mainContent').innerHTML = `
+          <div class="card" style="color: #ef4444;">
+            Error loading data: ${error.message}
+          </div>
+        `;
+      }
+    }
+    
+    function extractArchitecture() {
+      Object.values(state.tables).forEach(table => {
+        if (table.hooks) {
+          table.hooks.forEach(h => {
+            const name = typeof h === 'string' ? h : h.hookName;
+            if (name && !state.hooks.find(existing => 
+              (typeof existing === 'string' ? existing : existing.hookName) === name)) {
+              state.hooks.push(h);
+            }
+          });
+        }
+        if (table.components) {
+          table.components.forEach(c => {
+            const name = typeof c === 'string' ? c : (c.componentName || c.name);
+            if (name && !state.components.includes(name)) {
+              state.components.push(name);
+            }
+          });
+        }
+      });
+      
+      // Add pages
+      state.pages = [
+        'src/app/(main)/feed/page.tsx',
+        'src/app/(main)/crm/page.tsx',
+        'src/app/(main)/orders/page.tsx',
+        'src/app/(main)/insurance/page.tsx',
+        'src/app/page.tsx'
+      ];
+    }
+    
+    function updateProjectInfo(project) {
+      document.getElementById('projectInfo').innerHTML = `
+        <div>${project.name || 'Project'}</div>
+        <div style="font-size: 12px; opacity: 0.8;">
+          ${Object.keys(state.tables).length} tables • 
+          ${state.hooks.length} hooks • 
+          ${state.components.length} components
+        </div>
+      `;
+    }
+    
+    function selectItem(name, type) {
+      state.selectedItem = name;
+      state.selectedType = type;
+      
+      // Update sidebar selection
+      document.querySelectorAll('.entity-item').forEach(el => {
+        el.classList.remove('selected');
+      });
+      event?.currentTarget?.classList.add('selected');
+      
+      // Render content using enhanced viewers
+      if (type === 'table') {
+        window.tableDetailsViewer.render(name, state.tables[name], state.validationData);
+      } else if (type === 'hook') {
+        const hookData = state.hooks.find(h => 
+          (typeof h === 'string' ? h : h.hookName) === name
+        );
+        window.hookDetailsViewer.render(name, hookData, state.validationData);
+      } else if (type === 'component') {
+        const componentData = state.components.find(c => 
+          (typeof c === 'string' ? c : c.name || c.componentName) === name
+        ) || { name };
+        window.componentDetailsViewer.render(name, componentData, state.validationData);
+      } else if (type === 'page') {
+        const pageData = state.pages.find(p => 
+          (typeof p === 'string' ? p : p.path) === name
+        ) || { path: name };
+        window.pageDetailsViewer.render(name, pageData, state.validationData);
+      }
+      
+      // Update query inspector in right panel
+      updateQueryInspector(name, type);
+    }
+    
+    function renderComponent(name) {
+      const violations = getViolationsForItem(name);
+      const healthScore = calculateComponentHealth(violations);
+      
+      document.getElementById('mainContent').innerHTML = `
+        <div style="padding: 20px;">
+          <h2 style="color: #f8fafc; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+            🧩 ${name}
+            <span style="padding: 4px 12px; background: #f59e0b20; color: #f59e0b; border-radius: 6px; font-size: 12px; text-transform: uppercase;">COMPONENT</span>
+          </h2>
+          
+          <div style="background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%); padding: 24px; border-radius: 12px; margin-bottom: 24px; display: flex; align-items: center; gap: 24px;">
+            <div style="position: relative; width: 100px; height: 100px;">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#252525" stroke-width="8"/>
+                <circle cx="50" cy="50" r="45" fill="none" stroke="${healthScore >= 80 ? '#10b981' : healthScore >= 40 ? '#f59e0b' : '#ef4444'}" stroke-width="8" stroke-dasharray="${283 * (healthScore / 100)} 283" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+              </svg>
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                <div style="font-size: 24px; font-weight: bold; color: ${healthScore >= 80 ? '#10b981' : healthScore >= 40 ? '#f59e0b' : '#ef4444'};">${healthScore}%</div>
+                <div style="font-size: 10px; color: #64748b;">HEALTH</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 18px; color: #f8fafc; margin-bottom: 8px;">${healthScore >= 80 ? 'Healthy' : healthScore >= 40 ? 'Needs Attention' : 'Critical'}</div>
+              <div style="color: #94a3b8;">${violations.length} issue${violations.length !== 1 ? 's' : ''} found</div>
+            </div>
+          </div>
+          
+          ${violations.length > 0 ? `
+            <div style="background: #ef444410; border: 1px solid #ef444430; border-radius: 12px; padding: 20px;">
+              <h3 style="color: ${getThemeColor('status.error')}; margin-bottom: 16px;">⚠️ Issues (${violations.length})</h3>
+              ${violations.map(v => `
+                <div style="padding: 12px; background: #0f0f0f; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #ef4444;">
+                  <div style="color: #f8fafc;">${v.message}</div>
+                  ${v.line ? `<div style="color: ${getThemeColor('brand.primary')}; font-size: 11px; margin-top: 4px;">Line ${v.line}</div>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          ` : '<div style="background: #10b98120; border: 1px solid #10b98140; border-radius: 12px; padding: 20px; text-align: center; color: #10b981;">✅ No issues found</div>'}
+        </div>
+      `;
+    }
+    
+    function renderPage(path) {
+      const name = formatPageName(path);
+      const violations = getViolationsForPage(path);
+      
+      document.getElementById('mainContent').innerHTML = `
+        <div style="padding: 20px;">
+          <h2 style="color: #f8fafc; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+            📄 ${name}
+            <span style="padding: 4px 12px; background: #8b5cf620; color: #8b5cf6; border-radius: 6px; font-size: 12px; text-transform: uppercase;">PAGE</span>
+          </h2>
+          <div style="color: #64748b; font-family: monospace; margin-bottom: 24px; padding: 12px; background: #0f0f0f; border-radius: 8px;">${path}</div>
+          
+          ${validationService.renderViolations(violations, 'Violations')}
+        </div>
+      `;
+    }
+    
+    function updateQueryInspector(name, type) {
+      let content = `
+        <div>
+          <h4 style="color: #f8fafc; margin-bottom: 12px;">${type.toUpperCase()}: ${name}</h4>
+          <div style="font-size: 13px; color: #94a3b8; line-height: 1.5;">
+      `;
+      
+      if (type === 'table' && state.tables[name]) {
+        const table = state.tables[name];
+        content += `
+          <div><strong>Properties:</strong> ${table.properties?.length || 0}</div>
+          <div><strong>Relationships:</strong> ${table.relationships?.length || 0}</div>
+          <div><strong>Hooks:</strong> ${table.hooks?.length || 0}</div>
+          <div><strong>Components:</strong> ${table.components?.length || 0}</div>
+        `;
+      } else if (type === 'hook') {
+        const hook = state.hooks.find(h => (typeof h === 'string' ? h : h.hookName) === name);
+        if (typeof hook === 'object') {
+          content += `
+            <div><strong>Operations:</strong> ${hook.operations?.join(', ') || 'fetch'}</div>
+            <div><strong>Error Handling:</strong> ${hook.hasErrorHandling ? 'Yes' : 'No'}</div>
+            <div><strong>Loading State:</strong> ${hook.hasLoadingState ? 'Yes' : 'No'}</div>
+            <div><strong>Cache:</strong> ${hook.hasCacheInvalidation ? 'Yes' : 'No'}</div>
+          `;
+        }
+      }
+      
+      content += `
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('queryContent').innerHTML = content;
+    }
+    
+    function getViolationsForItem(name, type = 'any') {
+      return validationService.getViolationsForEntity(name, state.validationData, type);
+    }
+    
+    function getViolationsForPage(path) {
+      return validationService.getViolationsForEntity(path, state.validationData, 'page');
+    }
+    
+    function formatPageName(path) {
+      if (path.includes('(main)')) {
+        const parts = path.split('/');
+        const mainIdx = parts.findIndex(p => p === '(main)');
+        if (mainIdx >= 0 && mainIdx < parts.length - 1) {
+          return `(main) > ${parts[mainIdx + 1]}`;
+        }
+      }
+      const parts = path.split('/');
+      const name = parts[parts.length - 2];
+      return name === 'app' ? 'Home' : name;
+    }
+    
+    function calculateComponentHealth(violations) {
+      let score = 100;
+      violations.forEach(v => {
+        if (v.severity === 'critical') score -= 20;
+        else if (v.severity === 'warning') score -= 10;
+        else score -= 5;
+      });
+      return Math.max(0, Math.min(100, score));
+    }
+    
+    // Global functions
+    window.selectItem = selectItem;
+    
+    window.switchTab = function(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    };
+    
+    window.filterSidebar = function(event) {
+      const search = event.target.value.toLowerCase();
+      document.querySelectorAll('.entity-item').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(search) ? 'flex' : 'none';
+      });
+    };
+    
+    window.runValidations = function() {
+      document.getElementById('lastRun').textContent = 'Running...';
+      setTimeout(() => {
+        document.getElementById('lastRun').textContent = 'Last run: ' + new Date().toLocaleTimeString();
+      }, 2000);
+    };
+    
+    window.exportReport = function() {
+      alert('Export functionality coming soon!');
+    };
+    
+    // Tab switching functionality
+    window.switchTab = function(tab) {
+      // Remove active class from all tabs
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      
+      // Add active class to clicked tab
+      event.target.classList.add('active');
+      
+      // Update main content based on tab
+      const mainContent = document.getElementById('mainContent');
+      const rightPanel = document.getElementById('rightPanel');
+      
+      // Stop any active log polling when leaving Smart Analysis tab
+      if (window.liveLogPanel && tab !== 'smart') {
+        window.liveLogPanel.stopPolling();
+      }
+      
+      switch(tab) {
+        case 'overview':
+          // Show query inspector for overview
+          if (rightPanel) rightPanel.style.display = 'block';
+          
+          // Restore the selected item view (or select first table if none)
+          if (state.selectedItem) {
+            selectItem(state.selectedItem, state.selectedType);
+          } else {
+            const firstTable = Object.keys(state.tables)[0];
+            if (firstTable) selectItem(firstTable, 'table');
+          }
+          break;
+          
+        case 'architecture':
+          // Hide query inspector for architecture
+          if (rightPanel) rightPanel.style.display = 'none';
+          loadArchitectureView();
+          break;
+          
+        case '9rules':
+          // Hide query inspector for 9 rules
+          if (rightPanel) rightPanel.style.display = 'none';
+          loadNineRulesView();
+          break;
+          
+        case 'files':
+          // Hide query inspector for files
+          if (rightPanel) rightPanel.style.display = 'none';
+          loadFileAnalysisView();
+          break;
+          
+        case 'smart':
+          // Hide query inspector for smart analysis
+          if (rightPanel) rightPanel.style.display = 'none';
+          loadSmartAnalysisView();
+          break;
+          
+        default:
+          break;
+      }
+    };
+  </script>
+  
+  <!-- Load Dashboard Functions Modules -->
+  <script src="components/renderers/shared-utils.js"></script>
+  <script src="components/renderers/architecture-renderer.js"></script>
+  <script src="components/renderers/nine-rules-renderer.js"></script>
+  <script src="components/dashboard-functions.js"></script>
+  
+  <script>
+    // Smart Analysis View loader
+    window.loadSmartAnalysisView = async function() {
+      const smartView = new SmartAnalysisView('mainContent');
+      await smartView.render();
+    };
+  </script>
+  
+  <script>
+    window.tableDetailsViewer = new TableDetailsViewer('mainContent');
+    window.hookDetailsViewer = new HookDetailsViewer('mainContent');
+    window.componentDetailsViewer = new ComponentDetailsViewer('mainContent');
+    window.pageDetailsViewer = new PageDetailsViewer('mainContent');
+    
+    // Initialize dashboard when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  </script>
+</body>
+</html>
