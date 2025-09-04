@@ -1,383 +1,59 @@
 {
   "meta": {
-    "generated": "2025-09-04T07:32:04.536Z",
-    "projectPath": "/Users/rajatdhanda/Tech/Projects/ai-observer",
-    "fileCount": 112
+    "generated": "2025-09-04T07:30:55.554Z",
+    "projectPath": "/Users/rajatdhanda/Tech/Projects/streax",
+    "fileCount": 54
   },
   "exports": {
-    "contracts/schemas/order.schema.ts": [
-      {
-        "name": "OrderContract",
-        "line": 9
-      },
-      {
-        "name": "DatabaseOrderMapper",
-        "line": 34
-      },
-      {
-        "name": "UseOrdersContract",
-        "line": 58
-      },
-      {
-        "name": "useOrdersWithContract",
-        "line": 70
-      },
-      {
-        "name": "OrdersTabWithContract",
-        "line": 104
-      }
-    ],
-    "contracts/schemas/professional.v1.schema.ts": [
-      {
-        "name": "ProfessionalV1Schema",
-        "line": 7
-      },
-      {
-        "name": "DatabaseProfessionalV1Mapper",
-        "line": 29
-      },
-      {
-        "name": "validateProfessionalV1",
-        "line": 64
-      }
-    ],
-    "contracts/schemas/professional.v2.schema.ts": [
-      {
-        "name": "ProfessionalV2Schema",
-        "line": 12
-      },
-      {
-        "name": "DatabaseProfessionalV2Mapper",
-        "line": 52
-      },
-      {
-        "name": "toProfessionalV2",
-        "line": 96
-      },
-      {
-        "name": "toProfessionalV1",
-        "line": 112
-      },
-      {
-        "name": "validateProfessionalV2",
-        "line": 129
-      },
-      {
-        "name": "DEPRECATION_DATE",
-        "line": 135
-      },
-      {
-        "name": "DEPRECATION_MESSAGE",
-        "line": 136
-      }
-    ],
-    "contracts/schemas/queue.schemas.ts": [
-      {
-        "name": "EmailQueueMessageSchema",
-        "line": 9
-      },
-      {
-        "name": "JobQueueMessageSchema",
-        "line": 31
-      },
-      {
-        "name": "NotificationQueueSchema",
-        "line": 48
-      },
-      {
-        "name": "AnalyticsEventSchema",
-        "line": 66
-      },
-      {
-        "name": "OrderProcessingQueueSchema",
-        "line": 85
-      },
-      {
-        "name": "QueueMessageWrapperSchema",
-        "line": 106
-      },
-      {
-        "name": "validateQueueMessage",
-        "line": 122
-      },
-      {
-        "name": "createQueueSender",
-        "line": 150
-      },
-      {
-        "name": "createQueueConsumer",
-        "line": 164
-      }
-    ],
-    "contracts/schemas/webhook.schemas.ts": [
-      {
-        "name": "StripeWebhookSchema",
-        "line": 9
-      },
-      {
-        "name": "PayPalWebhookSchema",
-        "line": 29
-      },
-      {
-        "name": "GitHubWebhookSchema",
-        "line": 47
-      },
-      {
-        "name": "SlackWebhookSchema",
-        "line": 68
-      },
-      {
-        "name": "GenericWebhookSchema",
-        "line": 86
-      },
-      {
-        "name": "validateWebhook",
-        "line": 98
-      },
-      {
-        "name": "createWebhookHandler",
-        "line": 126
-      }
-    ],
-    "src/analyzer/background-analyzer.ts": [
-      {
-        "name": "BackgroundAnalyzer",
-        "line": 5
-      }
-    ],
-    "src/analyzer/business-logic-analyzer.ts": [
-      {
-        "name": "BusinessLogicAnalyzer",
-        "line": 101
-      }
-    ],
-    "src/analyzer/data-flow-mapper.ts": [
-      {
-        "name": "DataFlowMapper",
-        "line": 6
-      }
-    ],
-    "src/analyzer/enhanced-data-flow.ts": [
-      {
-        "name": "EnhancedDataFlowAnalyzer",
-        "line": 110
-      }
-    ],
-    "src/analyzer/entity-identifier.ts": [
-      {
-        "name": "EntityIdentifier",
-        "line": 3
-      }
-    ],
-    "src/analyzer/framework-detector.ts": [
-      {
-        "name": "FrameworkDetector",
-        "line": 5
-      }
-    ],
-    "src/analyzer/index.ts": [
-      {
-        "name": "ProjectAnalyzer",
-        "line": 99
-      }
-    ],
-    "src/analyzer/rule-generator.ts": [
-      {
-        "name": "ValidationRuleGenerator",
-        "line": 3
-      }
-    ],
-    "src/analyzer/smart-issue-analyzer.ts": [
-      {
-        "name": "SmartIssueAnalyzer",
-        "line": 40
-      }
-    ],
-    "src/analyzer/type-extractor.ts": [
-      {
-        "name": "TypeExtractor",
-        "line": 6
-      }
-    ],
-    "src/dashboard/logger.ts": [
-      {
-        "name": "DashboardLogger",
-        "line": 4
-      }
-    ],
-    "src/dashboard/types.ts": [
-      {
-        "name": "parseContractErrors",
-        "line": 40
-      },
-      {
-        "name": "renderDataFlowWithTabs",
-        "line": 55
-      },
-      {
-        "name": "renderContractView",
-        "line": 59
-      }
-    ],
-    "src/observer/map-generator.ts": [
-      {
-        "name": "MapGenerator",
-        "line": 48
-      }
-    ],
-    "src/observer/validator-runner.ts": [
-      {
-        "name": "ValidatorRunner",
-        "line": 28
-      }
-    ],
-    "src/utils/remote-logger.ts": [
-      {
-        "name": "RemoteLogger",
-        "line": 2
-      },
-      {
-        "name": "logger",
-        "line": 94
-      }
-    ],
-    "src/validator/boundary-validator.ts": [
-      {
-        "name": "BoundaryValidator",
-        "line": 18
-      }
-    ],
-    "src/validator/contract-detector.ts": [
-      {
-        "name": "ContractDetector",
-        "line": 25
-      }
-    ],
-    "src/validator/contract-validator.ts": [
-      {
-        "name": "ContractValidator",
-        "line": 34
-      }
-    ],
-    "src/validator/design-system-validator.ts": [
-      {
-        "name": "DesignSystemValidator",
-        "line": 18
-      }
-    ],
-    "src/validator/nine-rules-validator.ts": [
-      {
-        "name": "NineRulesValidator",
-        "line": 48
-      }
-    ],
-    "src/validator/severity-config.ts": [
-      {
-        "name": "SeverityLevels",
-        "line": 8
-      },
-      {
-        "name": "getSeverity",
-        "line": 64
-      },
-      {
-        "name": "calculateRealHealthScore",
-        "line": 97
-      },
-      {
-        "name": "getHealthColor",
-        "line": 123
-      },
-      {
-        "name": "getHealthLabel",
-        "line": 129
-      }
-    ],
-    "src/validator/table-mapper.ts": [
-      {
-        "name": "TableMapper",
-        "line": 74
-      }
-    ],
-    "src/validator/version-validator.ts": [
-      {
-        "name": "VersionValidator",
-        "line": 21
-      },
-      {
-        "name": "ProfessionalV2Schema",
-        "line": 102
-      }
-    ],
-    "src/validator/zod-schema-generator.ts": [
-      {
-        "name": "ZodSchemaGenerator",
-        "line": 23
-      },
-      {
-        "name": "Database",
-        "line": 256
-      },
-      {
-        "name": "validate",
-        "line": 264
-      }
-    ],
-    "test-projects/streax/contracts/schemas/professional.schema.ts": [
-      {
-        "name": "ProfessionalContract",
-        "line": 4
-      },
-      {
-        "name": "DatabaseProfessionalMapper",
-        "line": 26
-      },
-      {
-        "name": "validateProfessional",
-        "line": 61
-      },
-      {
-        "name": "useProfessionalsWithValidation",
-        "line": 74
-      }
-    ],
-    "test-projects/streax/next.config.ts": [
+    "next.config.ts": [
       {
         "name": "nextConfig",
         "line": 7
       }
     ],
-    "test-projects/streax/src/app/(main)/crm/page.tsx": [
+    "src/app/(main)/crm/page.tsx": [
       {
         "name": "CRMPage",
-        "line": 61
+        "line": 81
       }
     ],
-    "test-projects/streax/src/app/(main)/feed/page.tsx": [
+    "src/app/(main)/feed/page.tsx": [
       {
         "name": "FeedPage",
-        "line": 103
+        "line": 220
       }
     ],
-    "test-projects/streax/src/app/(main)/insurance/page.tsx": [
+    "src/app/(main)/insurance/page.tsx": [
       {
         "name": "InsurancePage",
-        "line": 41
+        "line": 35
       }
     ],
-    "test-projects/streax/src/app/(main)/learning/page.tsx": [
+    "src/app/(main)/learning/page.tsx": [
       {
         "name": "LearningPage",
-        "line": 143
+        "line": 258
       }
     ],
-    "test-projects/streax/src/app/(main)/orders/page.tsx": [
+    "src/app/(main)/orders/cart/page.tsx": [
+      {
+        "name": "CartPage",
+        "line": 37
+      }
+    ],
+    "src/app/(main)/orders/order-history/page.tsx": [
+      {
+        "name": "OrderHistoryPage",
+        "line": 67
+      }
+    ],
+    "src/app/(main)/orders/page.tsx": [
       {
         "name": "OrdersPage",
-        "line": 115
+        "line": 48
       }
     ],
-    "test-projects/streax/src/app/layout.tsx": [
+    "src/app/layout.tsx": [
       {
         "name": "metadata",
         "line": 15
@@ -387,79 +63,79 @@
         "line": 20
       }
     ],
-    "test-projects/streax/src/app/page.tsx": [
+    "src/app/page.tsx": [
       {
         "name": "Home",
         "line": 3
       }
     ],
-    "test-projects/streax/src/app/test/page.tsx": [
+    "src/app/test/page.tsx": [
       {
         "name": "TestPage",
         "line": 6
       }
     ],
-    "test-projects/streax/src/components/core/appointment-card.tsx": [
+    "src/components/core/appointment-card.tsx": [
       {
         "name": "AppointmentCard",
         "line": 13
       }
     ],
-    "test-projects/streax/src/components/core/avatar.tsx": [
+    "src/components/core/avatar.tsx": [
       {
         "name": "Avatar",
         "line": 19
       }
     ],
-    "test-projects/streax/src/components/core/badge.tsx": [
+    "src/components/core/badge.tsx": [
       {
         "name": "Badge",
         "line": 16
       }
     ],
-    "test-projects/streax/src/components/core/bottom-nav.tsx": [
+    "src/components/core/bottom-nav.tsx": [
       {
         "name": "BottomNav",
         "line": 50
       }
     ],
-    "test-projects/streax/src/components/core/button.tsx": [
+    "src/components/core/button.tsx": [
       {
         "name": "Button",
         "line": 15
       }
     ],
-    "test-projects/streax/src/components/core/card.tsx": [
+    "src/components/core/card.tsx": [
       {
         "name": "Card",
         "line": 18
       }
     ],
-    "test-projects/streax/src/components/core/category-card.tsx": [
+    "src/components/core/category-card.tsx": [
       {
         "name": "CategoryCard",
         "line": 14
       }
     ],
-    "test-projects/streax/src/components/core/client-card.tsx": [
+    "src/components/core/client-card.tsx": [
       {
         "name": "ClientCard",
         "line": 18
       }
     ],
-    "test-projects/streax/src/components/core/course-card.tsx": [
+    "src/components/core/course-card.tsx": [
       {
         "name": "CourseCard",
-        "line": 19
+        "line": 30
       }
     ],
-    "test-projects/streax/src/components/core/image.tsx": [
+    "src/components/core/image.tsx": [
       {
         "name": "Image",
         "line": 18
       }
     ],
-    "test-projects/streax/src/components/core/index.ts": [
+    "src/components/core/index.ts": [
       {
         "name": "Card",
         "line": 4
@@ -501,91 +177,91 @@
         "line": 13
       }
     ],
-    "test-projects/streax/src/components/core/input.tsx": [
+    "src/components/core/input.tsx": [
       {
         "name": "Input",
         "line": 17
       }
     ],
-    "test-projects/streax/src/components/core/list.tsx": [
+    "src/components/core/list.tsx": [
       {
         "name": "List",
         "line": 22
       }
     ],
-    "test-projects/streax/src/components/core/live-session-banner.tsx": [
+    "src/components/core/live-session-banner.tsx": [
       {
         "name": "LiveSessionBanner",
-        "line": 15
+        "line": 27
       }
     ],
-    "test-projects/streax/src/components/core/navbar.tsx": [
+    "src/components/core/navbar.tsx": [
       {
         "name": "NavBar",
         "line": 26
       }
     ],
-    "test-projects/streax/src/components/core/page-header.tsx": [
+    "src/components/core/page-header.tsx": [
       {
         "name": "PageHeader",
         "line": 17
       }
     ],
-    "test-projects/streax/src/components/core/post-card.tsx": [
+    "src/components/core/post-card.tsx": [
       {
         "name": "PostCard",
         "line": 18
       }
     ],
-    "test-projects/streax/src/components/core/post-composer.tsx": [
+    "src/components/core/post-composer.tsx": [
       {
         "name": "PostComposer",
         "line": 17
       }
     ],
-    "test-projects/streax/src/components/core/product-card.tsx": [
+    "src/components/core/product-card.tsx": [
       {
         "name": "ProductCard",
         "line": 18
       }
     ],
-    "test-projects/streax/src/components/core/search-bar.tsx": [
+    "src/components/core/search-bar.tsx": [
       {
         "name": "SearchBar",
         "line": 14
       }
     ],
-    "test-projects/streax/src/components/core/service-card.tsx": [
+    "src/components/core/service-card.tsx": [
       {
         "name": "ServiceCard",
         "line": 14
       }
     ],
-    "test-projects/streax/src/components/core/sheet.tsx": [
+    "src/components/core/sheet.tsx": [
       {
         "name": "Sheet",
         "line": 18
       }
     ],
-    "test-projects/streax/src/components/core/skeleton.tsx": [
+    "src/components/core/skeleton.tsx": [
       {
         "name": "Skeleton",
         "line": 16
       }
     ],
-    "test-projects/streax/src/components/core/stats-card.tsx": [
+    "src/components/core/stats-card.tsx": [
       {
         "name": "StatsCard",
         "line": 13
       }
     ],
-    "test-projects/streax/src/components/core/tabs.tsx": [
+    "src/components/core/tabs.tsx": [
       {
         "name": "Tabs",
         "line": 19
       }
     ],
-    "test-projects/streax/src/components/index.ts": [
+    "src/components/index.ts": [
       {
         "name": "AppointmentCard",
         "line": 4
@@ -675,59 +351,49 @@
         "line": 25
       }
     ],
-    "test-projects/streax/src/hooks/useAuth.ts": [
+    "src/hooks/useAuth.ts": [
       {
         "name": "useAuth",
         "line": 7
       }
     ],
-    "test-projects/streax/src/hooks/useClients.ts": [
+    "src/hooks/useClients.ts": [
       {
         "name": "useClients",
         "line": 7
       }
     ],
-    "test-projects/streax/src/hooks/useFeed.ts": [
+    "src/hooks/useFeed.ts": [
       {
         "name": "useFeed",
         "line": 7
       }
     ],
-    "test-projects/streax/src/hooks/useInsurance.ts": [
+    "src/hooks/useInsurance.ts": [
       {
         "name": "useInsurance",
         "line": 7
       }
     ],
-    "test-projects/streax/src/hooks/useLearning.ts": [
+    "src/hooks/useLearning.ts": [
       {
         "name": "useLearning",
         "line": 7
       }
     ],
-    "test-projects/streax/src/hooks/useProducts.ts": [
+    "src/hooks/useProducts.ts": [
       {
         "name": "useProducts",
         "line": 7
       }
     ],
-    "test-projects/streax/src/hooks/useProfessionals.ts": [
-      {
-        "name": "useProfessionalsWithContract",
-        "line": 5
-      },
-      {
-        "name": "ProfessionalsListWithValidation",
-        "line": 59
-      }
-    ],
-    "test-projects/streax/src/lib/utils.ts": [
+    "src/lib/utils.ts": [
       {
         "name": "cn",
         "line": 4
       }
     ],
-    "test-projects/streax/src/mocks/data.ts": [
+    "src/mocks/data.ts": [
       {
         "name": "mockUsers",
         "line": 13
@@ -781,7 +447,113 @@
         "line": 321
       }
     ],
-    "test-projects/streax/tailwind.config.ts": [
+    "src/mocks/orders.ts": [
+      {
+        "name": "mockProducts",
+        "line": 6
+      },
+      {
+        "name": "mockOrders",
+        "line": 286
+      },
+      {
+        "name": "mockProfessional",
+        "line": 593
+      },
+      {
+        "name": "productCategories",
+        "line": 633
+      },
+      {
+        "name": "searchProducts",
+        "line": 643
+      },
+      {
+        "name": "getProductById",
+        "line": 665
+      },
+      {
+        "name": "getOrderById",
+        "line": 669
+      },
+      {
+        "name": "getOrdersByCustomer",
+        "line": 673
+      },
+      {
+        "name": "getActiveOrders",
+        "line": 677
+      },
+      {
+        "name": "calculateCartTotals",
+        "line": 684
+      }
+    ],
+    "src/mocks/products-db-aligned.ts": [
+      {
+        "name": "mockProductsDB",
+        "line": 5
+      },
+      {
+        "name": "systemCoupons",
+        "line": 578
+      },
+      {
+        "name": "calculatePriceWithPromotions",
+        "line": 671
+      },
+      {
+        "name": "findVariantByAttributes",
+        "line": 753
+      },
+      {
+        "name": "hasActiveFlashSale",
+        "line": 765
+      },
+      {
+        "name": "getBestDiscount",
+        "line": 777
+      },
+      {
+        "name": "getProductDisplayPrice",
+        "line": 799
+      },
+      {
+        "name": "getVariantStockStatus",
+        "line": 809
+      }
+    ],
+    "src/mocks/products-enhanced.ts": [
+      {
+        "name": "enhancedProducts",
+        "line": 168
+      },
+      {
+        "name": "activeFlashSales",
+        "line": 817
+      },
+      {
+        "name": "availableCoupons",
+        "line": 843
+      },
+      {
+        "name": "calculateVariantPrice",
+        "line": 888
+      },
+      {
+        "name": "findVariantByAttributes",
+        "line": 964
+      },
+      {
+        "name": "isOnFlashSale",
+        "line": 976
+      },
+      {
+        "name": "getBestDiscount",
+        "line": 981
+      }
+    ],
+    "tailwind.config.ts": [
       {
         "name": "config",
         "line": 79
@@ -789,185 +561,22 @@
     ]
   },
   "imports": {
-    "contracts/schemas/order.schema.ts": [
-      "zod"
-    ],
-    "contracts/schemas/professional.v1.schema.ts": [
-      "zod"
-    ],
-    "contracts/schemas/professional.v2.schema.ts": [
-      "zod"
-    ],
-    "contracts/schemas/queue.schemas.ts": [
-      "zod"
-    ],
-    "contracts/schemas/webhook.schemas.ts": [
-      "zod"
-    ],
-    "dist/design-system-validator.js": [
-      "fs",
-      "path"
-    ],
-    "src/analyzer/background-analyzer.ts": [
-      "fs",
-      "path",
-      "./smart-issue-analyzer"
-    ],
-    "src/analyzer/business-logic-analyzer.ts": [
-      "fs",
-      "path",
-      "typescript"
-    ],
-    "src/analyzer/data-flow-mapper.ts": [
-      "fs",
-      "path",
-      "typescript",
-      "./index"
-    ],
-    "src/analyzer/enhanced-data-flow.ts": [
-      "fs",
-      "path",
-      "typescript"
-    ],
-    "src/analyzer/entity-identifier.ts": [
-      "./index"
-    ],
-    "src/analyzer/framework-detector.ts": [
-      "fs",
-      "path",
-      "./index"
-    ],
-    "src/analyzer/index.ts": [
-      "fs",
-      "path",
-      "./framework-detector",
-      "./type-extractor",
-      "./data-flow-mapper",
-      "./entity-identifier",
-      "./rule-generator"
-    ],
-    "src/analyzer/rule-generator.ts": [
-      "./index"
-    ],
-    "src/analyzer/smart-issue-analyzer.ts": [
-      "fs",
-      "path",
-      "child_process",
-      "../observer/validator-runner",
-      "../observer/map-generator"
-    ],
-    "src/analyzer/type-extractor.ts": [
-      "fs",
-      "path",
-      "typescript",
-      "./index"
-    ],
-    "src/cli/analyze-smart-watch.ts": [
-      "path",
-      "fs",
-      "../analyzer/smart-issue-analyzer",
-      "child_process"
-    ],
-    "src/cli/analyze-smart.ts": [
-      "../analyzer/smart-issue-analyzer",
-      "path"
-    ],
-    "src/dashboard/index.ts": [
-      "http",
-      "fs",
-      "path",
-      "../analyzer",
-      "../validator/table-mapper",
-      "../validator/nine-rules-validator",
-      "../validator/contract-validator",
-      "../validator/boundary-validator",
-      "../validator/version-validator",
-      "../validator/design-system-validator",
-      "../utils/remote-logger",
-      "../analyzer/smart-issue-analyzer",
-      "../validator/_archived/runtime-enforcer",
-      "../observer/map-generator",
-      "../observer/validator-runner"
-    ],
-    "src/dashboard/logger.ts": [
-      "fs",
-      "path"
-    ],
-    "src/observer/auto-observer.ts": [
-      "fs",
-      "path",
-      "child_process"
-    ],
-    "src/observer/map-generator.ts": [
-      "fs",
-      "path",
-      "typescript"
-    ],
-    "src/observer/validator-runner.ts": [
-      "fs",
-      "path",
-      "../validator/contract-detector"
-    ],
-    "src/validator/boundary-validator.ts": [
-      "zod",
-      "fs",
-      "path"
-    ],
-    "src/validator/contract-detector.ts": [
-      "fs",
-      "path",
-      "js-yaml"
-    ],
-    "src/validator/contract-validator.ts": [
-      "fs",
-      "path",
-      "js-yaml",
-      "typescript"
-    ],
-    "src/validator/design-system-validator.ts": [
-      "fs",
-      "path"
-    ],
-    "src/validator/nine-rules-validator.ts": [
-      "fs",
-      "path",
-      "typescript"
-    ],
-    "src/validator/table-mapper.ts": [
-      "fs",
-      "path",
-      "typescript"
-    ],
-    "src/validator/version-validator.ts": [
-      "fs",
-      "path",
-      "crypto"
-    ],
-    "src/validator/zod-schema-generator.ts": [
-      "zod",
-      "js-yaml",
-      "fs",
-      "path"
-    ],
-    "test-projects/streax/contracts/schemas/professional.schema.ts": [
-      "zod"
-    ],
-    "test-projects/streax/src/app/(main)/crm/page.tsx": [
+    "src/app/(main)/crm/page.tsx": [
       "react",
       "lucide-react",
       "@/components"
     ],
-    "test-projects/streax/src/app/(main)/feed/page.tsx": [
+    "src/app/(main)/feed/page.tsx": [
       "react",
       "lucide-react",
       "@/components"
     ],
-    "test-projects/streax/src/app/(main)/insurance/page.tsx": [
+    "src/app/(main)/insurance/page.tsx": [
       "react",
       "lucide-react",
       "@/components"
     ],
-    "test-projects/streax/src/app/(main)/learning/page.tsx": [
+    "src/app/(main)/learning/page.tsx": [
       "react",
       "lucide-react",
       "@/components/core/card",
@@ -976,146 +585,158 @@
       "@/components/core/avatar",
       "@/components/core/bottom-nav"
     ],
-    "test-projects/streax/src/app/(main)/orders/page.tsx": [
+    "src/app/(main)/orders/cart/page.tsx": [
+      "react",
+      "next/link",
+      "lucide-react",
+      "@/components",
+      "@/mocks/orders"
+    ],
+    "src/app/(main)/orders/order-history/page.tsx": [
       "react",
       "lucide-react",
-      "@/components"
+      "next/link",
+      "@/components",
+      "@/mocks/orders"
     ],
-    "test-projects/streax/src/app/layout.tsx": [
+    "src/app/(main)/orders/page.tsx": [
+      "react",
+      "next/link",
+      "lucide-react",
+      "@/components",
+      "@/mocks/orders"
+    ],
+    "src/app/layout.tsx": [
       "next/font/google"
     ],
-    "test-projects/streax/src/app/page.tsx": [
+    "src/app/page.tsx": [
       "next/image"
     ],
-    "test-projects/streax/src/app/test/page.tsx": [
+    "src/app/test/page.tsx": [
       "react"
     ],
-    "test-projects/streax/src/components/core/appointment-card.tsx": [
+    "src/components/core/appointment-card.tsx": [
       "./card"
     ],
-    "test-projects/streax/src/components/core/avatar.tsx": [
+    "src/components/core/avatar.tsx": [
       "react"
     ],
-    "test-projects/streax/src/components/core/badge.tsx": [
+    "src/components/core/badge.tsx": [
       "react"
     ],
-    "test-projects/streax/src/components/core/bottom-nav.tsx": [
+    "src/components/core/bottom-nav.tsx": [
       "next/link",
       "next/navigation",
       "lucide-react"
     ],
-    "test-projects/streax/src/components/core/button.tsx": [
+    "src/components/core/button.tsx": [
       "react"
     ],
-    "test-projects/streax/src/components/core/card.tsx": [
+    "src/components/core/card.tsx": [
       "react"
     ],
-    "test-projects/streax/src/components/core/category-card.tsx": [
+    "src/components/core/category-card.tsx": [
       "react",
       "./card"
     ],
-    "test-projects/streax/src/components/core/client-card.tsx": [
+    "src/components/core/client-card.tsx": [
       "lucide-react",
       "./card",
       "./badge",
       "./avatar"
     ],
-    "test-projects/streax/src/components/core/course-card.tsx": [
+    "src/components/core/course-card.tsx": [
       "lucide-react",
       "./card",
       "./badge",
       "./button"
     ],
-    "test-projects/streax/src/components/core/image.tsx": [
+    "src/components/core/image.tsx": [
       "react"
     ],
-    "test-projects/streax/src/components/core/input.tsx": [
+    "src/components/core/input.tsx": [
       "react"
     ],
-    "test-projects/streax/src/components/core/list.tsx": [
+    "src/components/core/list.tsx": [
       "react"
     ],
-    "test-projects/streax/src/components/core/live-session-banner.tsx": [
+    "src/components/core/live-session-banner.tsx": [
       "lucide-react",
       "./card",
       "./button",
       "./badge"
     ],
-    "test-projects/streax/src/components/core/navbar.tsx": [
+    "src/components/core/navbar.tsx": [
       "react"
     ],
-    "test-projects/streax/src/components/core/page-header.tsx": [
+    "src/components/core/page-header.tsx": [
       "react",
       "lucide-react",
       "./button"
     ],
-    "test-projects/streax/src/components/core/post-card.tsx": [
+    "src/components/core/post-card.tsx": [
       "lucide-react",
       "./avatar",
       "./card"
     ],
-    "test-projects/streax/src/components/core/post-composer.tsx": [
+    "src/components/core/post-composer.tsx": [
       "lucide-react",
       "./avatar"
     ],
-    "test-projects/streax/src/components/core/product-card.tsx": [
+    "src/components/core/product-card.tsx": [
       "./card",
       "./button",
       "./badge"
     ],
-    "test-projects/streax/src/components/core/search-bar.tsx": [
+    "src/components/core/search-bar.tsx": [
       "lucide-react",
       "./input"
     ],
-    "test-projects/streax/src/components/core/service-card.tsx": [
+    "src/components/core/service-card.tsx": [
       "react",
       "./card"
     ],
-    "test-projects/streax/src/components/core/sheet.tsx": [
+    "src/components/core/sheet.tsx": [
       "react"
     ],
-    "test-projects/streax/src/components/core/skeleton.tsx": [
+    "src/components/core/skeleton.tsx": [
       "react"
     ],
-    "test-projects/streax/src/components/core/stats-card.tsx": [
+    "src/components/core/stats-card.tsx": [
       "./card"
     ],
-    "test-projects/streax/src/components/core/tabs.tsx": [
+    "src/components/core/tabs.tsx": [
       "react"
     ],
-    "test-projects/streax/src/hooks/useAuth.ts": [
+    "src/hooks/useAuth.ts": [
       "react",
       "@/mocks/data"
     ],
-    "test-projects/streax/src/hooks/useClients.ts": [
+    "src/hooks/useClients.ts": [
       "react",
       "@/mocks/data"
     ],
-    "test-projects/streax/src/hooks/useFeed.ts": [
+    "src/hooks/useFeed.ts": [
       "react",
       "@/mocks/data"
     ],
-    "test-projects/streax/src/hooks/useInsurance.ts": [
+    "src/hooks/useInsurance.ts": [
       "react",
       "@/mocks/data"
     ],
-    "test-projects/streax/src/hooks/useLearning.ts": [
+    "src/hooks/useLearning.ts": [
       "react",
       "@/mocks/data"
     ],
-    "test-projects/streax/src/hooks/useProducts.ts": [
+    "src/hooks/useProducts.ts": [
       "react",
       "@/mocks/data"
     ],
-    "test-projects/streax/src/hooks/useProfessionals.ts": [
-      "react",
-      "../../contracts/schemas/professional.schema"
-    ],
-    "test-projects/streax/src/lib/utils.ts": [
+    "src/lib/utils.ts": [
       "clsx",
       "tailwind-merge"
     ],
-    "test-projects/streax/tailwind.config.ts": [
+    "tailwind.config.ts": [
       "tailwindcss-animate"
     ]
   },
@@ -1136,6 +757,14 @@
       "type": "page",
       "protected": false
     },
+    "/orders/cart": {
+      "type": "page",
+      "protected": false
+    },
+    "/orders/order-history": {
+      "type": "page",
+      "protected": false
+    },
     "/orders": {
       "type": "page",
       "protected": false
@@ -1150,78 +779,6 @@
     }
   },
   "files": {
-    "contracts/schemas/order.schema.ts": {
-      "metrics": {
-        "loc": 118,
-        "functions": 4,
-        "exports": 7,
-        "imports": 1,
-        "complexity": 3
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "contracts/schemas/professional.v1.schema.ts": {
-      "metrics": {
-        "loc": 60,
-        "functions": 2,
-        "exports": 4,
-        "imports": 1,
-        "complexity": 1
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "contracts/schemas/professional.v2.schema.ts": {
-      "metrics": {
-        "loc": 116,
-        "functions": 4,
-        "exports": 8,
-        "imports": 2,
-        "complexity": 1
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "contracts/schemas/queue.schemas.ts": {
-      "metrics": {
-        "loc": 174,
-        "functions": 7,
-        "exports": 14,
-        "imports": 1,
-        "complexity": 5
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "contracts/schemas/webhook.schemas.ts": {
-      "metrics": {
-        "loc": 126,
-        "functions": 4,
-        "exports": 12,
-        "imports": 1,
-        "complexity": 2
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "dist/design-system-validator.js": {
-      "metrics": {
-        "loc": 302,
-        "functions": 7,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 42
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
     "next-env.d.ts": {
       "metrics": {
         "loc": 0,
@@ -1234,694 +791,19 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "src/analyzer/background-analyzer.ts": {
+    "next.config.js": {
       "metrics": {
-        "loc": 63,
-        "functions": 5,
-        "exports": 1,
-        "imports": 3,
-        "complexity": 7
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/analyzer/business-logic-analyzer.ts": {
-      "metrics": {
-        "loc": 614,
-        "functions": 3,
-        "exports": 11,
-        "imports": 3,
-        "complexity": 123
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/analyzer/data-flow-mapper.ts": {
-      "metrics": {
-        "loc": 234,
-        "functions": 5,
-        "exports": 1,
-        "imports": 4,
-        "complexity": 45
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/analyzer/enhanced-data-flow.ts": {
-      "metrics": {
-        "loc": 684,
-        "functions": 10,
-        "exports": 13,
-        "imports": 3,
-        "complexity": 122
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/analyzer/entity-identifier.ts": {
-      "metrics": {
-        "loc": 185,
-        "functions": 2,
-        "exports": 1,
-        "imports": 1,
-        "complexity": 51
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/analyzer/framework-detector.ts": {
-      "metrics": {
-        "loc": 102,
-        "functions": 2,
-        "exports": 1,
-        "imports": 3,
-        "complexity": 15
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/analyzer/index.ts": {
-      "metrics": {
-        "loc": 154,
-        "functions": 5,
-        "exports": 13,
-        "imports": 7,
-        "complexity": 11
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/analyzer/rule-generator.ts": {
-      "metrics": {
-        "loc": 282,
-        "functions": 2,
-        "exports": 1,
-        "imports": 1,
-        "complexity": 33
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/analyzer/smart-issue-analyzer.ts": {
-      "metrics": {
-        "loc": 607,
-        "functions": 8,
-        "exports": 4,
-        "imports": 4,
-        "complexity": 118
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/analyzer/type-extractor.ts": {
-      "metrics": {
-        "loc": 131,
-        "functions": 6,
-        "exports": 1,
-        "imports": 4,
-        "complexity": 23
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/cli/analyze-smart-watch.ts": {
-      "metrics": {
-        "loc": 57,
-        "functions": 3,
-        "exports": 0,
-        "imports": 4,
-        "complexity": 15
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/cli/analyze-smart.ts": {
-      "metrics": {
-        "loc": 19,
-        "functions": 1,
-        "exports": 0,
-        "imports": 2,
-        "complexity": 2
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/component-details-viewer.js": {
-      "metrics": {
-        "loc": 382,
-        "functions": 3,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 36
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/components/control-bar.js": {
-      "metrics": {
-        "loc": 263,
-        "functions": 5,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 18
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/dashboard-functions.js": {
-      "metrics": {
-        "loc": 859,
-        "functions": 8,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 48
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/entity-data-provider.js": {
-      "metrics": {
-        "loc": 468,
-        "functions": 3,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 16
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/components/file-analysis-view.js": {
-      "metrics": {
-        "loc": 294,
-        "functions": 8,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 16
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/hook-details-viewer.js": {
-      "metrics": {
-        "loc": 457,
-        "functions": 7,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 43
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/components/index.js": {
-      "metrics": {
-        "loc": 176,
-        "functions": 6,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 2
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/components/live-log-panel.js": {
-      "metrics": {
-        "loc": 202,
-        "functions": 5,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 12
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/page-details-viewer.js": {
-      "metrics": {
-        "loc": 387,
-        "functions": 3,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 32
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/components/renderers/architecture-renderer.js": {
-      "metrics": {
-        "loc": 283,
-        "functions": 2,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 21
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/renderers/nine-rules-renderer.js": {
-      "metrics": {
-        "loc": 383,
-        "functions": 8,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 22
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/renderers/shared-utils.js": {
-      "metrics": {
-        "loc": 73,
-        "functions": 2,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 10
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/components/scripts/api-client.js": {
-      "metrics": {
-        "loc": 233,
-        "functions": 30,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 14
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/scripts/data-processor.js": {
-      "metrics": {
-        "loc": 380,
-        "functions": 13,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 73
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/components/scripts/index.js": {
-      "metrics": {
-        "loc": 89,
-        "functions": 0,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 1
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/components/scripts/state-manager.js": {
-      "metrics": {
-        "loc": 351,
-        "functions": 13,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 40
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/self-test.js": {
-      "metrics": {
-        "loc": 196,
-        "functions": 16,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 21
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/severity-badge.js": {
-      "metrics": {
-        "loc": 241,
-        "functions": 4,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 14
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/components/sidebar-navigator.js": {
-      "metrics": {
-        "loc": 490,
-        "functions": 18,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 71
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/smart-analysis-view.js": {
-      "metrics": {
-        "loc": 348,
-        "functions": 6,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 28
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/smart-refresh-manager.js": {
-      "metrics": {
-        "loc": 96,
-        "functions": 6,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 13
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/components/table-details-viewer.js": {
-      "metrics": {
-        "loc": 415,
-        "functions": 10,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 57
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/components/validation-service.js": {
-      "metrics": {
-        "loc": 326,
-        "functions": 6,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 57
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/components/viewers/index.js": {
-      "metrics": {
-        "loc": 92,
-        "functions": 0,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 1
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/dashboard-loader.js": {
-      "metrics": {
-        "loc": 165,
-        "functions": 6,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 21
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/index.ts": {
-      "metrics": {
-        "loc": 649,
-        "functions": 15,
-        "exports": 0,
-        "imports": 11,
-        "complexity": 99
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/logger.ts": {
-      "metrics": {
-        "loc": 67,
-        "functions": 2,
-        "exports": 1,
-        "imports": 2,
-        "complexity": 10
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/dashboard/theme-config.js": {
-      "metrics": {
-        "loc": 74,
+        "loc": 34,
         "functions": 1,
         "exports": 0,
         "imports": 0,
-        "complexity": 5
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/types/window.d.ts": {
-      "metrics": {
-        "loc": 13,
-        "functions": 0,
-        "exports": 1,
-        "imports": 0,
-        "complexity": 1
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/dashboard/types.ts": {
-      "metrics": {
-        "loc": 52,
-        "functions": 3,
-        "exports": 8,
-        "imports": 0,
-        "complexity": 10
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/observer/auto-observer.ts": {
-      "metrics": {
-        "loc": 105,
-        "functions": 4,
-        "exports": 0,
-        "imports": 3,
-        "complexity": 10
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/observer/map-generator.ts": {
-      "metrics": {
-        "loc": 333,
-        "functions": 10,
-        "exports": 2,
-        "imports": 4,
-        "complexity": 95
-      },
-      "hasParse": 1,
-      "hasAuth": 1,
-      "hasTryCatch": 1,
-      "hasFormValidation": 1
-    },
-    "src/observer/validator-runner.ts": {
-      "metrics": {
-        "loc": 382,
-        "functions": 7,
-        "exports": 1,
-        "imports": 3,
-        "complexity": 63
-      },
-      "hasParse": 1,
-      "hasAuth": 1,
-      "hasTryCatch": 1
-    },
-    "src/utils/remote-logger.ts": {
-      "metrics": {
-        "loc": 71,
-        "functions": 2,
-        "exports": 2,
-        "imports": 0,
-        "complexity": 19
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/validator/boundary-validator.ts": {
-      "metrics": {
-        "loc": 274,
-        "functions": 3,
-        "exports": 1,
-        "imports": 3,
-        "complexity": 70
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/validator/contract-detector.ts": {
-      "metrics": {
-        "loc": 266,
-        "functions": 8,
-        "exports": 1,
-        "imports": 3,
-        "complexity": 62
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/validator/contract-validator.ts": {
-      "metrics": {
-        "loc": 324,
-        "functions": 5,
-        "exports": 1,
-        "imports": 4,
-        "complexity": 53
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/validator/design-system-validator.ts": {
-      "metrics": {
-        "loc": 394,
-        "functions": 3,
-        "exports": 1,
-        "imports": 2,
-        "complexity": 72
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/validator/nine-rules-validator.ts": {
-      "metrics": {
-        "loc": 802,
-        "functions": 21,
-        "exports": 5,
-        "imports": 3,
-        "complexity": 123
-      },
-      "hasParse": 1,
-      "hasAuth": 1,
-      "hasTryCatch": 0,
-      "hasFormValidation": 1
-    },
-    "src/validator/severity-config.ts": {
-      "metrics": {
-        "loc": 115,
-        "functions": 5,
-        "exports": 5,
-        "imports": 0,
-        "complexity": 29
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "src/validator/table-mapper.ts": {
-      "metrics": {
-        "loc": 564,
-        "functions": 12,
-        "exports": 4,
-        "imports": 3,
-        "complexity": 114
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1,
-      "hasFormValidation": 1
-    },
-    "src/validator/version-validator.ts": {
-      "metrics": {
-        "loc": 287,
-        "functions": 2,
-        "exports": 3,
-        "imports": 3,
-        "complexity": 41
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "src/validator/zod-schema-generator.ts": {
-      "metrics": {
-        "loc": 245,
-        "functions": 8,
-        "exports": 5,
-        "imports": 5,
-        "complexity": 40
-      },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "test-projects/streax/contracts/schemas/professional.schema.ts": {
-      "metrics": {
-        "loc": 90,
-        "functions": 5,
-        "exports": 5,
-        "imports": 1,
         "complexity": 2
       },
-      "hasParse": 1,
-      "hasAuth": 0,
-      "hasTryCatch": 1
-    },
-    "test-projects/streax/next-env.d.ts": {
-      "metrics": {
-        "loc": 0,
-        "functions": 0,
-        "exports": 0,
-        "imports": 0,
-        "complexity": 1
-      },
       "hasParse": 0,
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/next.config.ts": {
+    "next.config.ts": {
       "metrics": {
         "loc": 5,
         "functions": 0,
@@ -1933,7 +815,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/postcss.config.js": {
+    "postcss.config.js": {
       "metrics": {
         "loc": 5,
         "functions": 0,
@@ -1945,9 +827,9 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/app/(main)/crm/page.tsx": {
+    "src/app/(main)/crm/page.tsx": {
       "metrics": {
-        "loc": 226,
+        "loc": 246,
         "functions": 1,
         "exports": 1,
         "imports": 2,
@@ -1957,55 +839,79 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/app/(main)/feed/page.tsx": {
+    "src/app/(main)/feed/page.tsx": {
       "metrics": {
-        "loc": 211,
+        "loc": 288,
         "functions": 4,
         "exports": 1,
         "imports": 3,
-        "complexity": 5
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "test-projects/streax/src/app/(main)/insurance/page.tsx": {
-      "metrics": {
-        "loc": 185,
-        "functions": 1,
-        "exports": 1,
-        "imports": 2,
-        "complexity": 1
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "test-projects/streax/src/app/(main)/learning/page.tsx": {
-      "metrics": {
-        "loc": 423,
-        "functions": 6,
-        "exports": 1,
-        "imports": 7,
-        "complexity": 8
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 0
-    },
-    "test-projects/streax/src/app/(main)/orders/page.tsx": {
-      "metrics": {
-        "loc": 236,
-        "functions": 6,
-        "exports": 1,
-        "imports": 2,
         "complexity": 6
       },
       "hasParse": 0,
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/app/layout.tsx": {
+    "src/app/(main)/insurance/page.tsx": {
+      "metrics": {
+        "loc": 179,
+        "functions": 1,
+        "exports": 1,
+        "imports": 2,
+        "complexity": 1
+      },
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/(main)/learning/page.tsx": {
+      "metrics": {
+        "loc": 508,
+        "functions": 6,
+        "exports": 1,
+        "imports": 7,
+        "complexity": 9
+      },
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/(main)/orders/cart/page.tsx": {
+      "metrics": {
+        "loc": 371,
+        "functions": 11,
+        "exports": 1,
+        "imports": 3,
+        "complexity": 10
+      },
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/(main)/orders/order-history/page.tsx": {
+      "metrics": {
+        "loc": 461,
+        "functions": 10,
+        "exports": 1,
+        "imports": 4,
+        "complexity": 27
+      },
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/(main)/orders/page.tsx": {
+      "metrics": {
+        "loc": 320,
+        "functions": 9,
+        "exports": 1,
+        "imports": 3,
+        "complexity": 15
+      },
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/app/layout.tsx": {
       "metrics": {
         "loc": 30,
         "functions": 1,
@@ -2017,7 +923,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/app/page.tsx": {
+    "src/app/page.tsx": {
       "metrics": {
         "loc": 101,
         "functions": 1,
@@ -2029,19 +935,19 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/app/test/page.tsx": {
+    "src/app/test/page.tsx": {
       "metrics": {
         "loc": 126,
         "functions": 5,
         "exports": 1,
         "imports": 1,
-        "complexity": 4
+        "complexity": 3
       },
       "hasParse": 0,
       "hasAuth": 0,
       "hasTryCatch": 1
     },
-    "test-projects/streax/src/components/core/appointment-card.tsx": {
+    "src/components/core/appointment-card.tsx": {
       "metrics": {
         "loc": 21,
         "functions": 1,
@@ -2053,7 +959,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/avatar.tsx": {
+    "src/components/core/avatar.tsx": {
       "metrics": {
         "loc": 86,
         "functions": 1,
@@ -2065,7 +971,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/badge.tsx": {
+    "src/components/core/badge.tsx": {
       "metrics": {
         "loc": 53,
         "functions": 1,
@@ -2077,7 +983,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/bottom-nav.tsx": {
+    "src/components/core/bottom-nav.tsx": {
       "metrics": {
         "loc": 76,
         "functions": 2,
@@ -2089,7 +995,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/button.tsx": {
+    "src/components/core/button.tsx": {
       "metrics": {
         "loc": 66,
         "functions": 1,
@@ -2101,7 +1007,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/card.tsx": {
+    "src/components/core/card.tsx": {
       "metrics": {
         "loc": 80,
         "functions": 1,
@@ -2113,7 +1019,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/category-card.tsx": {
+    "src/components/core/category-card.tsx": {
       "metrics": {
         "loc": 25,
         "functions": 1,
@@ -2125,31 +1031,31 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/client-card.tsx": {
+    "src/components/core/client-card.tsx": {
       "metrics": {
-        "loc": 115,
+        "loc": 117,
         "functions": 6,
         "exports": 1,
         "imports": 5,
-        "complexity": 8
+        "complexity": 9
       },
       "hasParse": 0,
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/course-card.tsx": {
+    "src/components/core/course-card.tsx": {
       "metrics": {
-        "loc": 144,
+        "loc": 153,
         "functions": 3,
         "exports": 1,
         "imports": 5,
-        "complexity": 14
+        "complexity": 15
       },
       "hasParse": 0,
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/image.tsx": {
+    "src/components/core/image.tsx": {
       "metrics": {
         "loc": 98,
         "functions": 5,
@@ -2161,7 +1067,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/index.ts": {
+    "src/components/core/index.ts": {
       "metrics": {
         "loc": 20,
         "functions": 0,
@@ -2173,7 +1079,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/input.tsx": {
+    "src/components/core/input.tsx": {
       "metrics": {
         "loc": 96,
         "functions": 1,
@@ -2185,7 +1091,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/list.tsx": {
+    "src/components/core/list.tsx": {
       "metrics": {
         "loc": 104,
         "functions": 2,
@@ -2197,19 +1103,19 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/live-session-banner.tsx": {
+    "src/components/core/live-session-banner.tsx": {
       "metrics": {
-        "loc": 39,
+        "loc": 50,
         "functions": 1,
         "exports": 1,
-        "imports": 5,
-        "complexity": 2
+        "imports": 4,
+        "complexity": 3
       },
       "hasParse": 0,
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/navbar.tsx": {
+    "src/components/core/navbar.tsx": {
       "metrics": {
         "loc": 98,
         "functions": 3,
@@ -2221,7 +1127,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/page-header.tsx": {
+    "src/components/core/page-header.tsx": {
       "metrics": {
         "loc": 55,
         "functions": 1,
@@ -2233,7 +1139,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/post-card.tsx": {
+    "src/components/core/post-card.tsx": {
       "metrics": {
         "loc": 109,
         "functions": 2,
@@ -2245,7 +1151,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/post-composer.tsx": {
+    "src/components/core/post-composer.tsx": {
       "metrics": {
         "loc": 71,
         "functions": 1,
@@ -2257,19 +1163,19 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/product-card.tsx": {
+    "src/components/core/product-card.tsx": {
       "metrics": {
         "loc": 82,
         "functions": 1,
         "exports": 1,
         "imports": 4,
-        "complexity": 9
+        "complexity": 10
       },
       "hasParse": 0,
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/search-bar.tsx": {
+    "src/components/core/search-bar.tsx": {
       "metrics": {
         "loc": 28,
         "functions": 1,
@@ -2281,7 +1187,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/service-card.tsx": {
+    "src/components/core/service-card.tsx": {
       "metrics": {
         "loc": 25,
         "functions": 1,
@@ -2293,7 +1199,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/sheet.tsx": {
+    "src/components/core/sheet.tsx": {
       "metrics": {
         "loc": 78,
         "functions": 3,
@@ -2305,7 +1211,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/skeleton.tsx": {
+    "src/components/core/skeleton.tsx": {
       "metrics": {
         "loc": 70,
         "functions": 1,
@@ -2317,7 +1223,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/stats-card.tsx": {
+    "src/components/core/stats-card.tsx": {
       "metrics": {
         "loc": 18,
         "functions": 1,
@@ -2329,7 +1235,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/core/tabs.tsx": {
+    "src/components/core/tabs.tsx": {
       "metrics": {
         "loc": 34,
         "functions": 1,
@@ -2341,7 +1247,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/components/index.ts": {
+    "src/components/index.ts": {
       "metrics": {
         "loc": 22,
         "functions": 0,
@@ -2353,7 +1259,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/hooks/useAuth.ts": {
+    "src/hooks/useAuth.ts": {
       "metrics": {
         "loc": 28,
         "functions": 5,
@@ -2367,7 +1273,7 @@
       "hasLoadingState": 1,
       "hasErrorState": 0
     },
-    "test-projects/streax/src/hooks/useClients.ts": {
+    "src/hooks/useClients.ts": {
       "metrics": {
         "loc": 62,
         "functions": 5,
@@ -2385,7 +1291,7 @@
         "update"
       ]
     },
-    "test-projects/streax/src/hooks/useFeed.ts": {
+    "src/hooks/useFeed.ts": {
       "metrics": {
         "loc": 57,
         "functions": 5,
@@ -2403,7 +1309,7 @@
         "update"
       ]
     },
-    "test-projects/streax/src/hooks/useInsurance.ts": {
+    "src/hooks/useInsurance.ts": {
       "metrics": {
         "loc": 40,
         "functions": 4,
@@ -2417,7 +1323,7 @@
       "hasLoadingState": 1,
       "hasErrorState": 0
     },
-    "test-projects/streax/src/hooks/useLearning.ts": {
+    "src/hooks/useLearning.ts": {
       "metrics": {
         "loc": 28,
         "functions": 4,
@@ -2431,7 +1337,7 @@
       "hasLoadingState": 1,
       "hasErrorState": 0
     },
-    "test-projects/streax/src/hooks/useProducts.ts": {
+    "src/hooks/useProducts.ts": {
       "metrics": {
         "loc": 57,
         "functions": 6,
@@ -2445,21 +1351,7 @@
       "hasLoadingState": 1,
       "hasErrorState": 0
     },
-    "test-projects/streax/src/hooks/useProfessionals.ts": {
-      "metrics": {
-        "loc": 63,
-        "functions": 5,
-        "exports": 2,
-        "imports": 3,
-        "complexity": 4
-      },
-      "hasParse": 0,
-      "hasAuth": 0,
-      "hasTryCatch": 1,
-      "hasLoadingState": 1,
-      "hasErrorState": 1
-    },
-    "test-projects/streax/src/lib/utils.ts": {
+    "src/lib/utils.ts": {
       "metrics": {
         "loc": 5,
         "functions": 1,
@@ -2471,7 +1363,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/mocks/data.ts": {
+    "src/mocks/data.ts": {
       "metrics": {
         "loc": 283,
         "functions": 0,
@@ -2483,19 +1375,55 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/types/database.types.ts": {
+    "src/mocks/orders.ts": {
       "metrics": {
-        "loc": 295,
-        "functions": 0,
-        "exports": 18,
-        "imports": 0,
-        "complexity": 68
+        "loc": 663,
+        "functions": 6,
+        "exports": 10,
+        "imports": 1,
+        "complexity": 12
       },
       "hasParse": 0,
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/src/types/models.ts": {
+    "src/mocks/products-db-aligned.ts": {
+      "metrics": {
+        "loc": 744,
+        "functions": 7,
+        "exports": 8,
+        "imports": 1,
+        "complexity": 36
+      },
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/mocks/products-enhanced.ts": {
+      "metrics": {
+        "loc": 878,
+        "functions": 5,
+        "exports": 12,
+        "imports": 1,
+        "complexity": 81
+      },
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/types/database.types.ts": {
+      "metrics": {
+        "loc": 938,
+        "functions": 0,
+        "exports": 23,
+        "imports": 0,
+        "complexity": 240
+      },
+      "hasParse": 0,
+      "hasAuth": 0,
+      "hasTryCatch": 0
+    },
+    "src/types/models.ts": {
       "metrics": {
         "loc": 187,
         "functions": 0,
@@ -2507,7 +1435,7 @@
       "hasAuth": 0,
       "hasTryCatch": 0
     },
-    "test-projects/streax/tailwind.config.ts": {
+    "tailwind.config.ts": {
       "metrics": {
         "loc": 77,
         "functions": 0,
@@ -2526,75 +1454,49 @@
       "components": [],
       "apis": [],
       "files": [
-        "contracts/schemas/order.schema.ts",
-        "contracts/schemas/professional.v1.schema.ts",
-        "contracts/schemas/professional.v2.schema.ts",
-        "contracts/schemas/queue.schemas.ts",
-        "contracts/schemas/webhook.schemas.ts",
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/analyzer/data-flow-mapper.ts",
-        "src/analyzer/entity-identifier.ts",
-        "src/analyzer/rule-generator.ts",
-        "src/analyzer/smart-issue-analyzer.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/dashboard/components/hook-details-viewer.js",
-        "src/dashboard/components/index.js",
-        "src/dashboard/components/page-details-viewer.js",
-        "src/dashboard/components/scripts/data-processor.js",
-        "src/dashboard/components/scripts/state-manager.js",
-        "src/dashboard/components/viewers/index.js",
-        "src/observer/map-generator.ts",
-        "src/validator/contract-detector.ts",
-        "src/validator/contract-validator.ts",
-        "src/validator/nine-rules-validator.ts",
-        "test-projects/streax/contracts/schemas/professional.schema.ts",
-        "test-projects/streax/src/app/(main)/crm/page.tsx",
-        "test-projects/streax/src/app/(main)/feed/page.tsx",
-        "test-projects/streax/src/app/(main)/learning/page.tsx",
-        "test-projects/streax/src/app/(main)/orders/page.tsx",
-        "test-projects/streax/src/components/core/avatar.tsx",
-        "test-projects/streax/src/components/core/bottom-nav.tsx",
-        "test-projects/streax/src/components/core/post-card.tsx",
-        "test-projects/streax/src/components/core/post-composer.tsx",
-        "test-projects/streax/src/hooks/useAuth.ts",
-        "test-projects/streax/src/hooks/useClients.ts",
-        "test-projects/streax/src/hooks/useFeed.ts",
-        "test-projects/streax/src/hooks/useInsurance.ts",
-        "test-projects/streax/src/hooks/useProfessionals.ts",
-        "test-projects/streax/src/mocks/data.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts"
+        "src/app/(main)/crm/page.tsx",
+        "src/app/(main)/feed/page.tsx",
+        "src/app/(main)/insurance/page.tsx",
+        "src/app/(main)/learning/page.tsx",
+        "src/app/(main)/orders/page.tsx",
+        "src/components/core/avatar.tsx",
+        "src/components/core/bottom-nav.tsx",
+        "src/components/core/post-card.tsx",
+        "src/components/core/post-composer.tsx",
+        "src/hooks/useAuth.ts",
+        "src/hooks/useClients.ts",
+        "src/hooks/useFeed.ts",
+        "src/hooks/useInsurance.ts",
+        "src/mocks/data.ts",
+        "src/mocks/orders.ts",
+        "src/mocks/products-db-aligned.ts",
+        "src/mocks/products-enhanced.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     },
     "Professional": {
-      "hooks": [
-        "useProfessionalsWithContract",
-        "ProfessionalsListWithValidation"
-      ],
+      "hooks": [],
       "components": [],
       "apis": [],
       "files": [
-        "contracts/schemas/professional.v1.schema.ts",
-        "contracts/schemas/professional.v2.schema.ts",
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/analyzer/entity-identifier.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/dashboard/components/table-details-viewer.js",
-        "src/observer/map-generator.ts",
-        "src/validator/version-validator.ts",
-        "test-projects/streax/contracts/schemas/professional.schema.ts",
-        "test-projects/streax/src/app/(main)/crm/page.tsx",
-        "test-projects/streax/src/app/(main)/feed/page.tsx",
-        "test-projects/streax/src/app/(main)/insurance/page.tsx",
-        "test-projects/streax/src/app/(main)/learning/page.tsx",
-        "test-projects/streax/src/app/(main)/orders/page.tsx",
-        "test-projects/streax/src/components/core/post-card.tsx",
-        "test-projects/streax/src/components/core/product-card.tsx",
-        "test-projects/streax/src/hooks/useProducts.ts",
-        "test-projects/streax/src/hooks/useProfessionals.ts",
-        "test-projects/streax/src/mocks/data.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts"
+        "src/app/(main)/crm/page.tsx",
+        "src/app/(main)/feed/page.tsx",
+        "src/app/(main)/insurance/page.tsx",
+        "src/app/(main)/learning/page.tsx",
+        "src/app/(main)/orders/cart/page.tsx",
+        "src/app/(main)/orders/page.tsx",
+        "src/components/core/course-card.tsx",
+        "src/components/core/live-session-banner.tsx",
+        "src/components/core/post-card.tsx",
+        "src/components/core/product-card.tsx",
+        "src/hooks/useProducts.ts",
+        "src/mocks/data.ts",
+        "src/mocks/orders.ts",
+        "src/mocks/products-db-aligned.ts",
+        "src/mocks/products-enhanced.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     },
     "Client": {
@@ -2607,46 +1509,35 @@
       ],
       "apis": [],
       "files": [
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/analyzer/data-flow-mapper.ts",
-        "src/analyzer/entity-identifier.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/dashboard/components/index.js",
-        "src/dashboard/components/scripts/api-client.js",
-        "src/dashboard/components/scripts/data-processor.js",
-        "src/dashboard/components/scripts/index.js",
-        "src/dashboard/components/scripts/state-manager.js",
-        "src/dashboard/components/self-test.js",
-        "src/observer/map-generator.ts",
-        "src/observer/validator-runner.ts",
-        "src/validator/nine-rules-validator.ts",
-        "src/validator/table-mapper.ts",
-        "test-projects/streax/src/app/(main)/crm/page.tsx",
-        "test-projects/streax/src/app/(main)/feed/page.tsx",
-        "test-projects/streax/src/app/(main)/insurance/page.tsx",
-        "test-projects/streax/src/app/(main)/learning/page.tsx",
-        "test-projects/streax/src/app/(main)/orders/page.tsx",
-        "test-projects/streax/src/app/test/page.tsx",
-        "test-projects/streax/src/components/core/appointment-card.tsx",
-        "test-projects/streax/src/components/core/bottom-nav.tsx",
-        "test-projects/streax/src/components/core/category-card.tsx",
-        "test-projects/streax/src/components/core/client-card.tsx",
-        "test-projects/streax/src/components/core/course-card.tsx",
-        "test-projects/streax/src/components/core/list.tsx",
-        "test-projects/streax/src/components/core/live-session-banner.tsx",
-        "test-projects/streax/src/components/core/page-header.tsx",
-        "test-projects/streax/src/components/core/post-card.tsx",
-        "test-projects/streax/src/components/core/post-composer.tsx",
-        "test-projects/streax/src/components/core/product-card.tsx",
-        "test-projects/streax/src/components/core/search-bar.tsx",
-        "test-projects/streax/src/components/core/service-card.tsx",
-        "test-projects/streax/src/components/core/stats-card.tsx",
-        "test-projects/streax/src/components/core/tabs.tsx",
-        "test-projects/streax/src/components/index.ts",
-        "test-projects/streax/src/hooks/useClients.ts",
-        "test-projects/streax/src/mocks/data.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts"
+        "next.config.js",
+        "src/app/(main)/crm/page.tsx",
+        "src/app/(main)/feed/page.tsx",
+        "src/app/(main)/insurance/page.tsx",
+        "src/app/(main)/learning/page.tsx",
+        "src/app/(main)/orders/cart/page.tsx",
+        "src/app/(main)/orders/order-history/page.tsx",
+        "src/app/(main)/orders/page.tsx",
+        "src/app/test/page.tsx",
+        "src/components/core/appointment-card.tsx",
+        "src/components/core/bottom-nav.tsx",
+        "src/components/core/category-card.tsx",
+        "src/components/core/client-card.tsx",
+        "src/components/core/course-card.tsx",
+        "src/components/core/list.tsx",
+        "src/components/core/live-session-banner.tsx",
+        "src/components/core/page-header.tsx",
+        "src/components/core/post-card.tsx",
+        "src/components/core/post-composer.tsx",
+        "src/components/core/product-card.tsx",
+        "src/components/core/search-bar.tsx",
+        "src/components/core/service-card.tsx",
+        "src/components/core/stats-card.tsx",
+        "src/components/core/tabs.tsx",
+        "src/components/index.ts",
+        "src/hooks/useClients.ts",
+        "src/mocks/data.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     },
     "Order": {
@@ -2654,61 +1545,37 @@
       "components": [],
       "apis": [],
       "files": [
-        "contracts/schemas/order.schema.ts",
-        "contracts/schemas/queue.schemas.ts",
-        "dist/design-system-validator.js",
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/analyzer/enhanced-data-flow.ts",
-        "src/analyzer/entity-identifier.ts",
-        "src/analyzer/smart-issue-analyzer.ts",
-        "src/cli/analyze-smart.ts",
-        "src/dashboard/components/component-details-viewer.js",
-        "src/dashboard/components/control-bar.js",
-        "src/dashboard/components/dashboard-functions.js",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/dashboard/components/file-analysis-view.js",
-        "src/dashboard/components/hook-details-viewer.js",
-        "src/dashboard/components/live-log-panel.js",
-        "src/dashboard/components/page-details-viewer.js",
-        "src/dashboard/components/renderers/architecture-renderer.js",
-        "src/dashboard/components/renderers/nine-rules-renderer.js",
-        "src/dashboard/components/renderers/shared-utils.js",
-        "src/dashboard/components/severity-badge.js",
-        "src/dashboard/components/sidebar-navigator.js",
-        "src/dashboard/components/smart-analysis-view.js",
-        "src/dashboard/components/table-details-viewer.js",
-        "src/dashboard/components/validation-service.js",
-        "src/dashboard/theme-config.js",
-        "src/observer/map-generator.ts",
-        "src/validator/contract-detector.ts",
-        "src/validator/contract-validator.ts",
-        "src/validator/design-system-validator.ts",
-        "test-projects/streax/src/app/(main)/crm/page.tsx",
-        "test-projects/streax/src/app/(main)/feed/page.tsx",
-        "test-projects/streax/src/app/(main)/insurance/page.tsx",
-        "test-projects/streax/src/app/(main)/learning/page.tsx",
-        "test-projects/streax/src/app/(main)/orders/page.tsx",
-        "test-projects/streax/src/app/page.tsx",
-        "test-projects/streax/src/app/test/page.tsx",
-        "test-projects/streax/src/components/core/appointment-card.tsx",
-        "test-projects/streax/src/components/core/bottom-nav.tsx",
-        "test-projects/streax/src/components/core/button.tsx",
-        "test-projects/streax/src/components/core/card.tsx",
-        "test-projects/streax/src/components/core/client-card.tsx",
-        "test-projects/streax/src/components/core/input.tsx",
-        "test-projects/streax/src/components/core/list.tsx",
-        "test-projects/streax/src/components/core/navbar.tsx",
-        "test-projects/streax/src/components/core/page-header.tsx",
-        "test-projects/streax/src/components/core/post-card.tsx",
-        "test-projects/streax/src/components/core/post-composer.tsx",
-        "test-projects/streax/src/components/core/search-bar.tsx",
-        "test-projects/streax/src/components/core/sheet.tsx",
-        "test-projects/streax/src/components/core/tabs.tsx",
-        "test-projects/streax/src/hooks/useFeed.ts",
-        "test-projects/streax/src/mocks/data.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts",
-        "test-projects/streax/tailwind.config.ts"
+        "src/app/(main)/crm/page.tsx",
+        "src/app/(main)/feed/page.tsx",
+        "src/app/(main)/insurance/page.tsx",
+        "src/app/(main)/learning/page.tsx",
+        "src/app/(main)/orders/cart/page.tsx",
+        "src/app/(main)/orders/order-history/page.tsx",
+        "src/app/(main)/orders/page.tsx",
+        "src/app/page.tsx",
+        "src/app/test/page.tsx",
+        "src/components/core/appointment-card.tsx",
+        "src/components/core/bottom-nav.tsx",
+        "src/components/core/button.tsx",
+        "src/components/core/card.tsx",
+        "src/components/core/client-card.tsx",
+        "src/components/core/input.tsx",
+        "src/components/core/list.tsx",
+        "src/components/core/navbar.tsx",
+        "src/components/core/page-header.tsx",
+        "src/components/core/post-card.tsx",
+        "src/components/core/post-composer.tsx",
+        "src/components/core/search-bar.tsx",
+        "src/components/core/sheet.tsx",
+        "src/components/core/tabs.tsx",
+        "src/hooks/useFeed.ts",
+        "src/mocks/data.ts",
+        "src/mocks/orders.ts",
+        "src/mocks/products-db-aligned.ts",
+        "src/mocks/products-enhanced.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts",
+        "tailwind.config.ts"
       ]
     },
     "Product": {
@@ -2721,25 +1588,23 @@
       ],
       "apis": [],
       "files": [
-        "contracts/schemas/order.schema.ts",
-        "contracts/schemas/queue.schemas.ts",
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/analyzer/entity-identifier.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/dashboard/components/renderers/nine-rules-renderer.js",
-        "src/dashboard/theme-config.js",
-        "src/observer/map-generator.ts",
-        "src/validator/severity-config.ts",
-        "test-projects/streax/src/app/(main)/feed/page.tsx",
-        "test-projects/streax/src/app/(main)/learning/page.tsx",
-        "test-projects/streax/src/app/(main)/orders/page.tsx",
-        "test-projects/streax/src/components/core/category-card.tsx",
-        "test-projects/streax/src/components/core/product-card.tsx",
-        "test-projects/streax/src/components/index.ts",
-        "test-projects/streax/src/hooks/useProducts.ts",
-        "test-projects/streax/src/mocks/data.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts"
+        "next.config.js",
+        "src/app/(main)/feed/page.tsx",
+        "src/app/(main)/learning/page.tsx",
+        "src/app/(main)/orders/cart/page.tsx",
+        "src/app/(main)/orders/order-history/page.tsx",
+        "src/app/(main)/orders/page.tsx",
+        "src/components/core/category-card.tsx",
+        "src/components/core/live-session-banner.tsx",
+        "src/components/core/product-card.tsx",
+        "src/components/index.ts",
+        "src/hooks/useProducts.ts",
+        "src/mocks/data.ts",
+        "src/mocks/orders.ts",
+        "src/mocks/products-db-aligned.ts",
+        "src/mocks/products-enhanced.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     },
     "Post": {
@@ -2752,25 +1617,18 @@
       ],
       "apis": [],
       "files": [
-        "contracts/schemas/webhook.schemas.ts",
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/analyzer/entity-identifier.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/dashboard/components/index.js",
-        "src/dashboard/components/scripts/index.js",
-        "src/observer/map-generator.ts",
-        "src/validator/boundary-validator.ts",
-        "src/validator/contract-validator.ts",
-        "src/validator/nine-rules-validator.ts",
-        "test-projects/streax/postcss.config.js",
-        "test-projects/streax/src/app/(main)/feed/page.tsx",
-        "test-projects/streax/src/components/core/post-card.tsx",
-        "test-projects/streax/src/components/core/post-composer.tsx",
-        "test-projects/streax/src/components/index.ts",
-        "test-projects/streax/src/hooks/useFeed.ts",
-        "test-projects/streax/src/mocks/data.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts"
+        "postcss.config.js",
+        "src/app/(main)/feed/page.tsx",
+        "src/app/(main)/orders/cart/page.tsx",
+        "src/app/(main)/orders/order-history/page.tsx",
+        "src/components/core/post-card.tsx",
+        "src/components/core/post-composer.tsx",
+        "src/components/index.ts",
+        "src/hooks/useFeed.ts",
+        "src/mocks/data.ts",
+        "src/mocks/orders.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     },
     "Comment": {
@@ -2778,19 +1636,12 @@
       "components": [],
       "apis": [],
       "files": [
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/analyzer/entity-identifier.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/observer/map-generator.ts",
-        "src/validator/design-system-validator.ts",
-        "src/validator/severity-config.ts",
-        "src/validator/version-validator.ts",
-        "test-projects/streax/src/app/(main)/feed/page.tsx",
-        "test-projects/streax/src/components/core/post-card.tsx",
-        "test-projects/streax/src/hooks/useFeed.ts",
-        "test-projects/streax/src/mocks/data.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts"
+        "src/app/(main)/feed/page.tsx",
+        "src/components/core/post-card.tsx",
+        "src/hooks/useFeed.ts",
+        "src/mocks/data.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     },
     "Session": {
@@ -2801,22 +1652,13 @@
       ],
       "apis": [],
       "files": [
-        "contracts/schemas/queue.schemas.ts",
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/analyzer/data-flow-mapper.ts",
-        "src/analyzer/entity-identifier.ts",
-        "src/analyzer/smart-issue-analyzer.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/observer/map-generator.ts",
-        "src/observer/validator-runner.ts",
-        "src/validator/nine-rules-validator.ts",
-        "test-projects/streax/src/app/(main)/feed/page.tsx",
-        "test-projects/streax/src/components/core/live-session-banner.tsx",
-        "test-projects/streax/src/components/index.ts",
-        "test-projects/streax/src/hooks/useFeed.ts",
-        "test-projects/streax/src/mocks/data.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts"
+        "src/app/(main)/feed/page.tsx",
+        "src/components/core/live-session-banner.tsx",
+        "src/components/index.ts",
+        "src/hooks/useFeed.ts",
+        "src/mocks/data.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     },
     "Insurance": {
@@ -2826,15 +1668,12 @@
       "components": [],
       "apis": [],
       "files": [
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/observer/map-generator.ts",
-        "test-projects/streax/src/app/(main)/insurance/page.tsx",
-        "test-projects/streax/src/components/core/bottom-nav.tsx",
-        "test-projects/streax/src/hooks/useInsurance.ts",
-        "test-projects/streax/src/mocks/data.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts"
+        "src/app/(main)/insurance/page.tsx",
+        "src/components/core/bottom-nav.tsx",
+        "src/hooks/useInsurance.ts",
+        "src/mocks/data.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     },
     "Course": {
@@ -2845,16 +1684,14 @@
       ],
       "apis": [],
       "files": [
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/observer/map-generator.ts",
-        "test-projects/streax/src/app/(main)/learning/page.tsx",
-        "test-projects/streax/src/components/core/course-card.tsx",
-        "test-projects/streax/src/components/index.ts",
-        "test-projects/streax/src/hooks/useLearning.ts",
-        "test-projects/streax/src/mocks/data.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts"
+        "src/app/(main)/feed/page.tsx",
+        "src/app/(main)/learning/page.tsx",
+        "src/components/core/course-card.tsx",
+        "src/components/index.ts",
+        "src/hooks/useLearning.ts",
+        "src/mocks/data.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     },
     "Payment": {
@@ -2862,14 +1699,12 @@
       "components": [],
       "apis": [],
       "files": [
-        "contracts/schemas/order.schema.ts",
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/analyzer/entity-identifier.ts",
-        "src/analyzer/smart-issue-analyzer.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/observer/map-generator.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts"
+        "src/app/(main)/feed/page.tsx",
+        "src/app/(main)/orders/cart/page.tsx",
+        "src/app/(main)/orders/order-history/page.tsx",
+        "src/mocks/orders.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     },
     "Invoice": {
@@ -2877,9 +1712,7 @@
       "components": [],
       "apis": [],
       "files": [
-        "src/analyzer/entity-identifier.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/observer/map-generator.ts"
+        "src/app/(main)/orders/order-history/page.tsx"
       ]
     },
     "Cart": {
@@ -2887,13 +1720,13 @@
       "components": [],
       "apis": [],
       "files": [
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/analyzer/entity-identifier.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/observer/map-generator.ts",
-        "test-projects/streax/src/app/(main)/orders/page.tsx",
-        "test-projects/streax/src/hooks/useProducts.ts",
-        "test-projects/streax/src/types/models.ts"
+        "src/app/(main)/feed/page.tsx",
+        "src/app/(main)/orders/cart/page.tsx",
+        "src/app/(main)/orders/page.tsx",
+        "src/hooks/useProducts.ts",
+        "src/mocks/orders.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     },
     "Appointment": {
@@ -2904,16 +1737,14 @@
       ],
       "apis": [],
       "files": [
-        "src/analyzer/business-logic-analyzer.ts",
-        "src/dashboard/components/entity-data-provider.js",
-        "src/observer/map-generator.ts",
-        "test-projects/streax/src/app/(main)/crm/page.tsx",
-        "test-projects/streax/src/components/core/appointment-card.tsx",
-        "test-projects/streax/src/components/index.ts",
-        "test-projects/streax/src/hooks/useClients.ts",
-        "test-projects/streax/src/mocks/data.ts",
-        "test-projects/streax/src/types/database.types.ts",
-        "test-projects/streax/src/types/models.ts"
+        "src/app/(main)/crm/page.tsx",
+        "src/app/(main)/feed/page.tsx",
+        "src/components/core/appointment-card.tsx",
+        "src/components/index.ts",
+        "src/hooks/useClients.ts",
+        "src/mocks/data.ts",
+        "src/types/database.types.ts",
+        "src/types/models.ts"
       ]
     }
   }

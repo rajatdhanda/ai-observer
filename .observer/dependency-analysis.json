@@ -1,0 +1,101 @@
+{
+  "summary": {
+    "total_files": 55,
+    "used_files": 13,
+    "unused_files": 49,
+    "usage_percentage": 23.64
+  },
+  "entry_points": [
+    "bin/ai-observe",
+    "child_process",
+    "chokidar",
+    "crypto",
+    "dist/utils/remote-logger",
+    "fs",
+    "path",
+    "src/cli/analyze-smart-watch.ts",
+    "src/cli/analyze-smart.ts",
+    "src/dashboard/index.ts",
+    "src/observer/auto-observer.ts",
+    "src/observer/map-generator.ts",
+    "src/observer/validator-runner.ts"
+  ],
+  "core_flows": {
+    "dashboard": {
+      "entry": "src/dashboard/unified-server.ts",
+      "components": [],
+      "purpose": "Web dashboard for viewing analysis results"
+    },
+    "smart_analyzer": {
+      "entry": "src/cli/analyze-smart.ts",
+      "components": [],
+      "purpose": "Analyzes codebase and generates FIX_THIS.json"
+    },
+    "observer": {
+      "entry": "bin/ai-observe",
+      "components": [],
+      "purpose": "Real-time file monitoring and validation"
+    }
+  },
+  "unused_files": [
+    "src/analyzer/background-analyzer.ts",
+    "src/analyzer/business-logic-analyzer.ts",
+    "src/analyzer/data-flow-mapper.ts",
+    "src/analyzer/enhanced-data-flow.ts",
+    "src/analyzer/entity-identifier.ts",
+    "src/analyzer/framework-detector.ts",
+    "src/analyzer/index.ts",
+    "src/analyzer/rule-generator.ts",
+    "src/analyzer/smart-issue-analyzer.ts",
+    "src/analyzer/type-extractor.ts",
+    "src/dashboard/components/component-details-viewer.js",
+    "src/dashboard/components/control-bar.js",
+    "src/dashboard/components/dashboard-functions.js",
+    "src/dashboard/components/entity-data-provider.js",
+    "src/dashboard/components/file-analysis-view.js",
+    "src/dashboard/components/hook-details-viewer.js",
+    "src/dashboard/components/index.js",
+    "src/dashboard/components/live-log-panel.js",
+    "src/dashboard/components/page-details-viewer.js",
+    "src/dashboard/components/renderers/architecture-renderer.js",
+    "src/dashboard/components/renderers/nine-rules-renderer.js",
+    "src/dashboard/components/renderers/shared-utils.js",
+    "src/dashboard/components/scripts/api-client.js",
+    "src/dashboard/components/scripts/data-processor.js",
+    "src/dashboard/components/scripts/index.js",
+    "src/dashboard/components/scripts/state-manager.js",
+    "src/dashboard/components/self-test.js",
+    "src/dashboard/components/severity-badge.js",
+    "src/dashboard/components/sidebar-navigator.js",
+    "src/dashboard/components/smart-analysis-view.js",
+    "src/dashboard/components/smart-refresh-manager.js",
+    "src/dashboard/components/table-details-viewer.js",
+    "src/dashboard/components/validation-service.js",
+    "src/dashboard/components/viewers/index.js",
+    "src/dashboard/dashboard-loader.js",
+    "src/dashboard/logger.ts",
+    "src/dashboard/theme-config.js",
+    "src/dashboard/types.ts",
+    "src/dashboard/types/window.d.ts",
+    "src/utils/remote-logger.ts",
+    "src/validator/boundary-validator.ts",
+    "src/validator/contract-detector.ts",
+    "src/validator/contract-validator.ts",
+    "src/validator/design-system-validator.ts",
+    "src/validator/nine-rules-validator.ts",
+    "src/validator/severity-config.ts",
+    "src/validator/table-mapper.ts",
+    "src/validator/version-validator.ts",
+    "src/validator/zod-schema-generator.ts"
+  ],
+  "component_map": {},
+  "recommendations": [
+    "Directory 'src/dashboard' has 4 unused files - consider removing",
+    "Directory 'src/dashboard/components' has 16 unused files - consider removing",
+    "Directory 'src/validator' has 9 unused files - consider removing",
+    "Directory 'src/analyzer' has 10 unused files - consider removing",
+    "Directory 'src/dashboard/components/scripts' has 4 unused files - consider removing",
+    "Found 1 unused test files",
+    "Multiple validator files (10) - consider consolidation"
+  ]
+}

@@ -1,7 +1,7 @@
 {
-  "README": "0 issues fixed! 121 remaining in 3 buckets.",
-  "generated": "2025-09-04T08:51:08.867Z",
-  "project": "/Users/rajatdhanda/Tech/Projects/ai-observer",
+  "README": "0 issues fixed! 132 remaining in 3 buckets.",
+  "generated": "2025-09-04T09:26:54.265Z",
+  "project": "/Users/rajatdhanda/Tech/Projects/streax",
   "project_type": "fullstack",
   "detected_features": {
     "has_payments": false,
@@ -16,10 +16,10 @@
       "description": "Issues that prevent the application from running or cause crashes",
       "color": "#ef4444",
       "priority": 1,
-      "count": 12,
+      "count": 58,
       "issues": [
         {
-          "file": "test-projects/streax/src/types/database.types.ts",
+          "file": "src/types/database.types.ts",
           "line": 0,
           "rule": "Type-Database Alignment",
           "severity": "critical",
@@ -28,7 +28,7 @@
           "category": "type_safety"
         },
         {
-          "file": "src/analyzer/business-logic-analyzer.ts",
+          "file": "src/app/(main)/feed/page.tsx",
           "line": 0,
           "rule": "Contract Compliance",
           "severity": "critical",
@@ -37,7 +37,7 @@
           "category": "contracts"
         },
         {
-          "file": "contracts/schemas/queue.schemas.ts",
+          "file": "src/app/(main)/feed/page.tsx",
           "line": 0,
           "rule": "Contract Compliance",
           "severity": "critical",
@@ -46,7 +46,7 @@
           "category": "contracts"
         },
         {
-          "file": "src/analyzer/business-logic-analyzer.ts",
+          "file": "src/app/(main)/insurance/page.tsx",
           "line": 0,
           "rule": "Contract Compliance",
           "severity": "critical",
@@ -55,7 +55,7 @@
           "category": "contracts"
         },
         {
-          "file": "src/analyzer/business-logic-analyzer.ts",
+          "file": "src/app/(main)/feed/page.tsx",
           "line": 0,
           "rule": "Contract Compliance",
           "severity": "critical",
@@ -64,7 +64,7 @@
           "category": "contracts"
         },
         {
-          "file": "contracts/schemas/order.schema.ts",
+          "file": "src/app/(main)/feed/page.tsx",
           "line": 0,
           "rule": "Contract Compliance",
           "severity": "critical",
@@ -73,7 +73,7 @@
           "category": "contracts"
         },
         {
-          "file": "src/analyzer/entity-identifier.ts",
+          "file": "src/app/(main)/orders/order-history/page.tsx",
           "line": 0,
           "rule": "Contract Compliance",
           "severity": "critical",
@@ -82,7 +82,7 @@
           "category": "contracts"
         },
         {
-          "file": "src/analyzer/business-logic-analyzer.ts",
+          "file": "src/app/(main)/feed/page.tsx",
           "line": 0,
           "rule": "Contract Compliance",
           "severity": "critical",
@@ -91,7 +91,7 @@
           "category": "contracts"
         },
         {
-          "file": "src/analyzer/business-logic-analyzer.ts",
+          "file": "src/app/(main)/crm/page.tsx",
           "line": 0,
           "rule": "Contract Compliance",
           "severity": "critical",
@@ -100,7 +100,7 @@
           "category": "contracts"
         },
         {
-          "file": "test-projects/streax/src/app/(main)/insurance/page.tsx",
+          "file": "src/app/(main)/insurance/page.tsx",
           "line": 0,
           "rule": "Contract Compliance",
           "severity": "critical",
@@ -109,13 +109,22 @@
           "category": "contracts"
         },
         {
-          "file": "test-projects/streax/src/components/core/image.tsx",
+          "file": "src/components/core/image.tsx",
           "line": 0,
           "rule": "Contract Compliance",
           "severity": "critical",
           "message": "Type 'Image' exported but no contract for ''",
           "fix": "Consider adding '' contract",
           "category": "contracts"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/types/database.types.ts",
+          "line": 0,
+          "rule": "Type-Database Alignment",
+          "severity": "critical",
+          "message": "Schema 'database.types' not used with .parse() in database layer",
+          "fix": "Add database.typesSchema.parse(data) when fetching from database",
+          "category": "type_safety"
         },
         {
           "file": ".observer/contracts.json",
@@ -125,6 +134,411 @@
           "message": "No contracts defined - AI Observer cannot validate your code",
           "fix": "Create contracts.json with your API and database contracts",
           "category": "setup"
+        },
+        {
+          "file": "src/app/(main)/crm/page.tsx",
+          "line": 31,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Object literal may only specify known properties, and 'salon_id' does not exist in type 'Client'.",
+          "fix": "Fix TypeScript error",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/feed/page.tsx",
+          "line": 75,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Object literal may only specify known properties, and 'push_enabled' does not exist in type '{ email: boolean; sms: boolean; push: boolean; marketing: boolean; }'.",
+          "fix": "Fix TypeScript error",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/feed/page.tsx",
+          "line": 140,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Object literal may only specify known properties, and 'alt_text' does not exist in type '{ url: string; type: \"video\" | \"image\"; thumbnail_url?: string | undefined; }'.",
+          "fix": "Fix TypeScript error",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/feed/page.tsx",
+          "line": 154,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Object literal may only specify known properties, and 'recent_interactions' does not exist in type '{ likes_count: number; comments_count: number; shares_count: number; saves_count: number; views_count: number; }'.",
+          "fix": "Fix TypeScript error",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/feed/page.tsx",
+          "line": 178,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Object literal may only specify known properties, and 'alt_text' does not exist in type '{ url: string; type: \"video\" | \"image\"; thumbnail_url?: string | undefined; }'.",
+          "fix": "Fix TypeScript error",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/feed/page.tsx",
+          "line": 192,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Object literal may only specify known properties, and 'recent_interactions' does not exist in type '{ likes_count: number; comments_count: number; shares_count: number; saves_count: number; views_count: number; }'.",
+          "fix": "Fix TypeScript error",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/insurance/page.tsx",
+          "line": 25,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Object literal may only specify known properties, and 'userId' does not exist in type 'InsurancePolicy'.",
+          "fix": "Fix TypeScript error",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/insurance/page.tsx",
+          "line": 178,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'premium' does not exist on type 'InsurancePolicy'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/learning/page.tsx",
+          "line": 373,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'media' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/learning/page.tsx",
+          "line": 383,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'instructor_name' does not exist on type 'Course'. Did you mean 'instructor_id'?",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/learning/page.tsx",
+          "line": 413,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'media' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/learning/page.tsx",
+          "line": 420,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'instructor_name' does not exist on type 'Course'. Did you mean 'instructor_id'?",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/learning/page.tsx",
+          "line": 426,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'certification' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/learning/page.tsx",
+          "line": 436,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'access' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/learning/page.tsx",
+          "line": 437,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'access' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/learning/page.tsx",
+          "line": 462,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'media' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/learning/page.tsx",
+          "line": 469,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'instructor_name' does not exist on type 'Course'. Did you mean 'instructor_id'?",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/app/(main)/learning/page.tsx",
+          "line": 506,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'media' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/components/core/client-card.tsx",
+          "line": 41,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'salon_id' does not exist on type 'Client'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/components/core/client-card.tsx",
+          "line": 41,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'salon_visits' does not exist on type '{ first_visit: string; last_visit?: string | undefined; total_visits: number; total_spent: number; average_ticket_size: number; favorite_services: string[]; last_services: { service: string; date: string; professional_id: string; }[]; }'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/components/core/client-card.tsx",
+          "line": 42,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'salon_visits' does not exist on type '{ first_visit: string; last_visit?: string | undefined; total_visits: number; total_spent: number; average_ticket_size: number; favorite_services: string[]; last_services: { service: string; date: string; professional_id: string; }[]; }'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/components/core/client-card.tsx",
+          "line": 70,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'last_visit_date' does not exist on type '{ first_visit: string; last_visit?: string | undefined; total_visits: number; total_spent: number; average_ticket_size: number; favorite_services: string[]; last_services: { service: string; date: string; professional_id: string; }[]; }'. Did you mean 'last_visit'?",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/components/core/course-card.tsx",
+          "line": 61,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'media' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/components/core/course-card.tsx",
+          "line": 73,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'instructor_name' does not exist on type 'Course'. Did you mean 'instructor_id'?",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/components/core/course-card.tsx",
+          "line": 102,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'media' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/components/core/course-card.tsx",
+          "line": 109,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'instructor_name' does not exist on type 'Course'. Did you mean 'instructor_id'?",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/components/core/course-card.tsx",
+          "line": 118,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'certification' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/components/core/course-card.tsx",
+          "line": 128,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'access' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/components/core/course-card.tsx",
+          "line": 129,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'access' does not exist on type 'Course'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useClients.ts",
+          "line": 39,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Object literal may only specify known properties, and 'userId' does not exist in type 'Client'.",
+          "fix": "Fix TypeScript error",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useClients.ts",
+          "line": 60,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'lastVisit' does not exist on type 'Client'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useClients.ts",
+          "line": 62,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'totalSpent' does not exist on type 'Client'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useFeed.ts",
+          "line": 44,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'likes' does not exist on type 'Post'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useFeed.ts",
+          "line": 44,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'likedByMe' does not exist on type 'Post'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useFeed.ts",
+          "line": 44,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'likedByMe' does not exist on type 'Post'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useFeed.ts",
+          "line": 56,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Object literal may only specify known properties, and 'userId' does not exist in type 'Post'.",
+          "fix": "Fix TypeScript error",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useInsurance.ts",
+          "line": 37,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'amount' does not exist on type 'Partial<{ claim_id: string; claim_date: string; incident_date: string; claim_amount: number; status: \"paid\" | \"submitted\" | \"under_review\" | \"approved\" | \"rejected\"; description: string; documents: { ...; }[]; approved_amount?: number | undefined; rejection_reason?: string | undefined; processed_by?: string | undefi...'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useInsurance.ts",
+          "line": 39,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'type' does not exist on type 'Partial<{ claim_id: string; claim_date: string; incident_date: string; claim_amount: number; status: \"paid\" | \"submitted\" | \"under_review\" | \"approved\" | \"rejected\"; description: string; documents: { ...; }[]; approved_amount?: number | undefined; rejection_reason?: string | undefined; processed_by?: string | undefi...'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useProducts.ts",
+          "line": 35,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'productId' does not exist on type 'CartItem'. Did you mean 'product_id'?",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useProducts.ts",
+          "line": 38,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'productId' does not exist on type 'CartItem'. Did you mean 'product_id'?",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useProducts.ts",
+          "line": 47,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'professionalPrice' does not exist on type 'Product'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useProducts.ts",
+          "line": 53,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'productId' does not exist on type 'CartItem'. Did you mean 'product_id'?",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/hooks/useProducts.ts",
+          "line": 56,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property 'price' does not exist on type 'CartItem'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/mocks/products-db-aligned.ts",
+          "line": 756,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property '0' does not exist on type '{ id: string; name: string; sku: string; barcode?: string | undefined; pricing: { mrp: number; selling_price: number; professional_price: number; cost_price?: number | undefined; }; inventory: { ...; }; attributes: Record<...>; media?: { ...; }[] | undefined; weight?: number | undefined; dimensions?: { ...; } | unde...'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
+        },
+        {
+          "file": "src/mocks/products-db-aligned.ts",
+          "line": 809,
+          "rule": "typescript_error",
+          "severity": "critical",
+          "message": "Property '0' does not exist on type '{ id: string; name: string; sku: string; barcode?: string | undefined; pricing: { mrp: number; selling_price: number; professional_price: number; cost_price?: number | undefined; }; inventory: { ...; }; attributes: Record<...>; media?: { ...; }[] | undefined; weight?: number | undefined; dimensions?: { ...; } | unde...'.",
+          "fix": "Check property name or add type definition",
+          "category": "types"
         }
       ]
     },
@@ -134,10 +548,10 @@
       "description": "Issues that affect code organization, maintainability, and reliability",
       "color": "#f59e0b",
       "priority": 2,
-      "count": 16,
+      "count": 35,
       "issues": [
         {
-          "file": "test-projects/streax/src/hooks/useAuth.ts",
+          "file": "src/hooks/useAuth.ts",
           "line": 0,
           "rule": "Error Handling",
           "severity": "critical",
@@ -146,7 +560,7 @@
           "category": "error_handling"
         },
         {
-          "file": "test-projects/streax/src/hooks/useClients.ts",
+          "file": "src/hooks/useClients.ts",
           "line": 0,
           "rule": "Error Handling",
           "severity": "critical",
@@ -155,7 +569,7 @@
           "category": "error_handling"
         },
         {
-          "file": "test-projects/streax/src/hooks/useInsurance.ts",
+          "file": "src/hooks/useInsurance.ts",
           "line": 0,
           "rule": "Error Handling",
           "severity": "critical",
@@ -164,7 +578,7 @@
           "category": "error_handling"
         },
         {
-          "file": "test-projects/streax/src/hooks/useLearning.ts",
+          "file": "src/hooks/useLearning.ts",
           "line": 0,
           "rule": "Error Handling",
           "severity": "critical",
@@ -173,7 +587,7 @@
           "category": "error_handling"
         },
         {
-          "file": "test-projects/streax/src/hooks/useProducts.ts",
+          "file": "src/hooks/useProducts.ts",
           "line": 0,
           "rule": "Error Handling",
           "severity": "critical",
@@ -182,7 +596,7 @@
           "category": "error_handling"
         },
         {
-          "file": "test-projects/streax/src/hooks/useClients.ts",
+          "file": "src/hooks/useClients.ts",
           "line": 0,
           "rule": "Cache Invalidation",
           "severity": "high",
@@ -191,7 +605,7 @@
           "category": "performance"
         },
         {
-          "file": "test-projects/streax/src/hooks/useFeed.ts",
+          "file": "src/hooks/useFeed.ts",
           "line": 0,
           "rule": "Cache Invalidation",
           "severity": "high",
@@ -200,85 +614,256 @@
           "category": "performance"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/crm/page.tsx",
+          "line": 0,
+          "rule": "Hook-Database Pattern",
+          "severity": "critical",
+          "message": "Component has direct database access",
+          "fix": "Components should use hooks for data fetching, not direct DB calls",
+          "category": "architecture"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/feed/page.tsx",
+          "line": 0,
+          "rule": "Hook-Database Pattern",
+          "severity": "critical",
+          "message": "Component has direct database access",
+          "fix": "Components should use hooks for data fetching, not direct DB calls",
+          "category": "architecture"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/insurance/page.tsx",
+          "line": 0,
+          "rule": "Hook-Database Pattern",
+          "severity": "critical",
+          "message": "Component has direct database access",
+          "fix": "Components should use hooks for data fetching, not direct DB calls",
+          "category": "architecture"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/learning/page.tsx",
+          "line": 0,
+          "rule": "Hook-Database Pattern",
+          "severity": "critical",
+          "message": "Component has direct database access",
+          "fix": "Components should use hooks for data fetching, not direct DB calls",
+          "category": "architecture"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/orders/cart/page.tsx",
+          "line": 0,
+          "rule": "Hook-Database Pattern",
+          "severity": "critical",
+          "message": "Component has direct database access",
+          "fix": "Components should use hooks for data fetching, not direct DB calls",
+          "category": "architecture"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/orders/order-history/page.tsx",
+          "line": 0,
+          "rule": "Hook-Database Pattern",
+          "severity": "critical",
+          "message": "Component has direct database access",
+          "fix": "Components should use hooks for data fetching, not direct DB calls",
+          "category": "architecture"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/orders/page.tsx",
+          "line": 0,
+          "rule": "Hook-Database Pattern",
+          "severity": "critical",
+          "message": "Component has direct database access",
+          "fix": "Components should use hooks for data fetching, not direct DB calls",
+          "category": "architecture"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/client-card.tsx",
+          "line": 0,
+          "rule": "Hook-Database Pattern",
+          "severity": "critical",
+          "message": "Component has direct database access",
+          "fix": "Components should use hooks for data fetching, not direct DB calls",
+          "category": "architecture"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/course-card.tsx",
+          "line": 0,
+          "rule": "Hook-Database Pattern",
+          "severity": "critical",
+          "message": "Component has direct database access",
+          "fix": "Components should use hooks for data fetching, not direct DB calls",
+          "category": "architecture"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/post-card.tsx",
+          "line": 0,
+          "rule": "Hook-Database Pattern",
+          "severity": "critical",
+          "message": "Component has direct database access",
+          "fix": "Components should use hooks for data fetching, not direct DB calls",
+          "category": "architecture"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/product-card.tsx",
+          "line": 0,
+          "rule": "Hook-Database Pattern",
+          "severity": "critical",
+          "message": "Component has direct database access",
+          "fix": "Components should use hooks for data fetching, not direct DB calls",
+          "category": "architecture"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/learning/page.tsx",
           "line": 0,
           "rule": "File Size Warnings",
           "severity": "warning",
-          "message": "File has 743 lines (exceeds 500 lines)",
+          "message": "File has 559 lines (exceeds 500 lines)",
           "fix": "Consider splitting - AI performs better with smaller files",
           "category": "maintainability"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/enhanced-data-flow.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/orders.ts",
           "line": 0,
           "rule": "File Size Warnings",
           "severity": "warning",
-          "message": "File has 864 lines (exceeds 500 lines)",
+          "message": "File has 693 lines (exceeds 500 lines)",
           "fix": "Consider splitting - AI performs better with smaller files",
           "category": "maintainability"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-db-aligned.ts",
           "line": 0,
           "rule": "File Size Warnings",
           "severity": "warning",
-          "message": "File has 805 lines (exceeds 500 lines)",
+          "message": "File has 826 lines (exceeds 500 lines)",
           "fix": "Consider splitting - AI performs better with smaller files",
           "category": "maintainability"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-enhanced.ts",
           "line": 0,
           "rule": "File Size Warnings",
           "severity": "warning",
-          "message": "File has 778 lines (exceeds 500 lines)",
+          "message": "File has 984 lines (exceeds 500 lines)",
           "fix": "Consider splitting - AI performs better with smaller files",
           "category": "maintainability"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/validator/nine-rules-validator.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/types/database.types.ts",
           "line": 0,
           "rule": "File Size Warnings",
           "severity": "critical",
-          "message": "File has 1166 lines (exceeds 1000 lines)",
+          "message": "File has 1232 lines (exceeds 1000 lines)",
           "fix": "Split into smaller modules - AI loses context in large files",
           "category": "maintainability"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/validator/table-mapper.ts",
-          "line": 0,
-          "rule": "File Size Warnings",
-          "severity": "warning",
-          "message": "File has 691 lines (exceeds 500 lines)",
-          "fix": "Consider splitting - AI performs better with smaller files",
-          "category": "maintainability"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/type-extractor.ts, /Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/learning/page.tsx, /Users/rajatdhanda/Tech/Projects/streax/src/components/core/course-card.tsx",
           "line": 0,
           "rule": "Duplicate Functions",
           "severity": "warning",
-          "message": "Function 'walkDir' defined in 2 files",
+          "message": "Function 'getDifficultyColor' defined in 2 files",
           "fix": "AI might use wrong version - consolidate or rename functions",
           "category": "code_drift"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/type-extractor.ts, /Users/rajatdhanda/Tech/Projects/ai-observer/src/validator/table-mapper.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/learning/page.tsx, /Users/rajatdhanda/Tech/Projects/streax/src/components/core/course-card.tsx",
           "line": 0,
           "rule": "Duplicate Functions",
           "severity": "warning",
-          "message": "Function 'visit' defined in 2 files",
+          "message": "Function 'formatDuration' defined in 2 files",
           "fix": "AI might use wrong version - consolidate or rename functions",
           "category": "code_drift"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/validator/boundary-validator.ts, /Users/rajatdhanda/Tech/Projects/ai-observer/src/validator/design-system-validator.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/orders/page.tsx, /Users/rajatdhanda/Tech/Projects/streax/src/hooks/useProducts.ts",
           "line": 0,
           "rule": "Duplicate Functions",
           "severity": "warning",
-          "message": "Function 'scanDir' defined in 2 files",
+          "message": "Function 'addToCart' defined in 2 files",
           "fix": "AI might use wrong version - consolidate or rename functions",
           "category": "code_drift"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/orders/page.tsx, /Users/rajatdhanda/Tech/Projects/streax/src/hooks/useProducts.ts",
+          "line": 0,
+          "rule": "Duplicate Functions",
+          "severity": "warning",
+          "message": "Function 'removeFromCart' defined in 2 files",
+          "fix": "AI might use wrong version - consolidate or rename functions",
+          "category": "code_drift"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-db-aligned.ts, /Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-enhanced.ts",
+          "line": 0,
+          "rule": "Duplicate Functions",
+          "severity": "warning",
+          "message": "Function 'findVariantByAttributes' defined in 2 files",
+          "fix": "AI might use wrong version - consolidate or rename functions",
+          "category": "code_drift"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-db-aligned.ts, /Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-enhanced.ts",
+          "line": 0,
+          "rule": "Duplicate Functions",
+          "severity": "warning",
+          "message": "Function 'getBestDiscount' defined in 2 files",
+          "fix": "AI might use wrong version - consolidate or rename functions",
+          "category": "code_drift"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/hooks/useAuth.ts",
+          "line": 0,
+          "rule": "Export Completeness",
+          "severity": "warning",
+          "message": "Hook may be missing exports: data, loading, error",
+          "fix": "AI expects standard returns - add missing properties",
+          "category": "api_completeness"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/hooks/useClients.ts",
+          "line": 0,
+          "rule": "Export Completeness",
+          "severity": "warning",
+          "message": "Hook may be missing exports: data, error",
+          "fix": "AI expects standard returns - add missing properties",
+          "category": "api_completeness"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/hooks/useFeed.ts",
+          "line": 0,
+          "rule": "Export Completeness",
+          "severity": "warning",
+          "message": "Hook may be missing exports: data",
+          "fix": "AI expects standard returns - add missing properties",
+          "category": "api_completeness"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/hooks/useInsurance.ts",
+          "line": 0,
+          "rule": "Export Completeness",
+          "severity": "warning",
+          "message": "Hook may be missing exports: data, error",
+          "fix": "AI expects standard returns - add missing properties",
+          "category": "api_completeness"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/hooks/useLearning.ts",
+          "line": 0,
+          "rule": "Export Completeness",
+          "severity": "warning",
+          "message": "Hook may be missing exports: data, error",
+          "fix": "AI expects standard returns - add missing properties",
+          "category": "api_completeness"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/hooks/useProducts.ts",
+          "line": 0,
+          "rule": "Export Completeness",
+          "severity": "warning",
+          "message": "Hook may be missing exports: data, error",
+          "fix": "AI expects standard returns - add missing properties",
+          "category": "api_completeness"
         }
       ]
     },
@@ -288,888 +873,406 @@
       "description": "Issues that improve code quality, consistency, and best practices",
       "color": "#3b82f6",
       "priority": 3,
-      "count": 93,
+      "count": 39,
       "issues": [
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/hooks/useAuth.ts",
+          "line": 0,
+          "rule": "Error Handling Chain",
+          "severity": "warning",
+          "message": "Hook missing error state management",
+          "fix": "Add error state: const [error, setError] = useState(null)",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/hooks/useClients.ts",
+          "line": 0,
+          "rule": "Error Handling Chain",
+          "severity": "warning",
+          "message": "Hook missing error state management",
+          "fix": "Add error state: const [error, setError] = useState(null)",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/hooks/useInsurance.ts",
+          "line": 0,
+          "rule": "Error Handling Chain",
+          "severity": "warning",
+          "message": "Hook missing error state management",
+          "fix": "Add error state: const [error, setError] = useState(null)",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/hooks/useLearning.ts",
+          "line": 0,
+          "rule": "Error Handling Chain",
+          "severity": "warning",
+          "message": "Hook missing error state management",
+          "fix": "Add error state: const [error, setError] = useState(null)",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/hooks/useProducts.ts",
+          "line": 0,
+          "rule": "Error Handling Chain",
+          "severity": "warning",
+          "message": "Hook missing error state management",
+          "fix": "Add error state: const [error, setError] = useState(null)",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/bottom-nav.tsx",
+          "line": 0,
+          "rule": "Error Handling Chain",
+          "severity": "warning",
+          "message": "Component missing error UI handling",
+          "fix": "Add {error && <ErrorMessage />} to handle errors",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/image.tsx",
+          "line": 0,
+          "rule": "Error Handling Chain",
+          "severity": "warning",
+          "message": "Component missing error UI handling",
+          "fix": "Add {error && <ErrorMessage />} to handle errors",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/sheet.tsx",
+          "line": 0,
+          "rule": "Error Handling Chain",
+          "severity": "warning",
+          "message": "Component missing error UI handling",
+          "fix": "Add {error && <ErrorMessage />} to handle errors",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/crm/page.tsx",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw route string found: '/src/app'",
+          "message": "Raw query key found: ['VIP']",
+          "fix": "Use QueryKeys.keyName() from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/learning/page.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw query key found: ['difficulty_level']",
+          "fix": "Use QueryKeys.keyName() from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/orders/cart/page.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw route string found: \"/orders\"",
           "fix": "Use Routes.routeName from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/orders/cart/page.tsx",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw route string found: '/route.ts'",
+          "message": "Raw route string found: \"/orders/checkout\"",
           "fix": "Use Routes.routeName from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/orders/order-history/page.tsx",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw route string found: '/route.js'",
+          "message": "Raw route string found: \"/orders\"",
           "fix": "Use Routes.routeName from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/orders/page.tsx",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['type']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Product']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Checkout']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Payment']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Order']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Fulfill']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Complete']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Validate']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Credentials']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Redirect']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Post']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Publish']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Display']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Feed']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Engage']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Update']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Policy']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Review']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Activate']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Claim']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['Insurance']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/business-logic-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['CRM']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/enhanced-data-flow.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/'",
+          "message": "Raw route string found: \"/orders/order-history\"",
           "fix": "Use Routes.routeName from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/enhanced-data-flow.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/(main)/orders/page.tsx",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw route string found: `/api/${match[1]}`",
+          "message": "Raw route string found: \"/orders/cart\"",
           "fix": "Use Routes.routeName from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/enhanced-data-flow.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/layout.tsx",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['type']",
+          "message": "Raw query key found: [\"latin\"]",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/framework-detector.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/page.tsx",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['next']",
+          "message": "Raw route string found: \"/next.svg\"",
+          "fix": "Use Routes.routeName from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/page.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw route string found: \"/vercel.svg\"",
+          "fix": "Use Routes.routeName from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/page.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw route string found: \"/file.svg\"",
+          "fix": "Use Routes.routeName from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/page.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw route string found: \"/window.svg\"",
+          "fix": "Use Routes.routeName from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/app/page.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw route string found: \"/globe.svg\"",
+          "fix": "Use Routes.routeName from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/bottom-nav.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw route string found: '/feed'",
+          "fix": "Use Routes.routeName from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/bottom-nav.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw route string found: '/orders'",
+          "fix": "Use Routes.routeName from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/bottom-nav.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw route string found: '/insurance'",
+          "fix": "Use Routes.routeName from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/bottom-nav.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw route string found: '/crm'",
+          "fix": "Use Routes.routeName from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/bottom-nav.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw route string found: '/learning'",
+          "fix": "Use Routes.routeName from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/components/core/course-card.tsx",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw query key found: ['difficulty_level']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/framework-detector.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-db-aligned.ts",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['react']",
+          "message": "Raw query key found: ['prod_tools_001']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/framework-detector.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-db-aligned.ts",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['vue']",
+          "message": "Raw query key found: ['prod_developer_001']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/framework-detector.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-db-aligned.ts",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['nuxt']",
+          "message": "Raw query key found: ['new']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/framework-detector.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-db-aligned.ts",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['express']",
+          "message": "Raw query key found: ['variants']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/framework-detector.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-enhanced.ts",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['svelte']",
+          "message": "Raw route string found: '/products/loreal-vitamino-color-shampoo'",
+          "fix": "Use Routes.routeName from constants/registry",
+          "category": "other"
+        },
+        {
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-enhanced.ts",
+          "line": 0,
+          "rule": "Registry Usage (No Raw Strings)",
+          "severity": "warning",
+          "message": "Raw query key found: ['prod_002']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-enhanced.ts",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['stripe']",
+          "message": "Raw query key found: ['prod_tools_001']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-enhanced.ts",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['square']",
+          "message": "Raw query key found: ['hair_color']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/mocks/products-enhanced.ts",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['paypal']",
+          "message": "Raw query key found: ['prod_developer_001']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/types/database.types.ts",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['firebase']",
+          "message": "Raw query key found: ['course_progress']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/types/database.types.ts",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['prisma']",
+          "message": "Raw query key found: ['claims_history']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
           "category": "other"
         },
         {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
+          "file": "/Users/rajatdhanda/Tech/Projects/streax/src/types/database.types.ts",
           "line": 0,
           "rule": "Registry Usage (No Raw Strings)",
           "severity": "warning",
-          "message": "Raw query key found: ['typeorm']",
+          "message": "Raw query key found: ['claims']",
           "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['mongoose']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['sequelize']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['express']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['fastify']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['next']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['react']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['vue']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['angular']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['nuxt']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['expo']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/analyzer/smart-issue-analyzer.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['tensorflow']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/health'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/logs'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/errors'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/observer-logs'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/smart-analysis-meta'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/smart-analysis'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/run-smart-analysis'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/diagnostics'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/projects'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/set-project'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/analysis'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/project-info'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/table-mapping'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/nine-rules'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/contracts'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/architecture-data'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/boundaries'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/map-validation'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/versions'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/design-system'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/modular-fixed'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/theme-config.js'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/components/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/hooks/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/dashboard/index.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/app/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/observer/map-generator.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/hooks/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/observer/map-generator.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/page.tsx'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/observer/map-generator.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/route.ts'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/observer/map-generator.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/components/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/observer/map-generator.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/observer/validator-runner.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/db/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/observer/validator-runner.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/components/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/observer/validator-runner.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/hooks/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/observer/validator-runner.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/api/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/validator/contract-detector.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: [\"field\"]",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/validator/contract-validator.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw query key found: ['total_amount']",
-          "fix": "Use QueryKeys.keyName() from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/validator/design-system-validator.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/components/ui/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/validator/design-system-validator.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/design-system/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/validator/table-mapper.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/types/'",
-          "fix": "Use Routes.routeName from constants/registry",
-          "category": "other"
-        },
-        {
-          "file": "/Users/rajatdhanda/Tech/Projects/ai-observer/src/validator/table-mapper.ts",
-          "line": 0,
-          "rule": "Registry Usage (No Raw Strings)",
-          "severity": "warning",
-          "message": "Raw route string found: '/route'",
-          "fix": "Use Routes.routeName from constants/registry",
           "category": "other"
         }
       ]
     }
   ],
   "stats": {
-    "total_issues_found": 121,
-    "issues_shown": 121,
+    "total_issues_found": 132,
+    "issues_shown": 132,
     "visibility_percentage": 100,
     "by_bucket": [
       {
         "name": "BLOCKERS",
-        "count": 12
+        "count": 58
       },
       {
         "name": "STRUCTURAL",
-        "count": 16
+        "count": 35
       },
       {
         "name": "COMPLIANCE",
-        "count": 93
+        "count": 39
       }
     ],
     "by_severity": {
-      "critical": 18,
+      "critical": 75,
       "high": 2,
       "medium": 0,
       "low": 0
     },
     "by_rule": {
-      "Type-Database Alignment": 1,
+      "Type-Database Alignment": 2,
       "Error Handling": 5,
       "Cache Invalidation": 2,
       "Contract Compliance": 10,
-      "Registry Usage (No Raw Strings)": 93,
-      "File Size Warnings": 6,
-      "Duplicate Functions": 3,
-      "missing_contracts": 1
+      "Hook-Database Pattern": 11,
+      "Error Handling Chain": 8,
+      "Registry Usage (No Raw Strings)": 31,
+      "File Size Warnings": 5,
+      "Duplicate Functions": 6,
+      "Export Completeness": 6,
+      "missing_contracts": 1,
+      "typescript_error": 45
     },
     "buckets_total": 3,
     "fixed_since_last_run": 0,
-    "remaining_issues": 121
+    "remaining_issues": 132
   },
   "context": {
-    "total": "121 issues in 3 priority buckets",
+    "total": "132 issues in 3 priority buckets",
     "bucket_priorities": [
       {
         "BLOCKERS": "Issues that prevent the application from running or cause crashes"
@@ -1183,8 +1286,8 @@
     ]
   },
   "progress": {
-    "session_started": "2025-09-04T06:48:14.548Z",
-    "runs_count": 10,
+    "session_started": "2025-09-04T06:48:27.608Z",
+    "runs_count": 11,
     "total_fixed": 0,
     "enhancement_note": "Enhanced with bucket classification - showing ALL issues"
   }

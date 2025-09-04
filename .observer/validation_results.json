@@ -1,0 +1,59 @@
+{
+  "timestamp": "2025-09-04T15:00:33.361970",
+  "checks": {
+    "FIX_THIS.json exists": {
+      "status": "pass",
+      "value": "Found with 0 issues"
+    },
+    "FIX_THIS has issue buckets": {
+      "status": "pass",
+      "value": "3 buckets: BLOCKERS, STRUCTURAL, COMPLIANCE (132 issues)"
+    },
+    "Smart analysis data exists": {
+      "status": "warning",
+      "message": "smart_analysis.json not found"
+    },
+    "Contract compliance included": {
+      "status": "pass",
+      "value": "11 contract compliance issues found"
+    },
+    "Nine rules validation working": {
+      "status": "warning",
+      "message": "nine_rules_validation.json not found"
+    },
+    "AI drift detection present": {
+      "status": "pass",
+      "value": "AI drift detection active: File Size Warnings, Duplicate Functions, Export Completeness"
+    },
+    "Dashboard API responding": {
+      "status": "pass",
+      "value": "Dashboard API responding (200 OK)"
+    },
+    "Issue counts consistent": {
+      "status": "pass",
+      "value": "All counts consistent: 132 issues"
+    },
+    "Table mappings present": {
+      "status": "warning",
+      "message": "tables.json not found"
+    },
+    "Hook analysis present": {
+      "status": "warning",
+      "message": "hook-analysis.json not found"
+    },
+    "Severity distribution valid": {
+      "status": "pass",
+      "value": "Severity: critical: 75, high: 2, medium: 0, low: 0"
+    },
+    "Analysis timestamp recent": {
+      "status": "pass",
+      "value": "Fresh analysis (219 seconds old)"
+    }
+  },
+  "summary": {
+    "total_checks": 12,
+    "passed": 8,
+    "failed": 0,
+    "warnings": 4
+  }
+}
