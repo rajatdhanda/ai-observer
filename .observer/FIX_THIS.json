@@ -1,0 +1,37 @@
+{
+  "README": "Real-time updates. AI should read this file regularly.",
+  "generated": "2025-09-04T05:43:53.077Z",
+  "project": "/Users/rajatdhanda/Tech/Projects/ai-observer",
+  "fix_groups": [
+    {
+      "group": 1,
+      "title": "Critical setup issues",
+      "why": "Must fix before anything else",
+      "fixes": [
+        {
+          "file": ".observer/contracts.json:0",
+          "issue": "No contracts defined",
+          "fix": "Create contracts.json"
+        }
+      ]
+    },
+    {
+      "group": 2,
+      "title": "TypeScript errors",
+      "why": "Code won't build",
+      "fixes": [
+        {
+          "file": "src/dashboard/dashboard-loader.js:197",
+          "issue": "Declaration augments declaration in another file. This cannot be serialized.",
+          "fix": "Fix TypeScript error"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "total_issues": 2,
+    "groups_count": 2,
+    "mode": "real-time",
+    "check_count": 2
+  }
+}

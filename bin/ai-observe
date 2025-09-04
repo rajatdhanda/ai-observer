@@ -1,39 +1,151 @@
 #!/usr/bin/env node
 
-const { exec, execSync } = require('child_process');
+const chokidar = require('chokidar');
+const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
+
+// Try to import RemoteLogger if available
+let logger;
+try {
+  const { RemoteLogger } = require('../dist/utils/remote-logger');
+  logger = RemoteLogger.getInstance();
+} catch {
+  // Fallback to console logging if RemoteLogger not available
+  logger = {
+    info: (msg, src) => console.log(`[${src || 'observer'}] ${msg}`),
+    success: (msg, src) => console.log(`✅ [${src || 'observer'}] ${msg}`),
+    warning: (msg, src) => console.log(`⚠️ [${src || 'observer'}] ${msg}`),
+    error: (msg, src) => console.error(`❌ [${src || 'observer'}] ${msg}`),
+    debug: (msg, src) => console.log(`🔍 [${src || 'observer'}] ${msg}`)
+  };
+}
 
 const projectPath = process.cwd();
-
-// Clear console and show header
-console.clear();
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log('║                   🤖 AI OBSERVER v1.0                      ║');
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║ 📁 Project: ${projectPath.padEnd(47)} ║`);
-console.log('║ 📄 Output:  .observer/FIX_THIS.json                       ║');
-console.log('║ 🔄 Updates: Every 30 seconds                              ║');
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
-
-// Create .observer directory
 const observerDir = path.join(projectPath, '.observer');
+
+// State management
+let fileFingerprints = new Map(); // file → {mtime, size, hash}
+let analysisInProgress = false;
+let pendingAnalysis = false;
+let lastAnalysisTime = 0;
+let checkCount = 0;
+
+// Configuration
+const DEBOUNCE_MS = 200;
+const MIN_ANALYSIS_INTERVAL = 3000; // Don't run analysis more than every 3 seconds
+const USE_REALTIME = process.argv.includes('--realtime') || process.argv.includes('-r');
+const INTERVAL_MODE = !USE_REALTIME;
+const CHECK_INTERVAL = 30000; // 30 seconds for interval mode
+
+// Create observer directory
 if (!fs.existsSync(observerDir)) {
   fs.mkdirSync(observerDir, { recursive: true });
 }
 
-let lastCheckTime = null;
-let checkCount = 0;
+// Clear console and show header
+console.clear();
+console.log('╔════════════════════════════════════════════════════════════╗');
+console.log('║              🤖 AI OBSERVER v2.0 (Production)             ║');
+console.log('╠════════════════════════════════════════════════════════════╣');
+console.log(`║ 📁 Project: ${projectPath.padEnd(47)} ║`);
+console.log(`║ 🚀 Mode:    ${(USE_REALTIME ? 'Real-time file watching' : 'Interval checking (30s)').padEnd(47)} ║`);
+console.log('║ 📄 Output:  .observer/FIX_THIS.json                       ║');
+console.log('╚════════════════════════════════════════════════════════════╝');
+console.log('');
 
-// Function to analyze and update FIX_THIS.json
-function analyze() {
-  const fixPath = path.join(observerDir, 'FIX_THIS.json');
+// Debounce function
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Get file fingerprint (mtime and size)
+function getFileFingerprint(filePath) {
+  try {
+    const stats = fs.statSync(filePath);
+    return {
+      mtime: stats.mtime.getTime(),
+      size: stats.size
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Get file hash (MD5)
+function getFileHash(filePath) {
+  try {
+    const content = fs.readFileSync(filePath);
+    return crypto.createHash('md5').update(content).digest('hex');
+  } catch {
+    return null;
+  }
+}
+
+// Check if file actually changed
+function hasFileChanged(filePath) {
+  const oldFingerprint = fileFingerprints.get(filePath);
+  const newFingerprint = getFileFingerprint(filePath);
+  
+  if (!newFingerprint) return false;
+  if (!oldFingerprint) return true;
+  
+  // Fast path: check mtime and size first
+  if (oldFingerprint.mtime === newFingerprint.mtime && 
+      oldFingerprint.size === newFingerprint.size) {
+    return false;
+  }
+  
+  // Slow path: compute hash only if mtime/size changed
+  const newHash = getFileHash(filePath);
+  if (oldFingerprint.hash === newHash) {
+    // Update mtime/size but keep same hash
+    fileFingerprints.set(filePath, { ...newFingerprint, hash: newHash });
+    return false;
+  }
+  
+  // File actually changed
+  fileFingerprints.set(filePath, { ...newFingerprint, hash: newHash });
+  return true;
+}
+
+// Analysis function
+async function analyze() {
+  const now = Date.now();
+  
+  // Rate limiting in real-time mode
+  if (USE_REALTIME && now - lastAnalysisTime < MIN_ANALYSIS_INTERVAL) {
+    pendingAnalysis = true;
+    setTimeout(() => {
+      if (pendingAnalysis) {
+        pendingAnalysis = false;
+        analyze();
+      }
+    }, MIN_ANALYSIS_INTERVAL - (now - lastAnalysisTime));
+    return;
+  }
+  
+  if (analysisInProgress) {
+    pendingAnalysis = true;
+    return;
+  }
+  
+  analysisInProgress = true;
+  lastAnalysisTime = now;
   checkCount++;
   const startTime = Date.now();
   
-  // Show checking status
-  process.stdout.write(`[${new Date().toLocaleTimeString()}] Checking... `);
+  process.stdout.write(`[${new Date().toLocaleTimeString()}] Analyzing... `);
+  logger.info('Running analysis...', 'analyzer');
   
   try {
     const issues = [];
@@ -45,9 +157,10 @@ function analyze() {
         issue: 'No contracts defined',
         fix: 'Create contracts.json'
       });
+      logger.warning('No contracts defined', 'analyzer');
     }
     
-    // 2. Run TypeScript check if tsconfig exists
+    // 2. Run TypeScript check (incremental)
     if (fs.existsSync(path.join(projectPath, 'tsconfig.json'))) {
       try {
         execSync('npx tsc --noEmit --incremental', { 
@@ -57,7 +170,7 @@ function analyze() {
         });
       } catch (e) {
         const output = e.stdout?.toString() || '';
-        const lines = output.split('\n').slice(0, 20); // First 20 errors
+        const lines = output.split('\n').slice(0, 20);
         
         lines.forEach(line => {
           const match = line.match(/(.+)\((\d+),\d+\):\s+error\s+TS\d+:\s+(.+)/);
@@ -75,7 +188,6 @@ function analyze() {
     // Group issues
     const groups = [];
     if (issues.length > 0) {
-      // Group 1: Critical (contracts, setup)
       const critical = issues.filter(i => i.file.includes('contracts') || i.file.includes('.env'));
       if (critical.length > 0) {
         groups.push({
@@ -86,7 +198,6 @@ function analyze() {
         });
       }
       
-      // Group 2: TypeScript errors
       const tsErrors = issues.filter(i => !critical.includes(i));
       if (tsErrors.length > 0) {
         groups.push({
@@ -99,14 +210,17 @@ function analyze() {
     }
     
     // Write FIX_THIS.json
+    const fixPath = path.join(observerDir, 'FIX_THIS.json');
     const data = {
-      README: "AI: Read this file for issues to fix. Auto-updates every 30 seconds.",
+      README: USE_REALTIME ? "Real-time updates. AI should read this file regularly." : "Auto-updates every 30 seconds.",
       generated: new Date().toISOString(),
       project: projectPath,
       fix_groups: groups,
       stats: {
         total_issues: issues.length,
-        groups_count: groups.length
+        groups_count: groups.length,
+        mode: USE_REALTIME ? 'real-time' : 'interval',
+        check_count: checkCount
       }
     };
     
@@ -116,30 +230,112 @@ function analyze() {
     
     if (issues.length > 0) {
       console.log(`✅ Found ${issues.length} issues (${groups.length} groups) [${duration}ms]`);
-      
-      // Show summary
+      logger.success(`Found ${issues.length} issues in ${groups.length} groups`, 'analyzer', { duration, issueCount: issues.length });
       groups.forEach(g => {
         console.log(`   └─ Group ${g.group}: ${g.fixes.length} ${g.title.toLowerCase()}`);
       });
     } else {
       console.log(`✨ No issues found! [${duration}ms]`);
+      logger.success('No issues found!', 'analyzer', { duration });
     }
-    
-    lastCheckTime = new Date();
   } catch (error) {
     console.log(`❌ Error: ${error.message}`);
+    logger.error(`Analysis failed: ${error.message}`, 'analyzer');
+  } finally {
+    analysisInProgress = false;
+    
+    if (pendingAnalysis) {
+      pendingAnalysis = false;
+      setTimeout(analyze, 100);
+    }
   }
 }
 
-// Initial analysis
-analyze();
+// Debounced analysis
+const debouncedAnalyze = debounce(analyze, DEBOUNCE_MS);
 
-// Re-analyze every 30 seconds
-setInterval(analyze, 30000);
+if (USE_REALTIME) {
+  // Real-time mode with file watching
+  console.log('📊 LIVE STATUS:');
+  console.log('────────────────────────────────────────────────────────');
+  
+  // Set up file watcher
+  const watcher = chokidar.watch(['src/**/*.{ts,tsx,js,jsx}', '.env', 'package.json'], {
+    ignored: [
+      '**/node_modules/**',
+      '**/.git/**',
+      '**/.observer/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/*.log'
+    ],
+    persistent: true,
+    cwd: projectPath,
+    ignoreInitial: true,
+    awaitWriteFinish: {
+      stabilityThreshold: 100,
+      pollInterval: 100
+    }
+  });
 
-console.log('\n📊 LIVE STATUS:');
-console.log('────────────────────────────────────────────────────────');
-console.log('');
+  // Handle file changes
+  watcher
+    .on('add', filePath => {
+      console.log(`📝 File added: ${filePath}`);
+      logger.info(`File added: ${filePath}`, 'watcher');
+      debouncedAnalyze();
+    })
+    .on('change', filePath => {
+      if (hasFileChanged(path.join(projectPath, filePath))) {
+        console.log(`📝 File changed: ${filePath}`);
+        logger.info(`File changed: ${filePath}`, 'watcher');
+        debouncedAnalyze();
+      } else {
+        process.stdout.write(`[${new Date().toLocaleTimeString()}] Skip: ${filePath} (unchanged)\r`);
+        logger.debug(`File unchanged, skipping: ${filePath}`, 'watcher');
+      }
+    })
+    .on('unlink', filePath => {
+      console.log(`🗑️  File removed: ${filePath}`);
+      logger.warning(`File removed: ${filePath}`, 'watcher');
+      fileFingerprints.delete(filePath);
+      debouncedAnalyze();
+    })
+    .on('error', error => {
+      console.error(`❌ Watcher error: ${error}`);
+      logger.error(`Watcher error: ${error.message}`, 'watcher');
+    })
+    .on('ready', () => {
+      console.log('✅ Real-time monitoring active\n');
+      logger.info(`Started real-time monitoring`, 'watcher');
+      // Initial analysis
+      analyze();
+    });
+} else {
+  // Interval mode (default)
+  console.log('📊 LIVE STATUS:');
+  console.log('────────────────────────────────────────────────────────');
+  console.log('');
+  
+  // Initial analysis
+  analyze();
+  
+  // Re-analyze every 30 seconds
+  setInterval(analyze, CHECK_INTERVAL);
+  
+  console.log(`⏰ Checking every ${CHECK_INTERVAL/1000} seconds`);
+  console.log('💡 Tip: Use --realtime or -r flag for real-time file watching\n');
+}
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+  console.log('\n\n👋 Shutting down observer...');
+  logger.info('Observer shutdown', 'system');
+  if (USE_REALTIME && global.watcher) {
+    global.watcher.close();
+  }
+  process.exit(0);
+});
 
 // Keep process alive
 process.stdin.resume();
