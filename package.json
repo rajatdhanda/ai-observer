@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "main": "./bin/ai-analyze",
   "bin": {
-    "ai-observer": "./bin/ai-analyze",
-    "ai-observe": "./bin/ai-observe",
-    "ai-analyze": "./bin/ai-analyze"
+    "ai-observer": "./bin/ai-analyze"
   },
   "scripts": {
     "build": "tsc",
