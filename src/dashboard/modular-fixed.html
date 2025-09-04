@@ -121,8 +121,7 @@
     
     .content-area {
       flex: 1;
-      overflow-y: auto;
-      padding: 20px;
+      padding: 0;
     }
     
     .right-panel {
@@ -133,15 +132,6 @@
       padding: 20px;
     }
     
-    .search-box {
-      background: var(--bg-card-dark);
-      border: 1px solid var(--border);
-      color: var(--text-primary);
-      padding: 8px 12px;
-      border-radius: 6px;
-      width: calc(100% - 30px);
-      margin: 15px;
-    }
     
     .entity-list {
       padding: 15px;
@@ -294,7 +284,6 @@
   <div class="main-container">
     <!-- Sidebar -->
     <div class="sidebar">
-      <input type="text" class="search-box" placeholder="Search..." onkeyup="filterSidebar(event)">
       <div id="sidebarContent">
         <!-- Dynamic sidebar content -->
       </div>

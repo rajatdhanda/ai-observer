@@ -198,23 +198,44 @@ class SidebarNavigator {
       <div class="entity-section">
         <div style="padding: 12px 16px; background: #1a1a1a;">
           <h3 style="margin: 0 0 12px 0; font-size: 13px; color: #94a3b8; text-transform: uppercase; font-weight: 600;">✅ Validation Health</h3>
-          <div style="display: flex; gap: 8px;">
+          <div style="display: flex; gap: 8px;" id="validationCounts">
             <div style="flex: 1; text-align: center; padding: 8px; background: #ef444420; border-radius: 6px; border: 1px solid #ef444440;">
-              <div style="color: #ef4444; font-size: 18px; font-weight: bold;">0</div>
+              <div style="color: #ef4444; font-size: 18px; font-weight: bold;" id="criticalCount">...</div>
               <div style="color: #fca5a5; font-size: 10px;">Critical</div>
             </div>
             <div style="flex: 1; text-align: center; padding: 8px; background: #f59e0b20; border-radius: 6px; border: 1px solid #f59e0b40;">
-              <div style="color: #f59e0b; font-size: 18px; font-weight: bold;">0</div>
+              <div style="color: #f59e0b; font-size: 18px; font-weight: bold;" id="warningCount">...</div>
               <div style="color: #fcd34d; font-size: 10px;">Warning</div>
             </div>
             <div style="flex: 1; text-align: center; padding: 8px; background: #3b82f620; border-radius: 6px; border: 1px solid #3b82f640;">
-              <div style="color: #3b82f6; font-size: 18px; font-weight: bold;">0</div>
+              <div style="color: #3b82f6; font-size: 18px; font-weight: bold;" id="infoCount">...</div>
               <div style="color: #93c5fd; font-size: 10px;">Info</div>
             </div>
           </div>
         </div>
       </div>
     `;
+  }
+
+  async updateValidationCounts() {
+    try {
+      const response = await fetch('/api/map-validation');
+      const data = await response.json();
+      
+      if (data && data.summary && data.summary.bySeverity) {
+        const counts = data.summary.bySeverity;
+        
+        const criticalEl = document.getElementById('criticalCount');
+        const warningEl = document.getElementById('warningCount');  
+        const infoEl = document.getElementById('infoCount');
+        
+        if (criticalEl) criticalEl.textContent = counts.critical || 0;
+        if (warningEl) warningEl.textContent = counts.warning || 0;
+        if (infoEl) infoEl.textContent = counts.info || 0;
+      }
+    } catch (error) {
+      console.error('Failed to fetch validation counts:', error);
+    }
   }
   
   renderSimpleItem(displayName, type, icon, actualName = null) {
@@ -326,6 +347,9 @@ class SidebarNavigator {
     if (searchInput) {
       searchInput.addEventListener('keyup', (e) => this.filterItems(e.target.value));
     }
+
+    // Update validation counts  
+    this.updateValidationCounts();
   }
 
   // Expand section to show all items
