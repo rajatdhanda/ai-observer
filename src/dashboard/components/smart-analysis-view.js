@@ -13,12 +13,25 @@ class SmartAnalysisView {
       const response = await fetch('/api/smart-analysis');
       const data = await response.json();
 
-      if (!data || !data.exists) {
-        container.innerHTML = this.renderNoAnalysis();
-        return;
-      }
+      // Create two-column layout
+      container.innerHTML = `
+        <div style="display: flex; height: 100%; gap: 0;">
+          <!-- Main Content (left) -->
+          <div id="smartAnalysisMain" style="flex: 1; overflow-y: auto; min-width: 0;">
+            ${!data || !data.exists ? this.renderNoAnalysis() : this.renderAnalysis(data.analysis)}
+          </div>
+          
+          <!-- Live Log Panel (right) -->
+          <div id="liveLogPanel" style="width: 400px; flex-shrink: 0;">
+            ${window.liveLogPanel ? window.liveLogPanel.renderPanel() : ''}
+          </div>
+        </div>
+      `;
 
-      container.innerHTML = this.renderAnalysis(data.analysis);
+      // Start log polling if panel exists
+      if (window.liveLogPanel) {
+        window.liveLogPanel.startPolling();
+      }
     } catch (error) {
       console.error('Failed to load smart analysis:', error);
       container.innerHTML = this.renderError(error);

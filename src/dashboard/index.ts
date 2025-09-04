@@ -94,6 +94,17 @@ class Dashboard {
         const errors = this.logger.getRecentErrors(50);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ errors }));
+      } else if (req.url === '/api/observer-logs') {
+        // Get observer activity logs for live panel
+        try {
+          const { logger } = require('../utils/remote-logger');
+          const logs = logger.getLogs(100);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ logs }));
+        } catch (error) {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ logs: [] }));
+        }
       } else if (req.url === '/api/smart-analysis-meta') {
         // Lightweight metadata check for change detection
         try {
