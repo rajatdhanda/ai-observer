@@ -10,25 +10,48 @@ const watchMode = args.includes('--watch') || args.includes('-w');
 const projectPath = args.find(arg => !arg.startsWith('-') && arg !== 'dashboard') || process.cwd();
 
 if (command === 'dashboard') {
-  // Start dashboard server
-  console.log('🔍 Starting dashboard server from your local machine...');
-  const { spawn } = require('child_process');
-  const dashboardPath = path.join(__dirname, '..', 'node_modules', '.bin', 'ts-node');
-  const serverPath = path.join(__dirname, '..', 'src', 'dashboard', 'index.ts');
+  // Start BOTH observer + dashboard in one command (80-20 rule)
+  console.log('🔍 Starting AI Observer with Dashboard...');
+  console.log('   📊 Dashboard: http://localhost:3001/modular-fixed');
+  console.log('   🤖 Observer: Running every 5 minutes');
+  console.log('');
   
-  const child = spawn('node', [dashboardPath, serverPath], {
+  // Start observer in background
+  const observerPath = path.join(__dirname, 'ai-observe');
+  const observer = spawn('node', [observerPath], {
+    stdio: ['ignore', 'pipe', 'pipe'],
+    cwd: projectPath,
+    env: { ...process.env, OBSERVER_PROJECT_PATH: projectPath }
+  });
+  
+  // Start dashboard server
+  const dashboardPath = path.join(__dirname, '..', 'dist', 'dashboard', 'index.js');
+  const dashboard = spawn('node', [dashboardPath], {
     stdio: 'inherit',
     cwd: projectPath,
     env: { ...process.env, OBSERVER_PROJECT_PATH: projectPath }
   });
   
-  child.on('exit', (code) => {
-    process.exit(code || 0);
+  // Handle observer output
+  observer.stdout.on('data', (data) => {
+    process.stdout.write(`[Observer] ${data}`);
   });
   
-  child.on('error', (error) => {
-    console.error('❌ Failed to start dashboard:', error.message);
-    process.exit(1);
+  observer.stderr.on('data', (data) => {
+    process.stderr.write(`[Observer] ${data}`);
+  });
+  
+  // Cleanup on exit
+  process.on('SIGINT', () => {
+    console.log('\n👋 Shutting down AI Observer...');
+    observer.kill('SIGTERM');
+    dashboard.kill('SIGTERM');
+    process.exit(0);
+  });
+  
+  dashboard.on('exit', (code) => {
+    observer.kill('SIGTERM');
+    process.exit(code || 0);
   });
   
 } else if (watchMode) {
