@@ -151,10 +151,10 @@ class SmartIssueAnalyzer {
     }
     checkObserverSetup() {
         const issues = [];
-        const contractPath = path.join(this.projectPath, '.observer', 'contracts.json');
+        const contractPath = path.join(this.projectPath, 'src', 'contracts', 'contracts.yaml');
         if (!fs.existsSync(contractPath)) {
             issues.push({
-                file: '.observer/contracts.json',
+                file: 'src/contracts/contracts.yaml',
                 line: 0,
                 type: 'missing_contracts',
                 severity: 'critical',
