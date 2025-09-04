@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "bin": {
-    "observer": "./dist/cli/observer.js"
+    "observer": "./dist/cli/observer.js",
+    "ai-observe": "./bin/ai-observe"
   },
   "scripts": {
     "observer": "ts-node src/cli/observer.ts",

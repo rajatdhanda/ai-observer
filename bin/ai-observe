@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+const { spawn } = require('child_process');
+const path = require('path');
+
+// Run ts-node with the dashboard TypeScript file
+const dashboardPath = path.join(__dirname, '..', 'src', 'dashboard', 'index.ts');
+const projectPath = process.cwd();
+const port = process.argv[2] || 3001;
+
+console.log('🔬 AI Observer Dashboard');
+console.log(`Analyzing: ${projectPath}`);
+console.log(`Port: ${port}`);
+console.log(`URL: http://localhost:${port}/modular-fixed`);
+
+const env = {
+  ...process.env,
+  OBSERVER_PROJECT_PATH: projectPath,
+  DASHBOARD_PORT: port
+};
+
+// Use ts-node to run the TypeScript file directly
+const tsNodePath = path.join(__dirname, '..', 'node_modules', '.bin', 'ts-node');
+const child = spawn(tsNodePath, [dashboardPath], { env, stdio: 'inherit' });
+
+child.on('error', (err) => {
+  console.error('Failed to start dashboard:', err);
+  process.exit(1);
+});

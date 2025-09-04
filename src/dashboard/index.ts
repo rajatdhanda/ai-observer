@@ -8,8 +8,9 @@ import { ContractValidator } from '../validator/contract-validator';
 import { BoundaryValidator } from '../validator/boundary-validator';
 import { VersionValidator } from '../validator/version-validator';
 import { DesignSystemValidator } from '../validator/design-system-validator';
+import { RemoteLogger } from './remote-logger';
 
-const PORT = 3001;
+const PORT = process.env.DASHBOARD_PORT || 3001;
 
 class Dashboard {
   private analysisData: any = null;
@@ -21,10 +22,15 @@ class Dashboard {
   private nineRulesResults: any = null;
   private contractValidator: ContractValidator | null = null;
   private contractResults: any = null;
+  private logger: RemoteLogger;
+  private startTime: Date = new Date();
+  private errorCount: number = 0;
 
   constructor() {
     // Get project path from environment or command line
     this.projectPath = process.argv[2] || process.env.OBSERVER_PROJECT_PATH || process.cwd();
+    this.logger = new RemoteLogger();
+    this.logger.info(`Dashboard starting for project: ${this.projectPath}`);
     this.scanForProjects();
   }
 
@@ -63,7 +69,46 @@ class Dashboard {
     const server = http.createServer(async (req, res) => {
       res.setHeader('Access-Control-Allow-Origin', '*');
       
-      if (req.url === '/api/projects') {
+      // Log all requests
+      this.logger.info(`Request: ${req.method} ${req.url}`);
+      
+      // Health check endpoint
+      if (req.url === '/api/health') {
+        const health = {
+          status: 'ok',
+          project: this.projectPath,
+          uptime: Math.floor((Date.now() - this.startTime.getTime()) / 1000),
+          errorCount: this.errorCount,
+          memory: process.memoryUsage(),
+          version: '1.0.0'
+        };
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(health));
+      } else if (req.url === '/api/logs') {
+        // Get recent logs for remote debugging
+        const logs = this.logger.getRecentLogs(50);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ logs }));
+      } else if (req.url === '/api/errors') {
+        // Get recent errors for remote debugging
+        const errors = this.logger.getRecentErrors(50);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ errors }));
+      } else if (req.url === '/api/diagnostics') {
+        // Complete diagnostics for remote debugging
+        const diagnostics = {
+          ...this.logger.getDiagnostics(),
+          project: this.projectPath,
+          hasSchema: fs.existsSync(path.join(this.projectPath, 'prisma', 'schema.prisma')),
+          hasSrcFolder: fs.existsSync(path.join(this.projectPath, 'src')),
+          availableProjects: this.availableProjects,
+          tableMappingStatus: this.tableMappingResults ? 'loaded' : 'not loaded',
+          tablesFound: this.tableMappingResults?.tables ? Object.keys(this.tableMappingResults.tables).length : 0,
+          errorCount: this.errorCount
+        };
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(diagnostics));
+      } else if (req.url === '/api/projects') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           current: this.projectPath,
@@ -107,17 +152,51 @@ class Dashboard {
           name: path.basename(this.projectPath)
         }));
       } else if (req.url === '/api/table-mapping') {
-        const mapping = await this.mapTables();
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(mapping));
+        try {
+          const mapping = await this.mapTables();
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(mapping));
+        } catch (error: any) {
+          this.errorCount++;
+          this.logger.error('Table mapping failed', error);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            error: 'Table mapping failed',
+            message: error.message,
+            project: this.projectPath,
+            hint: 'Check if project has prisma/schema.prisma file'
+          }));
+        }
       } else if (req.url === '/api/nine-rules') {
-        const results = await this.runNineRulesValidation();
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(results));
+        try {
+          const results = await this.runNineRulesValidation();
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(results));
+        } catch (error: any) {
+          this.errorCount++;
+          this.logger.error('Nine rules validation failed', error);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            error: 'Nine rules validation failed',
+            message: error.message,
+            project: this.projectPath
+          }));
+        }
       } else if (req.url === '/api/contracts') {
-        const results = await this.runContractValidation();
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(results));
+        try {
+          const results = await this.runContractValidation();
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(results));
+        } catch (error: any) {
+          this.errorCount++;
+          this.logger.error('Contract validation failed', error);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            error: 'Contract validation failed',
+            message: error.message,
+            project: this.projectPath
+          }));
+        }
       } else if (req.url?.startsWith('/api/architecture-data')) {
         const url = new URL(req.url, `http://localhost:${PORT}`);
         const type = url.searchParams.get('type') as 'hook' | 'component' | 'api' | 'page' | 'table';
@@ -401,7 +480,7 @@ Available projects: ${this.availableProjects.length}
       
       // Try to run runtime enforcement analysis
       try {
-        const RuntimeEnforcer = require('../validator/runtime-enforcer').RuntimeEnforcer;
+        const RuntimeEnforcer = require('../validator/_archived/runtime-enforcer').RuntimeEnforcer;
         const runtimeEnforcer = new RuntimeEnforcer(this.projectPath);
         const runtimeAnalysis = runtimeEnforcer.analyzeAndInjectValidation();
         
