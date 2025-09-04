@@ -13,20 +13,32 @@ class SmartAnalysisView {
       const response = await fetch('/api/smart-analysis');
       const data = await response.json();
 
-      // Create two-column layout
-      container.innerHTML = `
-        <div style="display: flex; height: 100%; gap: 0;">
-          <!-- Main Content (left) -->
-          <div id="smartAnalysisMain" style="flex: 1; overflow-y: auto; min-width: 0;">
-            ${!data || !data.exists ? this.renderNoAnalysis() : this.renderAnalysis(data.analysis)}
+      // Check if we need to add the layout wrapper
+      // The container might already have the two-column layout from the parent
+      const needsLayout = !container.querySelector('#smartAnalysisMain');
+      
+      if (needsLayout) {
+        // Create two-column layout
+        container.innerHTML = `
+          <div style="display: flex; height: 100%; gap: 0;">
+            <!-- Main Content (left) -->
+            <div id="smartAnalysisMain" style="flex: 1; overflow-y: auto; min-width: 0; padding-right: 20px;">
+              ${!data || !data.exists ? this.renderNoAnalysis() : this.renderAnalysis(data.analysis)}
+            </div>
+            
+            <!-- Live Log Panel (right) -->
+            <div id="liveLogPanel" style="width: 400px; flex-shrink: 0; height: 100%;">
+              ${window.liveLogPanel ? window.liveLogPanel.renderPanel() : '<div>Loading logs...</div>'}
+            </div>
           </div>
-          
-          <!-- Live Log Panel (right) -->
-          <div id="liveLogPanel" style="width: 400px; flex-shrink: 0;">
-            ${window.liveLogPanel ? window.liveLogPanel.renderPanel() : ''}
-          </div>
-        </div>
-      `;
+        `;
+      } else {
+        // Just update the main content
+        const mainDiv = container.querySelector('#smartAnalysisMain');
+        if (mainDiv) {
+          mainDiv.innerHTML = !data || !data.exists ? this.renderNoAnalysis() : this.renderAnalysis(data.analysis);
+        }
+      }
 
       // Start log polling if panel exists
       if (window.liveLogPanel) {

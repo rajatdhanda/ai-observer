@@ -698,9 +698,18 @@
       
       // Update main content based on tab
       const mainContent = document.getElementById('mainContent');
+      const rightPanel = document.getElementById('rightPanel');
+      
+      // Stop any active log polling when leaving Smart Analysis tab
+      if (window.liveLogPanel && tab !== 'smart') {
+        window.liveLogPanel.stopPolling();
+      }
       
       switch(tab) {
         case 'overview':
+          // Show query inspector for overview
+          if (rightPanel) rightPanel.style.display = 'block';
+          
           // Restore the selected item view (or select first table if none)
           if (state.selectedItem) {
             selectItem(state.selectedItem, state.selectedType);
@@ -711,18 +720,26 @@
           break;
           
         case 'architecture':
+          // Hide query inspector for architecture
+          if (rightPanel) rightPanel.style.display = 'none';
           loadArchitectureView();
           break;
           
         case '9rules':
+          // Hide query inspector for 9 rules
+          if (rightPanel) rightPanel.style.display = 'none';
           loadNineRulesView();
           break;
           
         case 'files':
+          // Hide query inspector for files
+          if (rightPanel) rightPanel.style.display = 'none';
           loadFileAnalysisView();
           break;
           
         case 'smart':
+          // Hide query inspector for smart analysis
+          if (rightPanel) rightPanel.style.display = 'none';
           loadSmartAnalysisView();
           break;
           

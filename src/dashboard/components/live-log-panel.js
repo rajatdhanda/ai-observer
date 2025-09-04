@@ -217,26 +217,6 @@ class LiveLogPanel {
     }
   }
 
-  // Simulate incoming logs for testing
-  simulateLogs() {
-    const messages = [
-      { level: 'info', message: 'Watching for changes in /src directory', source: 'watcher' },
-      { level: 'success', message: 'Found 5 TypeScript errors in auth.service.ts', source: 'analyzer' },
-      { level: 'warning', message: 'Contract validation pending for OrderService', source: 'validator' },
-      { level: 'info', message: 'Running incremental TypeScript compilation', source: 'tsc' },
-      { level: 'error', message: 'Failed to parse stripe.config.ts: Missing API key', source: 'config' },
-      { level: 'success', message: 'Updated FIX_THIS.json with 3 new critical issues', source: 'analyzer' },
-      { level: 'debug', message: 'File hash unchanged, skipping: components/Button.tsx', source: 'watcher' },
-      { level: 'info', message: 'Analyzing dependencies for payment module', source: 'analyzer' }
-    ];
-
-    const randomLog = messages[Math.floor(Math.random() * messages.length)];
-    this.addLog({
-      ...randomLog,
-      timestamp: new Date().toISOString(),
-      details: Math.random() > 0.7 ? 'Additional context or stack trace information here' : null
-    });
-  }
 
   startPolling() {
     // Fetch real logs every 2 seconds
