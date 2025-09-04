@@ -16,10 +16,15 @@ class SidebarNavigator {
     };
     this.selectedItem = null;
     this.selectedType = null;
+    this.validationData = null;
   }
   
-  render(data) {
+  async render(data) {
     this.data = this.processData(data);
+    
+    // Fetch validation data before rendering
+    await this.updateValidationCounts();
+    
     this.renderSidebar();
     this.attachEventListeners();
   }
@@ -233,13 +238,73 @@ class SidebarNavigator {
         if (warningEl) warningEl.textContent = counts.warning || 0;
         if (infoEl) infoEl.textContent = counts.info || 0;
       }
+      
+      // Store validation data for entity health mapping
+      this.validationData = data;
     } catch (error) {
       console.error('Failed to fetch validation counts:', error);
+    }
+  }
+
+  // Calculate entity health based on validation violations
+  getEntityHealth(entityName, entityType) {
+    if (!this.validationData || !this.validationData.violations) {
+      return { score: 100, color: '#10b981', severity: 'healthy' }; // Default green
+    }
+
+    let criticalIssues = 0;
+    let warningIssues = 0;
+    
+    // Map entity names to file patterns
+    let filePatterns = [];
+    switch (entityType) {
+      case 'hook':
+        filePatterns = [`src/hooks/${entityName}.ts`, `src/hooks/${entityName}.js`];
+        break;
+      case 'component':
+        filePatterns = [`src/components/core/${entityName}.tsx`, `src/components/core/${entityName}.ts`, `src/components/core/${entityName}.js`];
+        break;
+      case 'page':
+        // Handle page path mapping (e.g., "feed" -> "src/app/(main)/feed/page.tsx")
+        if (entityName.includes('(main)')) {
+          const pageName = entityName.split(' > ')[1] || entityName;
+          filePatterns = [`src/app/(main)/${pageName}/page.tsx`];
+        } else {
+          filePatterns = [`src/app/(main)/${entityName}/page.tsx`, `src/app/${entityName}/page.tsx`];
+        }
+        break;
+      default:
+        filePatterns = [];
+    }
+
+    // Count violations for this entity
+    this.validationData.violations.forEach(violation => {
+      const matchesEntity = filePatterns.some(pattern => 
+        violation.file.includes(pattern) || 
+        violation.file.includes(entityName.toLowerCase())
+      );
+      
+      if (matchesEntity) {
+        if (violation.severity === 'critical') criticalIssues++;
+        else if (violation.severity === 'warning') warningIssues++;
+      }
+    });
+
+    // Calculate health score and color
+    if (criticalIssues > 0) {
+      return { score: 0, color: '#ef4444', severity: 'critical', issues: { critical: criticalIssues, warning: warningIssues } };
+    } else if (warningIssues > 0) {
+      return { score: 60, color: '#f59e0b', severity: 'warning', issues: { critical: criticalIssues, warning: warningIssues } };
+    } else {
+      return { score: 100, color: '#10b981', severity: 'healthy', issues: { critical: criticalIssues, warning: warningIssues } };
     }
   }
   
   renderSimpleItem(displayName, type, icon, actualName = null) {
     const itemName = actualName || displayName;
+    
+    // Get health status based on validation data
+    const health = this.getEntityHealth(displayName, type);
     
     return `
       <div 
@@ -257,12 +322,11 @@ class SidebarNavigator {
         "
         onmouseover="this.style.background='#252525'"
         onmouseout="this.style.background='transparent'"
+        title="${health.severity === 'critical' ? `${health.issues.critical} critical issues` : health.severity === 'warning' ? `${health.issues.warning} warnings` : 'No issues detected'}"
       >
         <span style="font-size: 14px;">${icon}</span>
         <span style="color: #e2e8f0; font-size: 13px; flex: 1; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${displayName}</span>
-        ${type === 'page' && displayName.includes('feed') ? '<span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>' : ''}
-        ${type === 'page' && displayName.includes('crm') ? '<span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></span>' : ''}
-        ${type === 'page' && !displayName.includes('feed') && !displayName.includes('crm') ? '<span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>' : ''}
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: ${health.color};" title="${health.severity}"></span>
       </div>
     `;
   }
@@ -347,9 +411,6 @@ class SidebarNavigator {
     if (searchInput) {
       searchInput.addEventListener('keyup', (e) => this.filterItems(e.target.value));
     }
-
-    // Update validation counts  
-    this.updateValidationCounts();
   }
 
   // Expand section to show all items
