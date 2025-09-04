@@ -78,7 +78,7 @@ export class ContractDetector {
         if (!this.contracts[entity]) {
           this.contracts[entity] = {};
         }
-        this.contracts[entity].examples = exampleData;
+        this.contracts[entity].examples = exampleData as any;
       }
     }
 

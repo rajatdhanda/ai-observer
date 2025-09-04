@@ -849,7 +849,7 @@ export class SmartIssueAnalyzer {
   }
 
   private findEntryPoints(): string[] {
-    const entries = [];
+    const entries: string[] = [];
     const patterns = [
       'src/index.ts', 'src/main.ts', 'src/app.ts',
       'src/app/page.tsx', 'src/app/layout.tsx',
@@ -866,7 +866,7 @@ export class SmartIssueAnalyzer {
   }
 
   private findApiRoutes(): string[] {
-    const routes = [];
+    const routes: string[] = [];
     const apiDirs = [
       path.join(this.projectPath, 'src/app/api'),
       path.join(this.projectPath, 'pages/api'),

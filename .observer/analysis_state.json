@@ -1,8 +1,8 @@
 {
-  "total_issues": 132,
+  "total_issues": 97,
   "session_started": "2025-09-04T06:48:27.608Z",
-  "runs_count": 11,
-  "total_fixed": 0,
-  "last_run": "2025-09-04T09:26:54.266Z",
+  "runs_count": 12,
+  "total_fixed": 35,
+  "last_run": "2025-09-04T13:01:27.335Z",
   "enhancement": "bucket_classification"
 }
