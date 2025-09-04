@@ -1,0 +1,285 @@
+#!/usr/bin/env node
+
+const chokidar = require('chokidar');
+const { execSync } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
+
+const projectPath = process.cwd();
+const observerDir = path.join(projectPath, '.observer');
+
+// State management
+let fileFingerprints = new Map(); // file → {mtime, size, hash}
+let analysisInProgress = false;
+let pendingAnalysis = false;
+let lastAnalysisTime = 0;
+
+// Configuration
+const DEBOUNCE_MS = 200;
+const MIN_ANALYSIS_INTERVAL = 3000; // Don't run analysis more than every 3 seconds
+
+// Create observer directory
+if (!fs.existsSync(observerDir)) {
+  fs.mkdirSync(observerDir, { recursive: true });
+}
+
+// Clear console and show header
+console.clear();
+console.log('╔════════════════════════════════════════════════════════════╗');
+console.log('║              🤖 AI OBSERVER PRO v2.0 (Real-time)          ║');
+console.log('╠════════════════════════════════════════════════════════════╣');
+console.log(`║ 📁 Project: ${projectPath.padEnd(47)} ║`);
+console.log('║ 🚀 Mode:    Real-time file watching                       ║');
+console.log('║ 📄 Output:  .observer/FIX_THIS.json                       ║');
+console.log('╚════════════════════════════════════════════════════════════╝');
+console.log('');
+console.log('📊 LIVE STATUS:');
+console.log('────────────────────────────────────────────────────────');
+
+// Debounce function
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Smart fingerprinting
+function getFileFingerprint(filePath) {
+  try {
+    const stats = fs.statSync(filePath);
+    return {
+      mtime: stats.mtime.getTime(),
+      size: stats.size
+    };
+  } catch {
+    return null;
+  }
+}
+
+function getFileHash(filePath) {
+  try {
+    const content = fs.readFileSync(filePath);
+    return crypto.createHash('md5').update(content).digest('hex');
+  } catch {
+    return null;
+  }
+}
+
+// Check if file actually changed
+function hasFileChanged(filePath) {
+  const oldFingerprint = fileFingerprints.get(filePath);
+  const newFingerprint = getFileFingerprint(filePath);
+  
+  if (!newFingerprint) return false;
+  if (!oldFingerprint) return true;
+  
+  // Fast path: check mtime and size first
+  if (oldFingerprint.mtime === newFingerprint.mtime && 
+      oldFingerprint.size === newFingerprint.size) {
+    return false;
+  }
+  
+  // Slow path: compute hash only if mtime/size changed
+  const newHash = getFileHash(filePath);
+  if (oldFingerprint.hash === newHash) {
+    // Update mtime/size but keep same hash
+    fileFingerprints.set(filePath, { ...newFingerprint, hash: newHash });
+    return false;
+  }
+  
+  // File actually changed
+  fileFingerprints.set(filePath, { ...newFingerprint, hash: newHash });
+  return true;
+}
+
+// Analysis function
+async function analyze() {
+  const now = Date.now();
+  
+  // Rate limiting
+  if (now - lastAnalysisTime < MIN_ANALYSIS_INTERVAL) {
+    pendingAnalysis = true;
+    setTimeout(() => {
+      if (pendingAnalysis) {
+        pendingAnalysis = false;
+        analyze();
+      }
+    }, MIN_ANALYSIS_INTERVAL - (now - lastAnalysisTime));
+    return;
+  }
+  
+  if (analysisInProgress) {
+    pendingAnalysis = true;
+    return;
+  }
+  
+  analysisInProgress = true;
+  lastAnalysisTime = now;
+  const startTime = Date.now();
+  
+  process.stdout.write(`[${new Date().toLocaleTimeString()}] Analyzing... `);
+  
+  try {
+    const issues = [];
+    
+    // 1. Check contracts
+    if (!fs.existsSync(path.join(observerDir, 'contracts.json'))) {
+      issues.push({
+        file: '.observer/contracts.json:0',
+        issue: 'No contracts defined',
+        fix: 'Create contracts.json'
+      });
+    }
+    
+    // 2. Run TypeScript check (incremental)
+    if (fs.existsSync(path.join(projectPath, 'tsconfig.json'))) {
+      try {
+        execSync('npx tsc --noEmit --incremental', { 
+          cwd: projectPath, 
+          stdio: 'pipe',
+          timeout: 10000 
+        });
+      } catch (e) {
+        const output = e.stdout?.toString() || '';
+        const lines = output.split('\n').slice(0, 20);
+        
+        lines.forEach(line => {
+          const match = line.match(/(.+)\((\d+),\d+\):\s+error\s+TS\d+:\s+(.+)/);
+          if (match) {
+            issues.push({
+              file: `${match[1].replace(projectPath + '/', '')}:${match[2]}`,
+              issue: match[3].trim(),
+              fix: 'Fix TypeScript error'
+            });
+          }
+        });
+      }
+    }
+    
+    // Group issues
+    const groups = [];
+    if (issues.length > 0) {
+      const critical = issues.filter(i => i.file.includes('contracts') || i.file.includes('.env'));
+      if (critical.length > 0) {
+        groups.push({
+          group: 1,
+          title: 'Critical setup issues',
+          why: 'Must fix before anything else',
+          fixes: critical
+        });
+      }
+      
+      const tsErrors = issues.filter(i => !critical.includes(i));
+      if (tsErrors.length > 0) {
+        groups.push({
+          group: groups.length + 1,
+          title: 'TypeScript errors',
+          why: 'Code won\'t build',
+          fixes: tsErrors.slice(0, 10)
+        });
+      }
+    }
+    
+    // Write FIX_THIS.json
+    const fixPath = path.join(observerDir, 'FIX_THIS.json');
+    const data = {
+      README: "Real-time updates. AI should read this file regularly.",
+      generated: new Date().toISOString(),
+      project: projectPath,
+      fix_groups: groups,
+      stats: {
+        total_issues: issues.length,
+        groups_count: groups.length
+      }
+    };
+    
+    fs.writeFileSync(fixPath, JSON.stringify(data, null, 2));
+    
+    const duration = Date.now() - startTime;
+    
+    if (issues.length > 0) {
+      console.log(`✅ Found ${issues.length} issues (${groups.length} groups) [${duration}ms]`);
+      groups.forEach(g => {
+        console.log(`   └─ Group ${g.group}: ${g.fixes.length} ${g.title.toLowerCase()}`);
+      });
+    } else {
+      console.log(`✨ No issues found! [${duration}ms]`);
+    }
+  } catch (error) {
+    console.log(`❌ Error: ${error.message}`);
+  } finally {
+    analysisInProgress = false;
+    
+    if (pendingAnalysis) {
+      pendingAnalysis = false;
+      setTimeout(analyze, 100);
+    }
+  }
+}
+
+// Debounced analysis
+const debouncedAnalyze = debounce(analyze, DEBOUNCE_MS);
+
+// Set up file watcher
+const watcher = chokidar.watch(['src/**/*.{ts,tsx,js,jsx}', '.env', 'package.json'], {
+  ignored: [
+    '**/node_modules/**',
+    '**/.git/**',
+    '**/dist/**',
+    '**/build/**',
+    '**/.next/**',
+    '**/coverage/**',
+    '**/*.test.*',
+    '**/*.spec.*'
+  ],
+  persistent: true,
+  cwd: projectPath,
+  ignoreInitial: true,
+  awaitWriteFinish: {
+    stabilityThreshold: 100,
+    pollInterval: 100
+  }
+});
+
+// Handle file changes
+watcher
+  .on('add', path => {
+    console.log(`📝 File added: ${path}`);
+    debouncedAnalyze();
+  })
+  .on('change', filePath => {
+    if (hasFileChanged(path.join(projectPath, filePath))) {
+      console.log(`📝 File changed: ${filePath}`);
+      debouncedAnalyze();
+    }
+  })
+  .on('unlink', path => {
+    console.log(`🗑️  File removed: ${path}`);
+    fileFingerprints.delete(path);
+    debouncedAnalyze();
+  })
+  .on('error', error => {
+    console.error(`❌ Watcher error: ${error}`);
+  })
+  .on('ready', () => {
+    console.log('✅ Real-time monitoring active\n');
+    // Initial analysis
+    analyze();
+  });
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+  console.log('\n\n👋 Shutting down observer...');
+  watcher.close();
+  process.exit(0);
+});
+
+// Keep process alive
+process.stdin.resume();

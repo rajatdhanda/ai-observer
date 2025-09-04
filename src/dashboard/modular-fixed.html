@@ -287,6 +287,7 @@
     <button class="tab" onclick="switchTab('architecture')">Architecture</button>
     <button class="tab" onclick="switchTab('9rules')">9 Rules</button>
     <button class="tab" onclick="switchTab('files')">File Analysis</button>
+    <button class="tab" onclick="switchTab('smart')">🤖 Smart Analysis</button>
   </div>
   
   <!-- Main Container -->
@@ -339,6 +340,8 @@
   <script src="/components/page-details-viewer.js"></script>
   <script src="/components/sidebar-navigator.js"></script>
   <script src="/components/file-analysis-view.js"></script>
+  <script src="/components/smart-analysis-view.js"></script>
+  <script src="/components/smart-refresh-manager.js"></script>
   <!-- Production Configuration -->
   <script>
     // AI Observer Production Configuration
@@ -718,6 +721,10 @@
           loadFileAnalysisView();
           break;
           
+        case 'smart':
+          loadSmartAnalysisView();
+          break;
+          
         default:
           break;
       }
@@ -729,6 +736,14 @@
   <script src="components/renderers/architecture-renderer.js"></script>
   <script src="components/renderers/nine-rules-renderer.js"></script>
   <script src="components/dashboard-functions.js"></script>
+  
+  <script>
+    // Smart Analysis View loader
+    window.loadSmartAnalysisView = async function() {
+      const smartView = new SmartAnalysisView('mainContent');
+      await smartView.render();
+    };
+  </script>
   
   <script>
     window.tableDetailsViewer = new TableDetailsViewer('mainContent');

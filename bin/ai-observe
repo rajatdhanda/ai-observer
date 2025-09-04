@@ -1,41 +1,145 @@
 #!/usr/bin/env node
 
-const { spawn } = require('child_process');
+const { exec, execSync } = require('child_process');
 const path = require('path');
-
-// Run ts-node with the dashboard TypeScript file
-const dashboardPath = path.join(__dirname, '..', 'src', 'dashboard', 'index.ts');
-const projectPath = process.cwd();
-const port = process.argv[2] || 3001;
-
-console.log('🔬 AI Observer Dashboard');
-console.log(`Analyzing: ${projectPath}`);
-console.log(`Port: ${port}`);
-console.log(`URL: http://localhost:${port}/modular-fixed`);
-
-const env = {
-  ...process.env,
-  OBSERVER_PROJECT_PATH: projectPath,
-  DASHBOARD_PORT: port
-};
-
-// Try to use ts-node, but fallback to npx if not available
-const tsNodePath = path.join(__dirname, '..', 'node_modules', '.bin', 'ts-node');
 const fs = require('fs');
 
-let command, args;
-if (fs.existsSync(tsNodePath)) {
-  command = tsNodePath;
-  args = [dashboardPath];
-} else {
-  // Use npx to run ts-node
-  command = 'npx';
-  args = ['ts-node', dashboardPath];
+const projectPath = process.cwd();
+
+// Clear console and show header
+console.clear();
+console.log('╔════════════════════════════════════════════════════════════╗');
+console.log('║                   🤖 AI OBSERVER v1.0                      ║');
+console.log('╠════════════════════════════════════════════════════════════╣');
+console.log(`║ 📁 Project: ${projectPath.padEnd(47)} ║`);
+console.log('║ 📄 Output:  .observer/FIX_THIS.json                       ║');
+console.log('║ 🔄 Updates: Every 30 seconds                              ║');
+console.log('╚════════════════════════════════════════════════════════════╝');
+console.log('');
+
+// Create .observer directory
+const observerDir = path.join(projectPath, '.observer');
+if (!fs.existsSync(observerDir)) {
+  fs.mkdirSync(observerDir, { recursive: true });
 }
 
-const child = spawn(command, args, { env, stdio: 'inherit' });
+let lastCheckTime = null;
+let checkCount = 0;
 
-child.on('error', (err) => {
-  console.error('Failed to start dashboard:', err);
-  process.exit(1);
-});
+// Function to analyze and update FIX_THIS.json
+function analyze() {
+  const fixPath = path.join(observerDir, 'FIX_THIS.json');
+  checkCount++;
+  const startTime = Date.now();
+  
+  // Show checking status
+  process.stdout.write(`[${new Date().toLocaleTimeString()}] Checking... `);
+  
+  try {
+    const issues = [];
+    
+    // 1. Check contracts
+    if (!fs.existsSync(path.join(observerDir, 'contracts.json'))) {
+      issues.push({
+        file: '.observer/contracts.json:0',
+        issue: 'No contracts defined',
+        fix: 'Create contracts.json'
+      });
+    }
+    
+    // 2. Run TypeScript check if tsconfig exists
+    if (fs.existsSync(path.join(projectPath, 'tsconfig.json'))) {
+      try {
+        execSync('npx tsc --noEmit --incremental', { 
+          cwd: projectPath, 
+          stdio: 'pipe',
+          timeout: 15000 
+        });
+      } catch (e) {
+        const output = e.stdout?.toString() || '';
+        const lines = output.split('\n').slice(0, 20); // First 20 errors
+        
+        lines.forEach(line => {
+          const match = line.match(/(.+)\((\d+),\d+\):\s+error\s+TS\d+:\s+(.+)/);
+          if (match) {
+            issues.push({
+              file: `${match[1].replace(projectPath + '/', '')}:${match[2]}`,
+              issue: match[3].trim(),
+              fix: 'Fix TypeScript error'
+            });
+          }
+        });
+      }
+    }
+    
+    // Group issues
+    const groups = [];
+    if (issues.length > 0) {
+      // Group 1: Critical (contracts, setup)
+      const critical = issues.filter(i => i.file.includes('contracts') || i.file.includes('.env'));
+      if (critical.length > 0) {
+        groups.push({
+          group: 1,
+          title: 'Critical setup issues',
+          why: 'Must fix before anything else',
+          fixes: critical
+        });
+      }
+      
+      // Group 2: TypeScript errors
+      const tsErrors = issues.filter(i => !critical.includes(i));
+      if (tsErrors.length > 0) {
+        groups.push({
+          group: groups.length + 1,
+          title: 'TypeScript errors',
+          why: 'Code won\'t build',
+          fixes: tsErrors.slice(0, 10)
+        });
+      }
+    }
+    
+    // Write FIX_THIS.json
+    const data = {
+      README: "AI: Read this file for issues to fix. Auto-updates every 30 seconds.",
+      generated: new Date().toISOString(),
+      project: projectPath,
+      fix_groups: groups,
+      stats: {
+        total_issues: issues.length,
+        groups_count: groups.length
+      }
+    };
+    
+    fs.writeFileSync(fixPath, JSON.stringify(data, null, 2));
+    
+    const duration = Date.now() - startTime;
+    
+    if (issues.length > 0) {
+      console.log(`✅ Found ${issues.length} issues (${groups.length} groups) [${duration}ms]`);
+      
+      // Show summary
+      groups.forEach(g => {
+        console.log(`   └─ Group ${g.group}: ${g.fixes.length} ${g.title.toLowerCase()}`);
+      });
+    } else {
+      console.log(`✨ No issues found! [${duration}ms]`);
+    }
+    
+    lastCheckTime = new Date();
+  } catch (error) {
+    console.log(`❌ Error: ${error.message}`);
+  }
+}
+
+// Initial analysis
+analyze();
+
+// Re-analyze every 30 seconds
+setInterval(analyze, 30000);
+
+console.log('\n📊 LIVE STATUS:');
+console.log('────────────────────────────────────────────────────────');
+console.log('');
+
+// Keep process alive
+process.stdin.resume();

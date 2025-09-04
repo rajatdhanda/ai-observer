@@ -94,6 +94,56 @@ class Dashboard {
         const errors = this.logger.getRecentErrors(50);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ errors }));
+      } else if (req.url === '/api/smart-analysis-meta') {
+        // Lightweight metadata check for change detection
+        try {
+          const fixFilePath = path.join(this.projectPath, '.observer', 'FIX_THIS.json');
+          if (fs.existsSync(fixFilePath)) {
+            const stats = fs.statSync(fixFilePath);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ 
+              exists: true,
+              size: stats.size,
+              modified: stats.mtime.getTime()
+            }));
+          } else {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ exists: false }));
+          }
+        } catch (error: any) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      } else if (req.url === '/api/smart-analysis') {
+        // Serve the FIX_THIS.json if it exists
+        try {
+          const fixFilePath = path.join(this.projectPath, '.observer', 'FIX_THIS.json');
+          if (fs.existsSync(fixFilePath)) {
+            const analysis = JSON.parse(fs.readFileSync(fixFilePath, 'utf-8'));
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ exists: true, analysis }));
+          } else {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ exists: false }));
+          }
+        } catch (error: any) {
+          this.logger.error('Failed to read smart analysis', error);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      } else if (req.url === '/api/run-smart-analysis') {
+        // Run the smart analyzer
+        try {
+          const { SmartIssueAnalyzer } = require('../analyzer/smart-issue-analyzer');
+          const analyzer = new SmartIssueAnalyzer(this.projectPath);
+          await analyzer.analyze();
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true }));
+        } catch (error: any) {
+          this.logger.error('Smart analysis failed', error);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, error: error.message }));
+        }
       } else if (req.url === '/api/diagnostics') {
         // Complete diagnostics for remote debugging
         const diagnostics = {
