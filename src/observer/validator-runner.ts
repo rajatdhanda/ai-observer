@@ -284,8 +284,25 @@ export class ValidatorRunner {
    */
   private validateContracts() {
     try {
-      // Get project path from map path (streax-map.json is in root, project is in test-projects/streax)
-      const contractsPath = 'test-projects/streax/contracts.yaml';
+      // Try to find contracts.yaml in the project directory
+      const projectDir = path.dirname(this.mapPath);
+      let contractsPath = path.join(projectDir, 'contracts.yaml');
+      
+      // Fallback to common locations if not found
+      if (!fs.existsSync(contractsPath)) {
+        const possiblePaths = [
+          'test-projects/streax/contracts.yaml',
+          'contracts/contracts.yaml',
+          '.observer/contracts.yaml'
+        ];
+        
+        const foundPath = possiblePaths.find(p => fs.existsSync(p));
+        if (!foundPath) {
+          console.log('No contracts.yaml found, skipping contract validation');
+          return;
+        }
+        contractsPath = foundPath;
+      }
       
       // Run contract detector
       const detector = new ContractDetector(this.mapPath, contractsPath);
