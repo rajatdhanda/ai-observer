@@ -105,8 +105,42 @@ export class SmartIssueAnalyzer {
     // 1. Get ALL issues from the 9-rules validator system (this is where the 46 issues come from)
     const validatorIssues = await this.getValidatorSystemIssues();
     issues.push(...validatorIssues);
+    
+    // 2. Run enhanced 9-rules validator with AI drift prevention checks
+    try {
+      const { NineRulesValidator } = require('../validator/nine-rules-validator');
+      const nineRulesValidator = new NineRulesValidator(this.projectPath);
+      const nineRulesResults = await nineRulesValidator.validateAll();
+      
+      // Convert 9-rules violations to our Issue format
+      for (const ruleResult of nineRulesResults.results) {
+        for (const issue of ruleResult.issues) {
+          const newIssue = {
+            file: issue.file,
+            line: 0,
+            type: ruleResult.rule.toLowerCase().replace(/\s+/g, '_'),
+            severity: issue.severity,
+            message: issue.message,
+            rule: ruleResult.rule,
+            category: this.categorizeRule(ruleResult.rule),
+            suggestion: issue.suggestion
+          };
+          issues.push(newIssue);
+          
+          // Debug log for AI drift detection rules
+          if (ruleResult.rule === 'File Size Warnings' || 
+              ruleResult.rule === 'Duplicate Functions' || 
+              ruleResult.rule === 'Export Completeness') {
+            console.log(`  📍 AI Drift Issue: ${ruleResult.rule} - ${issue.file}`);
+          }
+        }
+      }
+      console.log(`📊 9-Rules validator found ${nineRulesResults.results.length} rule results`);
+    } catch (error) {
+      console.log('⚠️ 9-Rules validator skipped:', error);
+    }
 
-    // 2. Keep legacy checks for additional context
+    // 3. Keep legacy checks for additional context
     issues.push(...this.checkObserverSetup());
 
     // 3. TypeScript compiler check for additional issues
@@ -222,9 +256,19 @@ export class SmartIssueAnalyzer {
         return 'validation';
       case 'Auth Guards':
         return 'security';
+      case 'File Size Warnings':
+        return 'maintainability';
+      case 'Duplicate Functions':
+        return 'code_drift';
+      case 'Export Completeness':
+        return 'api_completeness';
       default:
         return 'other';
     }
+  }
+
+  private categorizeRule(rule: string): string {
+    return this.categorizeValidatorRule(rule);
   }
 
   private organizeBuckets(): IssueBucket[] {
@@ -283,10 +327,13 @@ export class SmartIssueAnalyzer {
       return (
         issue.rule === 'Contract Compliance' ||
         issue.rule === 'Type-Database Alignment' ||
+        issue.rule === 'Export Completeness' ||
         issue.type === 'missing_contracts' ||
         issue.type === 'typescript_error' ||
+        issue.type === 'export_completeness' ||
         issue.type === 'security' ||
-        issue.category === 'setup'
+        issue.category === 'setup' ||
+        issue.category === 'api_completeness'
       );
     }
     return false;
@@ -300,9 +347,17 @@ export class SmartIssueAnalyzer {
       issue.rule === 'Hook-Database Pattern' ||
       issue.rule === 'API Type Safety' ||
       issue.rule === 'Auth Guards' ||
+      issue.rule === 'File Size Warnings' ||
+      issue.rule === 'Duplicate Functions' ||
+      issue.rule === 'Export Completeness' ||
+      issue.type === 'file_size_warnings' ||
+      issue.type === 'duplicate_functions' ||
+      issue.type === 'export_completeness' ||
       issue.category === 'architecture' ||
       issue.category === 'performance' ||
-      issue.category === 'contracts'
+      issue.category === 'maintainability' ||
+      issue.category === 'code_drift' ||
+      issue.category === 'api_completeness'
     );
   }
 
@@ -698,15 +753,10 @@ export class SmartIssueAnalyzer {
         remaining_issues: totalIssues
       },
       
-      // Updated instructions for bucket-based workflow
-      instructions: {
-        overview: "All issues organized by importance buckets for complete AI context",
-        workflow: "1. Fix BLOCKERS (critical runtime) → 2. Fix STRUCTURAL (architecture) → 3. Fix COMPLIANCE (quality)",
-        step1: "Start with BLOCKERS bucket - these prevent the app from running",
-        step2: "Move to STRUCTURAL bucket - these affect maintainability and reliability", 
-        step3: "Finish with COMPLIANCE bucket - these improve code quality",
-        step4: "Re-run analysis to see progress and get updated buckets",
-        note: "AI now has complete context of all issues, not just a limited subset"
+      // Context without step-by-step instructions
+      context: {
+        total: `${totalIssues} issues in ${buckets.length} priority buckets`,
+        bucket_priorities: buckets.map(b => ({ [b.name]: b.description }))
       },
       
       progress: {

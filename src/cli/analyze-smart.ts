@@ -4,7 +4,7 @@ import { SmartIssueAnalyzer } from '../analyzer/smart-issue-analyzer';
 import * as path from 'path';
 
 async function main() {
-  const projectPath = process.argv[2] || process.cwd();
+  const projectPath = process.env.OBSERVER_PROJECT_PATH || process.argv[2] || process.cwd();
   
   console.log('🤖 AI Observer - Smart Issue Analyzer');
   console.log(`📁 Analyzing: ${projectPath}`);
