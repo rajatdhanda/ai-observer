@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+
+// Simple wrapper to run the smart analyzer
+const { spawn } = require('child_process');
+const path = require('path');
+
+const projectPath = process.argv[2] || process.cwd();
+const scriptPath = path.join(__dirname, '..', 'dist', 'cli', 'analyze-smart.js');
+const tsScriptPath = path.join(__dirname, '..', 'src', 'cli', 'analyze-smart.ts');
+
+// Check if we have compiled version
+const fs = require('fs');
+const useTs = !fs.existsSync(scriptPath);
+
+if (useTs) {
+  // Use ts-node for development
+  const child = spawn('npx', ['ts-node', tsScriptPath, projectPath], {
+    stdio: 'inherit',
+    cwd: path.join(__dirname, '..'),
+    env: { ...process.env, OBSERVER_PROJECT_PATH: projectPath }
+  });
+  
+  child.on('exit', (code) => {
+    process.exit(code || 0);
+  });
+} else {
+  // Use compiled JS for production
+  const child = spawn('node', [scriptPath, projectPath], {
+    stdio: 'inherit',
+    env: { ...process.env, OBSERVER_PROJECT_PATH: projectPath }
+  });
+  
+  child.on('exit', (code) => {
+    process.exit(code || 0);
+  });
+}

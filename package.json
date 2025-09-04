@@ -2,7 +2,8 @@
   "name": "ai-observer",
   "version": "1.0.0",
   "bin": {
-    "ai-observe": "./bin/ai-observe"
+    "ai-observe": "./bin/ai-observe",
+    "ai-analyze": "./bin/ai-analyze"
   },
   "scripts": {
     "build": "tsc",
