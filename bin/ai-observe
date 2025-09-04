@@ -35,9 +35,9 @@ let checkCount = 0;
 // Configuration
 const DEBOUNCE_MS = 200;
 const MIN_ANALYSIS_INTERVAL = 3000; // Don't run analysis more than every 3 seconds
-const USE_REALTIME = process.argv.includes('--realtime') || process.argv.includes('-r');
-const INTERVAL_MODE = !USE_REALTIME;
-const CHECK_INTERVAL = 30000; // 30 seconds for interval mode
+const USE_REALTIME = false; // Disabled - too heavy on system
+const INTERVAL_MODE = true; // Always use interval mode
+const CHECK_INTERVAL = 300000; // 5 minutes for interval mode
 
 // Create observer directory
 if (!fs.existsSync(observerDir)) {
@@ -50,8 +50,8 @@ console.log('╔═════════════════════�
 console.log('║              🤖 AI OBSERVER v2.0 (Production)             ║');
 console.log('╠════════════════════════════════════════════════════════════╣');
 console.log(`║ 📁 Project: ${projectPath.padEnd(47)} ║`);
-console.log(`║ 🚀 Mode:    ${(USE_REALTIME ? 'Real-time file watching' : 'Interval checking (30s)').padEnd(47)} ║`);
-console.log('║ 📄 Output:  .observer/FIX_THIS.json                       ║');
+console.log('║ 🚀 Mode:    Interval checking (5 minutes)                 ║');
+console.log('║ 📄 Output:  src/contracts/fixes.json                      ║');
 console.log('╚════════════════════════════════════════════════════════════╝');
 console.log('');
 
@@ -148,7 +148,7 @@ async function analyze() {
   logger.info('Running analysis...', 'analyzer');
   
   try {
-    // Run the smart analyzer and get its results
+    // Run the smart analyzer - it creates src/contracts/fixes.json
     const smartAnalyzerPath = path.join(__dirname, '..', 'dist', 'cli', 'analyze-smart.js');
     const smartResult = execSync(`node "${smartAnalyzerPath}"`, {
       cwd: projectPath,
@@ -157,77 +157,27 @@ async function analyze() {
       env: { ...process.env, OBSERVER_PROJECT_PATH: projectPath }
     }).toString();
     
-    // Read the generated fixes.json from src/contracts
+    // Read the fixes.json from src/contracts to get issue count for logging
     const contractsDir = path.join(projectPath, 'src', 'contracts');
     const fixesPath = path.join(contractsDir, 'fixes.json');
     
-    let smartData = { issues: [], buckets: [] };
-    if (fs.existsSync(fixesPath)) {
-      smartData = JSON.parse(fs.readFileSync(fixesPath, 'utf8'));
-    }
-    
-    // Convert smart analyzer format to observer format
-    const groups = [];
     let totalIssues = 0;
+    let bucketsCount = 0;
     
-    if (smartData.buckets && smartData.buckets.length > 0) {
-      smartData.buckets.forEach((bucket, index) => {
-        if (bucket.issues && bucket.issues.length > 0) {
-          groups.push({
-            group: index + 1,
-            title: bucket.name,
-            why: bucket.description || 'Requires attention',
-            fixes: bucket.issues.map(issue => ({
-              file: `${issue.file}:${issue.line || 0}`,
-              issue: issue.description,
-              fix: issue.suggestion || 'Review and fix'
-            }))
-          });
-          totalIssues += bucket.issues.length;
-        }
-      });
-    }
-    
-    // Fallback: if no buckets, check for raw issues
-    if (groups.length === 0 && smartData.issues && smartData.issues.length > 0) {
-      groups.push({
-        group: 1,
-        title: 'Issues found',
-        why: 'Requires attention',
-        fixes: smartData.issues.slice(0, 20).map(issue => ({
-          file: `${issue.file}:${issue.line || 0}`,
-          issue: issue.description,
-          fix: issue.suggestion || 'Review and fix'
-        }))
-      });
-      totalIssues = smartData.issues.length;
-    }
-    
-    // Write FIX_THIS.json
-    const fixPath = path.join(observerDir, 'FIX_THIS.json');
-    const data = {
-      README: USE_REALTIME ? "Real-time updates. AI should read this file regularly." : "Auto-updates every 30 seconds.",
-      generated: new Date().toISOString(),
-      project: projectPath,
-      fix_groups: groups,
-      stats: {
-        total_issues: totalIssues,
-        groups_count: groups.length,
-        mode: USE_REALTIME ? 'real-time' : 'interval',
-        check_count: checkCount
+    if (fs.existsSync(fixesPath)) {
+      const smartData = JSON.parse(fs.readFileSync(fixesPath, 'utf8'));
+      if (smartData.stats) {
+        totalIssues = smartData.stats.total_issues_found || 0;
+        bucketsCount = smartData.stats.buckets_total || 0;
       }
-    };
-    
-    fs.writeFileSync(fixPath, JSON.stringify(data, null, 2));
+    }
     
     const duration = Date.now() - startTime;
     
     if (totalIssues > 0) {
-      console.log(`✅ Found ${totalIssues} issues (${groups.length} groups) [${duration}ms]`);
-      logger.success(`Found ${totalIssues} issues in ${groups.length} groups`, 'analyzer', { duration, issueCount: totalIssues });
-      groups.forEach(g => {
-        console.log(`   └─ Group ${g.group}: ${g.fixes.length} ${g.title.toLowerCase()}`);
-      });
+      console.log(`✅ Found ${totalIssues} issues in ${bucketsCount} buckets [${duration}ms]`);
+      logger.success(`Found ${totalIssues} issues in ${bucketsCount} buckets`, 'analyzer', { duration, issueCount: totalIssues });
+      console.log(`   📁 Check src/contracts/fixes.json for details`);
     } else {
       console.log(`✨ No issues found! [${duration}ms]`);
       logger.success('No issues found!', 'analyzer', { duration });
@@ -248,78 +198,19 @@ async function analyze() {
 // Debounced analysis
 const debouncedAnalyze = debounce(analyze, DEBOUNCE_MS);
 
-if (USE_REALTIME) {
-  // Real-time mode with file watching
-  console.log('📊 LIVE STATUS:');
-  console.log('────────────────────────────────────────────────────────');
-  
-  // Set up file watcher
-  const watcher = chokidar.watch(['src/**/*.{ts,tsx,js,jsx}', '.env', 'package.json'], {
-    ignored: [
-      '**/node_modules/**',
-      '**/.git/**',
-      '**/.observer/**',
-      '**/dist/**',
-      '**/build/**',
-      '**/*.log'
-    ],
-    persistent: true,
-    cwd: projectPath,
-    ignoreInitial: true,
-    awaitWriteFinish: {
-      stabilityThreshold: 100,
-      pollInterval: 100
-    }
-  });
+// Interval mode only - no file watching
+console.log('📊 LIVE STATUS:');
+console.log('────────────────────────────────────────────────────────');
+console.log('');
 
-  // Handle file changes
-  watcher
-    .on('add', filePath => {
-      console.log(`📝 File added: ${filePath}`);
-      logger.info(`File added: ${filePath}`, 'watcher');
-      debouncedAnalyze();
-    })
-    .on('change', filePath => {
-      if (hasFileChanged(path.join(projectPath, filePath))) {
-        console.log(`📝 File changed: ${filePath}`);
-        logger.info(`File changed: ${filePath}`, 'watcher');
-        debouncedAnalyze();
-      } else {
-        process.stdout.write(`[${new Date().toLocaleTimeString()}] Skip: ${filePath} (unchanged)\r`);
-        logger.debug(`File unchanged, skipping: ${filePath}`, 'watcher');
-      }
-    })
-    .on('unlink', filePath => {
-      console.log(`🗑️  File removed: ${filePath}`);
-      logger.warning(`File removed: ${filePath}`, 'watcher');
-      fileFingerprints.delete(filePath);
-      debouncedAnalyze();
-    })
-    .on('error', error => {
-      console.error(`❌ Watcher error: ${error}`);
-      logger.error(`Watcher error: ${error.message}`, 'watcher');
-    })
-    .on('ready', () => {
-      console.log('✅ Real-time monitoring active\n');
-      logger.info(`Started real-time monitoring`, 'watcher');
-      // Initial analysis
-      analyze();
-    });
-} else {
-  // Interval mode (default)
-  console.log('📊 LIVE STATUS:');
-  console.log('────────────────────────────────────────────────────────');
-  console.log('');
-  
-  // Initial analysis
-  analyze();
-  
-  // Re-analyze every 30 seconds
-  setInterval(analyze, CHECK_INTERVAL);
-  
-  console.log(`⏰ Checking every ${CHECK_INTERVAL/1000} seconds`);
-  console.log('💡 Tip: Use --realtime or -r flag for real-time file watching\n');
-}
+// Initial analysis
+analyze();
+
+// Re-analyze every 5 minutes
+setInterval(analyze, CHECK_INTERVAL);
+
+console.log(`⏰ Checking every ${CHECK_INTERVAL/1000/60} minutes`);
+console.log('💡 Tip: Run without --watch for one-time analysis\n');
 
 // Graceful shutdown
 process.on('SIGINT', () => {
