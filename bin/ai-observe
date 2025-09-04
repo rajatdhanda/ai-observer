@@ -19,9 +19,21 @@ const env = {
   DASHBOARD_PORT: port
 };
 
-// Use ts-node to run the TypeScript file directly
+// Try to use ts-node, but fallback to npx if not available
 const tsNodePath = path.join(__dirname, '..', 'node_modules', '.bin', 'ts-node');
-const child = spawn(tsNodePath, [dashboardPath], { env, stdio: 'inherit' });
+const fs = require('fs');
+
+let command, args;
+if (fs.existsSync(tsNodePath)) {
+  command = tsNodePath;
+  args = [dashboardPath];
+} else {
+  // Use npx to run ts-node
+  command = 'npx';
+  args = ['ts-node', dashboardPath];
+}
+
+const child = spawn(command, args, { env, stdio: 'inherit' });
 
 child.on('error', (err) => {
   console.error('Failed to start dashboard:', err);
