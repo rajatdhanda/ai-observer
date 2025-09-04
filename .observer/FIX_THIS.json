@@ -1,6 +1,6 @@
 {
-  "README": "35 issues fixed! 97 remaining in 3 buckets.",
-  "generated": "2025-09-04T13:01:27.333Z",
+  "README": "0 issues fixed! 97 remaining in 3 buckets.",
+  "generated": "2025-09-04T13:32:22.815Z",
   "project": "/Users/rajatdhanda/Tech/Projects/ai-observer",
   "project_type": "fullstack",
   "detected_features": {
@@ -949,7 +949,7 @@
       "missing_contracts": 1
     },
     "buckets_total": 3,
-    "fixed_since_last_run": 35,
+    "fixed_since_last_run": 0,
     "remaining_issues": 97
   },
   "context": {
@@ -968,7 +968,7 @@
   },
   "progress": {
     "session_started": "2025-09-04T06:48:27.608Z",
-    "runs_count": 12,
+    "runs_count": 13,
     "total_fixed": 35,
     "enhancement_note": "Enhanced with bucket classification - showing ALL issues"
   }
