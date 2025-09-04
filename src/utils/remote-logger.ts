@@ -68,6 +68,26 @@ export class RemoteLogger {
   clear() {
     this.logs = [];
   }
+
+  getRecentLogs(count: number = 50): any[] {
+    return this.logs.slice(0, count);
+  }
+
+  getRecentErrors(count: number = 50): any[] {
+    return this.logs.filter(log => log.level === 'error').slice(0, count);
+  }
+
+  getDiagnostics(): any {
+    const errorCount = this.logs.filter(log => log.level === 'error').length;
+    const warningCount = this.logs.filter(log => log.level === 'warning').length;
+    
+    return {
+      totalLogs: this.logs.length,
+      errorCount,
+      warningCount,
+      lastLogTime: this.logs.length > 0 ? this.logs[0].timestamp : null
+    };
+  }
 }
 
 // Export singleton instance

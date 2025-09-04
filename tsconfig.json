@@ -28,7 +28,7 @@
     "node_modules",
     "dist",
     "test-project",
-    "src/**/_archived/**",
-    "src/dashboard/components/**/*.js"
+    "src/dashboard/components/**/*.js",
+    "src/dashboard/dashboard-loader.js"
   ]
 }

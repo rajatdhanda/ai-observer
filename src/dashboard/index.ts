@@ -8,7 +8,7 @@ import { ContractValidator } from '../validator/contract-validator';
 import { BoundaryValidator } from '../validator/boundary-validator';
 import { VersionValidator } from '../validator/version-validator';
 import { DesignSystemValidator } from '../validator/design-system-validator';
-import { RemoteLogger } from './remote-logger';
+import { logger as RemoteLogger } from '../utils/remote-logger';
 
 const PORT = process.env.DASHBOARD_PORT || 3001;
 
@@ -22,14 +22,14 @@ class Dashboard {
   private nineRulesResults: any = null;
   private contractValidator: ContractValidator | null = null;
   private contractResults: any = null;
-  private logger: RemoteLogger;
+  private logger: typeof RemoteLogger;
   private startTime: Date = new Date();
   private errorCount: number = 0;
 
   constructor() {
     // Get project path from environment or command line
     this.projectPath = process.argv[2] || process.env.OBSERVER_PROJECT_PATH || process.cwd();
-    this.logger = new RemoteLogger();
+    this.logger = RemoteLogger;
     this.logger.info(`Dashboard starting for project: ${this.projectPath}`);
     this.scanForProjects();
   }
