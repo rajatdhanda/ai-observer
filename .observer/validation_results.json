@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-09-04T15:00:33.361970",
+  "timestamp": "2025-09-04T15:20:51.278138",
   "checks": {
     "FIX_THIS.json exists": {
       "status": "pass",
@@ -26,8 +26,8 @@
       "value": "AI drift detection active: File Size Warnings, Duplicate Functions, Export Completeness"
     },
     "Dashboard API responding": {
-      "status": "pass",
-      "value": "Dashboard API responding (200 OK)"
+      "status": "fail",
+      "message": "Failed endpoints: File Analysis(404), Entity Data(404)"
     },
     "Issue counts consistent": {
       "status": "pass",
@@ -46,14 +46,14 @@
       "value": "Severity: critical: 75, high: 2, medium: 0, low: 0"
     },
     "Analysis timestamp recent": {
-      "status": "pass",
-      "value": "Fresh analysis (219 seconds old)"
+      "status": "warning",
+      "message": "Analysis 23 minutes old"
     }
   },
   "summary": {
     "total_checks": 12,
-    "passed": 8,
-    "failed": 0,
-    "warnings": 4
+    "passed": 6,
+    "failed": 1,
+    "warnings": 5
   }
 }

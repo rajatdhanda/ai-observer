@@ -202,22 +202,35 @@ class DataValidator:
     def check_dashboard_api(self) -> Dict:
         """Check if dashboard API endpoints are responding"""
         try:
-            # Check if dashboard is running
-            result = subprocess.run(
-                ['curl', '-s', '-o', '/dev/null', '-w', '%{http_code}', 'http://localhost:3001/api/smart-analysis'],
-                capture_output=True,
-                text=True,
-                timeout=2
-            )
-            if result.stdout == '200':
+            # Check multiple critical endpoints
+            endpoints = [
+                ('/api/smart-analysis', 'Smart Analysis'),
+                ('/api/architecture-data', 'Architecture'),
+                ('/api/file-analysis', 'File Analysis'),
+                ('/api/entity-data', 'Entity Data')
+            ]
+            
+            failed = []
+            for endpoint, name in endpoints:
+                result = subprocess.run(
+                    ['curl', '-s', '-o', '/dev/null', '-w', '%{http_code}', f'http://localhost:3001{endpoint}'],
+                    capture_output=True,
+                    text=True,
+                    timeout=2
+                )
+                if result.stdout != '200':
+                    failed.append(f"{name}({result.stdout})")
+            
+            if not failed:
                 return {
                     'status': 'pass',
-                    'value': 'Dashboard API responding (200 OK)'
+                    'value': 'All dashboard APIs responding (200 OK)'
                 }
-            return {
-                'status': 'warning',
-                'message': f'Dashboard API returned {result.stdout}'
-            }
+            else:
+                return {
+                    'status': 'fail',
+                    'message': f'Failed endpoints: {", ".join(failed)}'
+                }
         except:
             return {
                 'status': 'warning',
