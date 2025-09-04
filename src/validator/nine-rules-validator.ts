@@ -85,6 +85,11 @@ export class NineRulesValidator {
     await this.rule8_FormValidation();
     await this.rule9_AuthGuardMatrix();
 
+    // Additional critical checks for AI drift prevention
+    await this.checkFileSizeWarnings();
+    await this.checkDuplicateFunctions();
+    await this.checkExportCompleteness();
+
     return this.generateSummary();
   }
 
@@ -974,6 +979,167 @@ export class NineRulesValidator {
     }
     
     return report;
+  }
+
+  /**
+   * Check for large files that AI might struggle with
+   */
+  private async checkFileSizeWarnings(): Promise<void> {
+    const result: ValidationResult = {
+      rule: 'File Size Warnings',
+      ruleNumber: 10,
+      status: 'pass',
+      score: 100,
+      issues: [],
+      coverage: { checked: 0, passed: 0, total: 0 }
+    };
+
+    const files = this.findFiles('**/*.ts', '**/*.tsx');
+    
+    for (const file of files) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const lines = content.split('\n').length;
+      result.coverage.total++;
+      result.coverage.checked++;
+      
+      if (lines > 1000) {
+        result.issues.push({
+          severity: 'critical',
+          file,
+          message: `File has ${lines} lines (exceeds 1000 lines)`,
+          suggestion: 'Split into smaller modules - AI loses context in large files'
+        });
+      } else if (lines > 500) {
+        result.issues.push({
+          severity: 'warning',
+          file,
+          message: `File has ${lines} lines (exceeds 500 lines)`,
+          suggestion: 'Consider splitting - AI performs better with smaller files'
+        });
+      } else {
+        result.coverage.passed++;
+      }
+    }
+
+    result.score = this.calculateScore(result.coverage);
+    result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+    this.results.push(result);
+  }
+
+  /**
+   * Check for duplicate function definitions
+   */
+  private async checkDuplicateFunctions(): Promise<void> {
+    const result: ValidationResult = {
+      rule: 'Duplicate Functions',
+      ruleNumber: 11,
+      status: 'pass',
+      score: 100,
+      issues: [],
+      coverage: { checked: 0, passed: 0, total: 0 }
+    };
+
+    const functionMap = new Map<string, string[]>();
+    const files = this.findFiles('**/*.ts', '**/*.tsx');
+    
+    for (const file of files) {
+      const content = fs.readFileSync(file, 'utf-8');
+      
+      // Find all function declarations and exports
+      const functionRegex = /(?:export\s+)?(?:async\s+)?function\s+(\w+)|(?:export\s+)?const\s+(\w+)\s*=\s*(?:async\s*)?\(/g;
+      let match;
+      
+      while ((match = functionRegex.exec(content)) !== null) {
+        const funcName = match[1] || match[2];
+        if (funcName) {
+          if (!functionMap.has(funcName)) {
+            functionMap.set(funcName, []);
+          }
+          functionMap.get(funcName)!.push(file);
+        }
+      }
+    }
+
+    // Check for duplicates
+    for (const [funcName, locations] of functionMap.entries()) {
+      result.coverage.total++;
+      result.coverage.checked++;
+      
+      if (locations.length > 1) {
+        result.issues.push({
+          severity: 'warning',
+          file: locations.join(', '),
+          message: `Function '${funcName}' defined in ${locations.length} files`,
+          suggestion: 'AI might use wrong version - consolidate or rename functions'
+        });
+      } else {
+        result.coverage.passed++;
+      }
+    }
+
+    result.score = this.calculateScore(result.coverage);
+    result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+    this.results.push(result);
+  }
+
+  /**
+   * Check if exports match what's expected (no missing data)
+   */
+  private async checkExportCompleteness(): Promise<void> {
+    const result: ValidationResult = {
+      rule: 'Export Completeness',
+      ruleNumber: 12,
+      status: 'pass',
+      score: 100,
+      issues: [],
+      coverage: { checked: 0, passed: 0, total: 0 }
+    };
+
+    const hookFiles = this.findFiles('**/hooks/**/*.ts');
+    
+    for (const file of hookFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      result.coverage.total++;
+      result.coverage.checked++;
+      
+      // Check if hook returns an object
+      if (content.includes('return {')) {
+        // Extract what's being returned
+        const returnMatch = content.match(/return\s+{([^}]+)}/);
+        if (returnMatch) {
+          const returnedItems = returnMatch[1].split(',').map(s => s.trim().split(':')[0]);
+          
+          // Check if common expected items are missing
+          const expectedItems = ['data', 'loading', 'error'];
+          const hasDataOperation = /create|update|delete|fetch|get|load/i.test(content);
+          
+          if (hasDataOperation) {
+            const missingItems = expectedItems.filter(item => 
+              !returnedItems.some(returned => returned.includes(item))
+            );
+            
+            if (missingItems.length > 0) {
+              result.issues.push({
+                severity: 'warning',
+                file,
+                message: `Hook may be missing exports: ${missingItems.join(', ')}`,
+                suggestion: 'AI expects standard returns - add missing properties'
+              });
+            } else {
+              result.coverage.passed++;
+            }
+          } else {
+            result.coverage.passed++;
+          }
+        }
+      } else {
+        result.coverage.passed++;
+      }
+    }
+
+    result.score = this.calculateScore(result.coverage);
+    result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+    this.results.push(result);
   }
 }
 
