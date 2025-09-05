@@ -158,9 +158,16 @@ class Dashboard {
                 }
             }
             else if (req.url === '/api/smart-analysis') {
-                // Serve the FIX_THIS.json if it exists
+                // Serve the fixes.json from src/contracts (single source of truth)
                 try {
-                    const fixFilePath = path.join(this.projectPath, '.observer', 'FIX_THIS.json');
+                    // First try src/contracts/fixes.json (new standard location)
+                    const contractsFixPath = path.join(this.projectPath, 'src', 'contracts', 'fixes.json');
+                    // Fallback to .observer/FIX_THIS.json for backward compatibility
+                    const observerFixPath = path.join(this.projectPath, '.observer', 'FIX_THIS.json');
+                    let fixFilePath = contractsFixPath;
+                    if (!fs.existsSync(contractsFixPath) && fs.existsSync(observerFixPath)) {
+                        fixFilePath = observerFixPath;
+                    }
                     if (fs.existsSync(fixFilePath)) {
                         const analysis = JSON.parse(fs.readFileSync(fixFilePath, 'utf-8'));
                         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -549,6 +556,19 @@ Available projects: ${this.availableProjects.length}
         const errorDeduction = Math.min(errors * 20, 80);
         const warningDeduction = Math.min(warnings * 5, 20);
         return Math.max(0, 100 - errorDeduction - warningDeduction);
+    }
+    // New method to calculate health based on smart analysis buckets
+    calculateSmartHealthScore(blockers, structural, compliance) {
+        if (blockers === 0 && structural === 0 && compliance === 0)
+            return 100;
+        // Smart scoring based on issue type:
+        // - BLOCKERS: 30 points each (these will break the app!)
+        // - STRUCTURAL: 10 points each (architecture issues)
+        // - COMPLIANCE: 2 points each (code quality)
+        const blockerDeduction = Math.min(blockers * 30, 70); // Max 70% deduction
+        const structuralDeduction = Math.min(structural * 10, 20); // Max 20% deduction
+        const complianceDeduction = Math.min(compliance * 2, 10); // Max 10% deduction
+        return Math.max(0, 100 - blockerDeduction - structuralDeduction - complianceDeduction);
     }
     async runContractValidation() {
         console.log('📋 Running contract validation...');

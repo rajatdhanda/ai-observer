@@ -126,9 +126,18 @@ class Dashboard {
           res.end(JSON.stringify({ error: error.message }));
         }
       } else if (req.url === '/api/smart-analysis') {
-        // Serve the FIX_THIS.json if it exists
+        // Serve the fixes.json from src/contracts (single source of truth)
         try {
-          const fixFilePath = path.join(this.projectPath, '.observer', 'FIX_THIS.json');
+          // First try src/contracts/fixes.json (new standard location)
+          const contractsFixPath = path.join(this.projectPath, 'src', 'contracts', 'fixes.json');
+          // Fallback to .observer/FIX_THIS.json for backward compatibility
+          const observerFixPath = path.join(this.projectPath, '.observer', 'FIX_THIS.json');
+          
+          let fixFilePath = contractsFixPath;
+          if (!fs.existsSync(contractsFixPath) && fs.existsSync(observerFixPath)) {
+            fixFilePath = observerFixPath;
+          }
+          
           if (fs.existsSync(fixFilePath)) {
             const analysis = JSON.parse(fs.readFileSync(fixFilePath, 'utf-8'));
             res.writeHead(200, { 'Content-Type': 'application/json' });
