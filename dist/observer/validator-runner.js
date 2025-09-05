@@ -284,6 +284,8 @@ class ValidatorRunner {
             // Fallback to common locations if not found
             if (!fs.existsSync(contractsPath)) {
                 const possiblePaths = [
+                    path.join(projectDir, 'src/contracts/contracts.yaml'), // ADDED: Check src/contracts/
+                    path.join(projectDir, 'contracts/contracts.yaml'), // Check contracts/
                     'test-projects/streax/contracts.yaml',
                     'contracts/contracts.yaml',
                     '.observer/contracts.yaml'

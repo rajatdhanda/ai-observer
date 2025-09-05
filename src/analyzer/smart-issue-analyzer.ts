@@ -334,6 +334,8 @@ export class SmartIssueAnalyzer {
     if (issue.severity === 'critical') {
       return (
         issue.rule === 'Contract Compliance' ||
+        issue.rule === 'Contract Violation' ||  // ADDED: Cross-layer contract violations
+        issue.type === 'contract_violation' ||  // ADDED: Direct check for contract violations
         issue.rule === 'Type-Database Alignment' ||
         issue.rule === 'Export Completeness' ||
         issue.type === 'missing_contracts' ||
@@ -599,10 +601,11 @@ export class SmartIssueAnalyzer {
         issues.push({
           file: cli.file,
           line: 0,
-          type: 'cross_layer_mismatch',
-          severity: cli.severity,
+          type: 'contract_violation',  // CHANGED: This is a CONTRACT VIOLATION, not just a mismatch
+          severity: 'critical',  // CHANGED: Contract violations are ALWAYS critical
           message: cli.message,
-          category: 'alignment',
+          category: 'contract',  // CHANGED: Put in contract category
+          rule: 'Contract Violation',  // ADDED: Explicit rule name
           suggestion: cli.fix
         });
       }

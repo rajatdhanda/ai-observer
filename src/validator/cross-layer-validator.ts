@@ -219,28 +219,28 @@ export class CrossLayerValidator {
     if (obj.book_title !== undefined && !this.hasContractProperty('book_title')) {
       this.issues.push({
         layer1: 'Golden Examples',
-        layer2: 'Contract',
+        layer2: 'Book Contract',
         file: 'golden.examples.json',
         property: 'book_title',
-        expected: 'title',
+        expected: 'title (per Book contract)',
         actual: 'book_title',
-        message: `Golden uses "book_title" but contract/type expects "title"`,
+        message: `CONTRACT VIOLATION: Golden uses "book_title" but Book contract requires "title"`,
         severity: 'critical',
-        fix: `Change golden example from "book_title" to "title"`
+        fix: `URGENT: Change golden example from "book_title" to "title" to comply with Book contract`
       });
     }
     
     if (obj.cover_image_url !== undefined && !this.hasContractProperty('cover_image_url')) {
       this.issues.push({
         layer1: 'Golden Examples',
-        layer2: 'Contract',
+        layer2: 'Book Contract',
         file: 'golden.examples.json',
         property: 'cover_image_url',
-        expected: 'cover',
+        expected: 'cover (per Book contract)',
         actual: 'cover_image_url',
-        message: `Golden uses "cover_image_url" but contract/type expects "cover"`,
+        message: `CONTRACT VIOLATION: Golden uses "cover_image_url" but Book contract requires "cover"`,
         severity: 'critical',
-        fix: `Change golden example from "cover_image_url" to "cover"`
+        fix: `URGENT: Change golden example from "cover_image_url" to "cover" to comply with Book contract`
       });
     }
     
