@@ -18,18 +18,13 @@ class SmartAnalysisView {
       const needsLayout = !container.querySelector('#smartAnalysisMain');
       
       if (needsLayout) {
-        // Create two-column layout
+        // Just render content normally - logs will appear below
         container.innerHTML = `
-          <div style="display: flex; height: 100%; gap: 0;">
-            <!-- Main Content (left) -->
-            <div id="smartAnalysisMain" style="flex: 1; overflow-y: auto; min-width: 0; padding-right: 20px;">
-              ${!data || !data.exists ? this.renderNoAnalysis() : this.renderAnalysis(data.analysis)}
-            </div>
-            
-            <!-- Live Log Panel (right) -->
-            <div id="liveLogPanel" style="width: 400px; flex-shrink: 0; height: 100%;">
-              ${window.liveLogPanel ? window.liveLogPanel.renderPanel() : '<div>Loading logs...</div>'}
-            </div>
+          <div id="smartAnalysisMain">
+            ${!data || !data.exists ? this.renderNoAnalysis() : this.renderAnalysis(data.analysis)}
+          </div>
+          <div id="liveLogPanel" style="margin-top: 20px;">
+            ${window.liveLogPanel ? window.liveLogPanel.renderPanel() : '<div>Loading logs...</div>'}
           </div>
         `;
       } else {

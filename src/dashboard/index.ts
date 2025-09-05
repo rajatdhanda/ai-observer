@@ -522,6 +522,21 @@ Available projects: ${this.availableProjects.length}
     return Math.max(0, 100 - errorDeduction - warningDeduction);
   }
 
+  // New method to calculate health based on smart analysis buckets
+  private calculateSmartHealthScore(blockers: number, structural: number, compliance: number): number {
+    if (blockers === 0 && structural === 0 && compliance === 0) return 100;
+    
+    // Smart scoring based on issue type:
+    // - BLOCKERS: 30 points each (these will break the app!)
+    // - STRUCTURAL: 10 points each (architecture issues)
+    // - COMPLIANCE: 2 points each (code quality)
+    const blockerDeduction = Math.min(blockers * 30, 70);  // Max 70% deduction
+    const structuralDeduction = Math.min(structural * 10, 20);  // Max 20% deduction
+    const complianceDeduction = Math.min(compliance * 2, 10);   // Max 10% deduction
+    
+    return Math.max(0, 100 - blockerDeduction - structuralDeduction - complianceDeduction);
+  }
+
   private async runContractValidation() {
     console.log('📋 Running contract validation...');
     
@@ -723,20 +738,16 @@ Available projects: ${this.availableProjects.length}
           }
           
           if (['.ts', '.tsx', '.js', '.jsx'].includes(ext)) {
-            // Only include files from src directory
-            if (!relativePath.startsWith('src/')) {
-              continue;
-            }
-            
             // Filter by type if specified
             switch (type) {
               case 'hooks':
-                if (relativePath.includes('/hooks/') || /^use[A-Z]/.test(item.name)) {
+                if (relativePath.startsWith('src/') && 
+                    (relativePath.includes('/hooks/') || /^use[A-Z]/.test(item.name))) {
                   files.push(fullPath);
                 }
                 break;
               case 'components':
-                if (relativePath.includes('/components/')) {
+                if (relativePath.startsWith('src/') && relativePath.includes('/components/')) {
                   files.push(fullPath);
                 }
                 break;
@@ -746,15 +757,19 @@ Available projects: ${this.availableProjects.length}
                 }
                 break;
               case 'pages':
-                if (relativePath.includes('/app/') && !relativePath.includes('/api/') && 
+                // Pages are in app/ directory, not src/
+                if (relativePath.startsWith('app/') && !relativePath.includes('/api/') && 
+                    !relativePath.includes('/ui-components/') &&
                     (item.name === 'page.tsx' || item.name === 'page.ts')) {
                   files.push(fullPath);
                 }
                 break;
               case 'all':
               default:
-                // For 'all', still apply the src filter
-                files.push(fullPath);
+                // Include files from both src/ and app/ directories
+                if (relativePath.startsWith('src/') || relativePath.startsWith('app/')) {
+                  files.push(fullPath);
+                }
                 break;
             }
           }
@@ -762,11 +777,20 @@ Available projects: ${this.availableProjects.length}
       }
     };
     
-    // Start walking from src directory if it exists
+    // Walk from both src and app directories
     const srcPath = path.join(this.projectPath, 'src');
+    const appPath = path.join(this.projectPath, 'app');
+    
     if (fs.existsSync(srcPath)) {
       walkDir(srcPath);
-    } else {
+    }
+    
+    if (fs.existsSync(appPath)) {
+      walkDir(appPath);
+    }
+    
+    // If neither exists, walk from project root
+    if (!fs.existsSync(srcPath) && !fs.existsSync(appPath)) {
       walkDir(this.projectPath);
     }
     

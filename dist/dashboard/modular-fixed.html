@@ -434,7 +434,7 @@
         }
         
         // Extract hooks and components
-        extractArchitecture();
+        await extractArchitecture();
         
         // Update UI
         updateProjectInfo(project);
@@ -464,7 +464,7 @@
       }
     }
     
-    function extractArchitecture() {
+    async function extractArchitecture() {
       Object.values(state.tables).forEach(table => {
         if (table.hooks) {
           table.hooks.forEach(h => {
@@ -485,14 +485,15 @@
         }
       });
       
-      // Add pages
-      state.pages = [
-        'src/app/(main)/feed/page.tsx',
-        'src/app/(main)/crm/page.tsx',
-        'src/app/(main)/orders/page.tsx',
-        'src/app/(main)/insurance/page.tsx',
-        'src/app/page.tsx'
-      ];
+      // Fetch pages from API instead of hardcoding
+      try {
+        const pagesResponse = await fetch('/api/architecture-data?type=page');
+        const pagesData = await pagesResponse.json();
+        state.pages = pagesData.map(page => page.file);
+      } catch (error) {
+        console.error('Failed to fetch pages:', error);
+        state.pages = [];  // Fallback to empty array
+      }
     }
     
     function updateProjectInfo(project) {

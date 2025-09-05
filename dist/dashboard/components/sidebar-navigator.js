@@ -224,11 +224,18 @@ class SidebarNavigator {
 
   async updateValidationCounts() {
     try {
-      const response = await fetch('/api/map-validation');
-      const data = await response.json();
+      // Fetch both validation data and smart analysis data
+      const [validationResponse, smartAnalysisResponse] = await Promise.all([
+        fetch('/api/map-validation'),
+        fetch('/api/smart-analysis')
+      ]);
       
-      if (data && data.summary && data.summary.bySeverity) {
-        const counts = data.summary.bySeverity;
+      const validationData = await validationResponse.json();
+      const smartAnalysisData = await smartAnalysisResponse.json();
+      
+      // Update validation counts in UI
+      if (validationData && validationData.summary && validationData.summary.bySeverity) {
+        const counts = validationData.summary.bySeverity;
         
         const criticalEl = document.getElementById('criticalCount');
         const warningEl = document.getElementById('warningCount');  
@@ -239,23 +246,26 @@ class SidebarNavigator {
         if (infoEl) infoEl.textContent = counts.info || 0;
       }
       
-      // Store validation data for entity health mapping
-      this.validationData = data;
+      // Store both validation data and smart analysis for entity health mapping
+      this.validationData = validationData;
+      this.smartAnalysisData = smartAnalysisData;
     } catch (error) {
       console.error('Failed to fetch validation counts:', error);
     }
   }
 
-  // Calculate entity health based on REAL breaking issues (not contract compliance)
+  // Calculate entity health based on smart analysis buckets (BLOCKERS/STRUCTURAL/COMPLIANCE)
   getEntityHealth(entityName, entityType) {
-    if (!this.validationData || !this.validationData.violations) {
-      return { score: 100, color: '#10b981', severity: 'healthy' }; // Default green
+    // Default to healthy if no smart analysis data
+    if (!this.smartAnalysisData || !this.smartAnalysisData.analysis || !this.smartAnalysisData.analysis.issue_buckets) {
+      return { score: 100, color: '#10b981', severity: 'healthy' };
     }
 
-    let realCriticalIssues = 0;
-    let warningIssues = 0;
+    let blockerCount = 0;
+    let structuralCount = 0;
+    let complianceCount = 0;
     
-    // Map entity names to file patterns
+    // Map entity names to file patterns for matching
     let filePatterns = [];
     switch (entityType) {
       case 'hook':
@@ -265,51 +275,82 @@ class SidebarNavigator {
         filePatterns = [`src/components/core/${entityName}.tsx`, `src/components/core/${entityName}.ts`, `src/components/core/${entityName}.js`];
         break;
       case 'page':
-        // Handle page path mapping (e.g., "feed" -> "src/app/(main)/feed/page.tsx")
-        if (entityName.includes('(main)')) {
+        // Handle different page path formats
+        if (entityName.includes(' > ')) {
           const pageName = entityName.split(' > ')[1] || entityName;
-          filePatterns = [`src/app/(main)/${pageName}/page.tsx`];
+          filePatterns = [`app/(main)/${pageName}/page.tsx`, `app/${pageName}/page.tsx`];
+        } else if (entityName.toLowerCase() === 'home') {
+          filePatterns = ['app/page.tsx', 'app/home/page.tsx'];
         } else {
-          filePatterns = [`src/app/(main)/${entityName}/page.tsx`, `src/app/${entityName}/page.tsx`];
+          filePatterns = [`app/${entityName.toLowerCase()}/page.tsx`, `app/(main)/${entityName.toLowerCase()}/page.tsx`];
         }
         break;
       default:
         filePatterns = [];
     }
 
-    // Count REAL breaking violations (not contract issues)
-    this.validationData.violations.forEach(violation => {
-      const matchesEntity = filePatterns.some(pattern => 
-        violation.file.includes(pattern) || 
-        violation.file.includes(entityName.toLowerCase())
-      );
-      
-      if (matchesEntity) {
-        // Only count REAL breaking issues, not "missing contract" issues
-        const isRealBreakingIssue = violation.severity === 'critical' && 
-          !violation.message.includes('contract') && 
-          !violation.message.includes('Contract') &&
-          (violation.message.includes('error') || 
-           violation.message.includes('missing') || 
-           violation.message.includes('type') ||
-           violation.rule === 'Error Handling' ||
-           violation.rule === 'Type-Database Alignment');
+    // Count issues from smart analysis buckets for this entity
+    this.smartAnalysisData.analysis.issue_buckets.forEach(bucket => {
+      bucket.issues?.forEach(issue => {
+        const matchesEntity = filePatterns.some(pattern => 
+          issue.file?.includes(pattern) || 
+          issue.file?.includes(entityName.toLowerCase()) ||
+          issue.file?.endsWith(`${entityName.toLowerCase()}.tsx`) ||
+          issue.file?.endsWith(`${entityName.toLowerCase()}.ts`)
+        );
         
-        if (isRealBreakingIssue) {
-          realCriticalIssues++;
-        } else if (violation.severity === 'warning') {
-          warningIssues++;
+        if (matchesEntity) {
+          switch (bucket.name) {
+            case 'BLOCKERS':
+              blockerCount++;
+              break;
+            case 'STRUCTURAL':
+              structuralCount++;
+              break;
+            case 'COMPLIANCE':
+              complianceCount++;
+              break;
+          }
         }
-      }
+      });
     });
 
-    // Calculate health score and color - be more conservative
-    if (realCriticalIssues > 0) {
-      return { score: 0, color: '#ef4444', severity: 'critical', issues: { critical: realCriticalIssues, warning: warningIssues } };
-    } else if (warningIssues > 0) {
-      return { score: 60, color: '#f59e0b', severity: 'warning', issues: { critical: realCriticalIssues, warning: warningIssues } };
+    // Calculate smart health score using the same logic from the server
+    const health = this.calculateSmartHealthScore(blockerCount, structuralCount, complianceCount);
+    
+    return {
+      score: health.score,
+      color: health.color,
+      severity: health.severity,
+      issues: { blockers: blockerCount, structural: structuralCount, compliance: complianceCount }
+    };
+  }
+
+  // Smart health score calculation (matches server-side logic)
+  calculateSmartHealthScore(blockers, structural, compliance) {
+    if (blockers === 0 && structural === 0 && compliance === 0) {
+      return { score: 100, color: '#10b981', severity: 'healthy' };
+    }
+    
+    // Smart scoring based on issue type:
+    // - BLOCKERS: 30 points each (these will break the app!)
+    // - STRUCTURAL: 10 points each (architecture issues) 
+    // - COMPLIANCE: 2 points each (code quality)
+    const blockerDeduction = Math.min(blockers * 30, 70);
+    const structuralDeduction = Math.min(structural * 10, 20);
+    const complianceDeduction = Math.min(compliance * 2, 10);
+    
+    const score = Math.max(0, 100 - blockerDeduction - structuralDeduction - complianceDeduction);
+    
+    // Determine color and severity based on score and issue types
+    if (blockers > 0) {
+      return { score, color: '#ef4444', severity: 'critical' }; // Red for blockers
+    } else if (structural > 0) {
+      return { score, color: '#f59e0b', severity: 'warning' };   // Orange for structural
+    } else if (compliance > 0) {
+      return { score, color: '#3b82f6', severity: 'info' };      // Blue for compliance
     } else {
-      return { score: 100, color: '#10b981', severity: 'healthy', issues: { critical: realCriticalIssues, warning: warningIssues } };
+      return { score: 100, color: '#10b981', severity: 'healthy' }; // Green for healthy
     }
   }
   
@@ -335,7 +376,7 @@ class SidebarNavigator {
         "
         onmouseover="this.style.background='#252525'"
         onmouseout="this.style.background='transparent'"
-        title="${health.severity === 'critical' ? `${health.issues.critical} critical issues` : health.severity === 'warning' ? `${health.issues.warning} warnings` : 'No issues detected'}"
+        title="${health.severity === 'critical' ? `${health.issues.blockers} blockers, ${health.issues.structural} structural, ${health.issues.compliance} compliance` : health.severity === 'warning' ? `${health.issues.structural} structural issues, ${health.issues.compliance} compliance` : health.severity === 'info' ? `${health.issues.compliance} compliance issues` : 'No issues detected'}"
       >
         <span style="font-size: 14px;">${icon}</span>
         <span style="color: #e2e8f0; font-size: 13px; flex: 1; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${displayName}</span>

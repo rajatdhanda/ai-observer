@@ -726,19 +726,16 @@ Available projects: ${this.availableProjects.length}
                         continue;
                     }
                     if (['.ts', '.tsx', '.js', '.jsx'].includes(ext)) {
-                        // Only include files from src directory
-                        if (!relativePath.startsWith('src/')) {
-                            continue;
-                        }
                         // Filter by type if specified
                         switch (type) {
                             case 'hooks':
-                                if (relativePath.includes('/hooks/') || /^use[A-Z]/.test(item.name)) {
+                                if (relativePath.startsWith('src/') &&
+                                    (relativePath.includes('/hooks/') || /^use[A-Z]/.test(item.name))) {
                                     files.push(fullPath);
                                 }
                                 break;
                             case 'components':
-                                if (relativePath.includes('/components/')) {
+                                if (relativePath.startsWith('src/') && relativePath.includes('/components/')) {
                                     files.push(fullPath);
                                 }
                                 break;
@@ -748,27 +745,36 @@ Available projects: ${this.availableProjects.length}
                                 }
                                 break;
                             case 'pages':
-                                if (relativePath.includes('/app/') && !relativePath.includes('/api/') &&
+                                // Pages are in app/ directory, not src/
+                                if (relativePath.startsWith('app/') && !relativePath.includes('/api/') &&
+                                    !relativePath.includes('/ui-components/') &&
                                     (item.name === 'page.tsx' || item.name === 'page.ts')) {
                                     files.push(fullPath);
                                 }
                                 break;
                             case 'all':
                             default:
-                                // For 'all', still apply the src filter
-                                files.push(fullPath);
+                                // Include files from both src/ and app/ directories
+                                if (relativePath.startsWith('src/') || relativePath.startsWith('app/')) {
+                                    files.push(fullPath);
+                                }
                                 break;
                         }
                     }
                 }
             }
         };
-        // Start walking from src directory if it exists
+        // Walk from both src and app directories
         const srcPath = path.join(this.projectPath, 'src');
+        const appPath = path.join(this.projectPath, 'app');
         if (fs.existsSync(srcPath)) {
             walkDir(srcPath);
         }
-        else {
+        if (fs.existsSync(appPath)) {
+            walkDir(appPath);
+        }
+        // If neither exists, walk from project root
+        if (!fs.existsSync(srcPath) && !fs.existsSync(appPath)) {
             walkDir(this.projectPath);
         }
         return files;
