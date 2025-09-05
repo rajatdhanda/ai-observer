@@ -3,6 +3,7 @@ import * as path from 'path';
 import { execSync } from 'child_process';
 import { ValidatorRunner } from '../observer/validator-runner';
 import { DesignSystemValidator } from '../validator/design-system-validator';
+import { CrossLayerValidator } from '../validator/cross-layer-validator';
 
 export interface Issue {
   file: string;
@@ -154,6 +155,9 @@ export class SmartIssueAnalyzer {
     
     // 5. Design system validation
     issues.push(...this.runDesignSystemValidation());
+    
+    // 6. Cross-layer validation (Types → Contracts → Golden → Components)
+    issues.push(...this.runCrossLayerValidation());
 
     // Store ALL issues (don't filter by severity - we need everything for bucket classification)
     this.issues = issues;
@@ -579,6 +583,36 @@ export class SmartIssueAnalyzer {
       });
     }
     
+    return issues;
+  }
+
+  private runCrossLayerValidation(): Issue[] {
+    const issues: Issue[] = [];
+
+    try {
+      console.log('🔗 Running cross-layer validation (Types→Contracts→Golden→Components)...');
+      const validator = new CrossLayerValidator(this.projectPath);
+      const crossLayerIssues = validator.validate();
+      
+      // Convert cross-layer issues to our Issue format
+      for (const cli of crossLayerIssues) {
+        issues.push({
+          file: cli.file,
+          line: 0,
+          type: 'cross_layer_mismatch',
+          severity: cli.severity,
+          message: cli.message,
+          category: 'alignment',
+          suggestion: cli.fix
+        });
+      }
+      
+      const stats = validator.getStats();
+      console.log(`🔗 Cross-layer validation found ${stats.total} misalignments (${stats.critical} critical)`);
+    } catch (error) {
+      console.log('⚠️ Cross-layer validation skipped:', error);
+    }
+
     return issues;
   }
 

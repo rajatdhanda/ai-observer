@@ -39,6 +39,7 @@ const path = __importStar(require("path"));
 const child_process_1 = require("child_process");
 const validator_runner_1 = require("../observer/validator-runner");
 const design_system_validator_1 = require("../validator/design-system-validator");
+const cross_layer_validator_1 = require("../validator/cross-layer-validator");
 class SmartIssueAnalyzer {
     projectPath;
     issues = [];
@@ -141,6 +142,8 @@ class SmartIssueAnalyzer {
         issues.push(...this.checkSecurityIssues());
         // 5. Design system validation
         issues.push(...this.runDesignSystemValidation());
+        // 6. Cross-layer validation (Types → Contracts → Golden → Components)
+        issues.push(...this.runCrossLayerValidation());
         // Store ALL issues (don't filter by severity - we need everything for bucket classification)
         this.issues = issues;
         console.log(`📊 Collected ${this.issues.length} total issues from all validation systems`);
@@ -513,6 +516,32 @@ class SmartIssueAnalyzer {
                 category: 'design_system',
                 suggestion: 'Check if project has React/Vue components to validate'
             });
+        }
+        return issues;
+    }
+    runCrossLayerValidation() {
+        const issues = [];
+        try {
+            console.log('🔗 Running cross-layer validation (Types→Contracts→Golden→Components)...');
+            const validator = new cross_layer_validator_1.CrossLayerValidator(this.projectPath);
+            const crossLayerIssues = validator.validate();
+            // Convert cross-layer issues to our Issue format
+            for (const cli of crossLayerIssues) {
+                issues.push({
+                    file: cli.file,
+                    line: 0,
+                    type: 'cross_layer_mismatch',
+                    severity: cli.severity,
+                    message: cli.message,
+                    category: 'alignment',
+                    suggestion: cli.fix
+                });
+            }
+            const stats = validator.getStats();
+            console.log(`🔗 Cross-layer validation found ${stats.total} misalignments (${stats.critical} critical)`);
+        }
+        catch (error) {
+            console.log('⚠️ Cross-layer validation skipped:', error);
         }
         return issues;
     }

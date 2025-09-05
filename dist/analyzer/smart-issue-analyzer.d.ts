@@ -53,6 +53,7 @@ export declare class SmartIssueAnalyzer {
     private runESLintCheck;
     private checkSecurityIssues;
     private runDesignSystemValidation;
+    private runCrossLayerValidation;
     private isCriticalEnvVar;
     private getErrorSeverity;
     private categorizeError;
