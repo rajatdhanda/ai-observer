@@ -2,6 +2,8 @@
 class SmartAnalysisView {
   constructor(containerId) {
     this.containerId = containerId;
+    // Make instance globally available for filter panel
+    window.smartAnalysisView = this;
   }
 
   async render() {
@@ -81,6 +83,9 @@ class SmartAnalysisView {
     const groups = analysis.fix_groups || []; // Fallback for old format
     const hasBuckets = buckets.length > 0;
     
+    // Store analysis data globally for filter panel
+    window.smartAnalysisData = analysis;
+    
     return `
       <div style="padding: 20px;">
         <!-- Live Status Bar -->
@@ -127,6 +132,9 @@ class SmartAnalysisView {
             Last Check: ${new Date(analysis.generated).toLocaleString()}
           </div>
         </div>
+
+        <!-- Issue Filter Panel -->
+        ${window.issueFilter ? window.issueFilter.render(analysis) : ''}
 
         <!-- Filter Bar -->
         ${hasBuckets ? `
