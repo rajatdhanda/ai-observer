@@ -1,6 +1,7 @@
 import * as http from 'http';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as net from 'net';
 import { ProjectAnalyzer } from '../analyzer';
 import { TableMapper } from '../validator/table-mapper';
 import { NineRulesValidator } from '../validator/nine-rules-validator';
@@ -10,7 +11,23 @@ import { VersionValidator } from '../validator/version-validator';
 import { DesignSystemValidator } from '../validator/design-system-validator';
 import { logger as RemoteLogger } from '../utils/remote-logger';
 
-const PORT = process.env.DASHBOARD_PORT || 3001;
+// Auto-find next available port starting from 3001
+function findAvailablePort(startPort: number = 3001): Promise<number> {
+  return new Promise((resolve) => {
+    const testPort = (port: number) => {
+      const server = net.createServer();
+      server.listen(port, () => {
+        server.close(() => resolve(port));
+      });
+      server.on('error', () => {
+        testPort(port + 1);
+      });
+    };
+    testPort(startPort);
+  });
+}
+
+let PORT: number;
 
 class Dashboard {
   private analysisData: any = null;
@@ -903,5 +920,10 @@ Available projects: ${this.availableProjects.length}
   }
 }
 
-const dashboard = new Dashboard();
-dashboard.start();
+async function startDashboard() {
+  PORT = process.env.DASHBOARD_PORT ? parseInt(process.env.DASHBOARD_PORT) : await findAvailablePort(3001);
+  const dashboard = new Dashboard();
+  await dashboard.start();
+}
+
+startDashboard();

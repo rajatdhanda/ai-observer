@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const http = __importStar(require("http"));
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+const net = __importStar(require("net"));
 const table_mapper_1 = require("../validator/table-mapper");
 const nine_rules_validator_1 = require("../validator/nine-rules-validator");
 const contract_validator_1 = require("../validator/contract-validator");
@@ -43,7 +44,22 @@ const boundary_validator_1 = require("../validator/boundary-validator");
 const version_validator_1 = require("../validator/version-validator");
 const design_system_validator_1 = require("../validator/design-system-validator");
 const remote_logger_1 = require("../utils/remote-logger");
-const PORT = process.env.DASHBOARD_PORT || 3001;
+// Auto-find next available port starting from 3001
+function findAvailablePort(startPort = 3001) {
+    return new Promise((resolve) => {
+        const testPort = (port) => {
+            const server = net.createServer();
+            server.listen(port, () => {
+                server.close(() => resolve(port));
+            });
+            server.on('error', () => {
+                testPort(port + 1);
+            });
+        };
+        testPort(startPort);
+    });
+}
+let PORT;
 class Dashboard {
     analysisData = null;
     projectPath;
@@ -893,5 +909,9 @@ Available projects: ${this.availableProjects.length}
         return files;
     }
 }
-const dashboard = new Dashboard();
-dashboard.start();
+async function startDashboard() {
+    PORT = process.env.DASHBOARD_PORT ? parseInt(process.env.DASHBOARD_PORT) : await findAvailablePort(3001);
+    const dashboard = new Dashboard();
+    await dashboard.start();
+}
+startDashboard();
