@@ -314,6 +314,9 @@ class SidebarNavigator {
       // Store both validation data and smart analysis for entity health mapping
       this.validationData = validationData;
       this.smartAnalysisData = smartAnalysisData;
+      
+      // Re-render the sidebar now that we have smart analysis data
+      this.render();
     } catch (error) {
       console.error('Failed to fetch validation counts:', error);
     }
