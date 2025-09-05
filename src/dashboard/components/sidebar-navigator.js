@@ -63,6 +63,9 @@ class SidebarNavigator {
   }
   
   renderSidebar() {
+    // Calculate grand totals for validation
+    const grandTotal = this.calculateGrandTotal();
+    
     this.container.innerHTML = `
       <div style="padding: 16px;">
         <input 
@@ -78,8 +81,23 @@ class SidebarNavigator {
             color: #e2e8f0;
             font-size: 14px;
             box-sizing: border-box;
+            margin-bottom: 16px;
           "
         >
+      </div>
+      
+      <!-- Grand Total Validation -->
+      <div style="
+        background: #1a1a1a;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        margin: 0 16px 16px 16px;
+        font-size: 11px;
+        font-family: monospace;
+      ">
+        <div style="color: #94a3b8; margin-bottom: 4px;">📊 TOTAL ISSUES</div>
+        <div style="color: #e2e8f0;">${grandTotal.blockers}B ${grandTotal.structural}S ${grandTotal.compliance}C = ${grandTotal.total} issues</div>
       </div>
       
       ${this.renderTableSection()}
@@ -149,9 +167,10 @@ class SidebarNavigator {
         </div>
         <div id="hooksList">
           ${count === 0 ? this.renderEmptyState('hooks') : 
-            this.data.hooks.slice(0, 15).map(hook => 
-              this.renderSimpleItem(this.extractHookName(hook), 'hook', '🔗')
-            ).join('')}
+            this.getSortedEntities(this.data.hooks, 'hook')
+              .slice(0, 15)
+              .map(hook => this.renderSimpleItem(this.extractHookName(hook), 'hook', '🔗'))
+              .join('')}
           ${count > 15 ? this.renderMoreIndicator(count - 15, 'hooks') : ''}
         </div>
         ${this.renderSectionSummary(summary, count)}
@@ -171,9 +190,10 @@ class SidebarNavigator {
         </div>
         <div id="componentsList">
           ${count === 0 ? this.renderEmptyState('components') : 
-            this.data.components.slice(0, 15).map(comp => 
-              this.renderSimpleItem(comp, 'component', '🧩')
-            ).join('')}
+            this.getSortedEntities(this.data.components, 'component')
+              .slice(0, 15)
+              .map(comp => this.renderSimpleItem(comp, 'component', '🧩'))
+              .join('')}
           ${count > 15 ? this.renderMoreIndicator(count - 15, 'components') : ''}
         </div>
         ${this.renderSectionSummary(summary, count)}
@@ -476,6 +496,53 @@ class SidebarNavigator {
     return Math.max(0, score);
   }
   
+  /**
+   * Sort entities by blocker count (worst first, then by name)
+   */
+  getSortedEntities(entities, type) {
+    return [...entities].sort((a, b) => {
+      const entityA = type === 'hook' ? this.extractHookName(a) : 
+                     type === 'component' ? this.extractComponentName(a) :
+                     this.formatPageName(a);
+      const entityB = type === 'hook' ? this.extractHookName(b) : 
+                     type === 'component' ? this.extractComponentName(b) :
+                     this.formatPageName(b);
+      
+      const healthA = this.getEntityHealth(entityA, type);
+      const healthB = this.getEntityHealth(entityB, type);
+      
+      const blockersA = healthA.issues?.blockers || 0;
+      const blockersB = healthB.issues?.blockers || 0;
+      
+      // Sort by blockers desc, then by name asc
+      if (blockersA !== blockersB) return blockersB - blockersA;
+      return entityA.localeCompare(entityB);
+    });
+  }
+  
+  /**
+   * Calculate grand total for validation
+   */
+  calculateGrandTotal() {
+    let totalBlockers = 0, totalStructural = 0, totalCompliance = 0;
+    
+    // Sum from all sections
+    const componentSummary = this.calculateSectionSummary(this.data.components, 'component');
+    const hookSummary = this.calculateSectionSummary(this.data.hooks, 'hook');
+    const pageSummary = this.calculateSectionSummary(this.data.pages, 'page');
+    
+    totalBlockers = componentSummary.totalBlockers + hookSummary.totalBlockers + pageSummary.totalBlockers;
+    totalStructural = componentSummary.totalStructural + hookSummary.totalStructural + pageSummary.totalStructural;
+    totalCompliance = componentSummary.totalCompliance + hookSummary.totalCompliance + pageSummary.totalCompliance;
+    
+    return {
+      blockers: totalBlockers,
+      structural: totalStructural, 
+      compliance: totalCompliance,
+      total: totalBlockers + totalStructural + totalCompliance
+    };
+  }
+
   /**
    * Calculate summary stats for a section
    */
