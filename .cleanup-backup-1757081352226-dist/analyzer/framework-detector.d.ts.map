@@ -1,1 +1,0 @@
-{"version":3,"file":"framework-detector.d.ts","sourceRoot":"","sources":["../../src/analyzer/framework-detector.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,aAAa,EAAE,MAAM,SAAS,CAAC;AAExC,qBAAa,iBAAiB;IACtB,MAAM,CAAC,WAAW,EAAE,MAAM,GAAG,OAAO,CAAC,aAAa,CAAC;IAsBzD,OAAO,CAAC,iBAAiB;CAgG1B"}
