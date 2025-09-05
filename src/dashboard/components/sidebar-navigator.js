@@ -139,6 +139,7 @@ class SidebarNavigator {
   
   renderHookSection() {
     const count = this.data.hooks.length;
+    const summary = this.calculateSectionSummary(this.data.hooks, 'hook');
     
     return `
       <div class="entity-section" style="border-bottom: 1px solid #252525;">
@@ -153,12 +154,14 @@ class SidebarNavigator {
             ).join('')}
           ${count > 15 ? this.renderMoreIndicator(count - 15, 'hooks') : ''}
         </div>
+        ${this.renderSectionSummary(summary, count)}
       </div>
     `;
   }
   
   renderComponentSection() {
     const count = this.data.components.length;
+    const summary = this.calculateSectionSummary(this.data.components, 'component');
     
     return `
       <div class="entity-section" style="border-bottom: 1px solid #252525;">
@@ -173,12 +176,14 @@ class SidebarNavigator {
             ).join('')}
           ${count > 15 ? this.renderMoreIndicator(count - 15, 'components') : ''}
         </div>
+        ${this.renderSectionSummary(summary, count)}
       </div>
     `;
   }
   
   renderPageSection() {
     const count = this.data.pages.length;
+    const summary = this.calculateSectionSummary(this.data.pages, 'page');
     
     return `
       <div class="entity-section" style="border-bottom: 1px solid #252525;">
@@ -194,6 +199,7 @@ class SidebarNavigator {
             }).join('')}
           ${count > 15 ? this.renderMoreIndicator(count - 15, 'pages') : ''}
         </div>
+        ${this.renderSectionSummary(summary, count)}
       </div>
     `;
   }
@@ -372,6 +378,25 @@ class SidebarNavigator {
     // Get health status based on validation data
     const health = this.getEntityHealth(displayName, type);
     
+    // Format compact issue counts (only show if there are issues)
+    let issueCounts = '';
+    if (health.issues && (health.issues.blockers > 0 || health.issues.structural > 0 || health.issues.compliance > 0)) {
+      const b = health.issues.blockers || 0;
+      const s = health.issues.structural || 0;
+      const c = health.issues.compliance || 0;
+      issueCounts = `
+        <span style="
+          font-size: 10px; 
+          color: #64748b; 
+          margin-right: 6px;
+          font-family: monospace;
+          background: #0f0f0f;
+          padding: 2px 4px;
+          border-radius: 3px;
+        ">${b}B ${s}S ${c}C</span>
+      `;
+    }
+    
     return `
       <div 
         class="sidebar-item ${type}-item"
@@ -382,7 +407,7 @@ class SidebarNavigator {
           cursor: pointer;
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 8px;
           transition: background 0.2s;
           border-left: 3px solid transparent;
         "
@@ -392,6 +417,7 @@ class SidebarNavigator {
       >
         <span style="font-size: 14px;">${icon}</span>
         <span style="color: #e2e8f0; font-size: 13px; flex: 1; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${displayName}</span>
+        ${issueCounts}
         <span style="width: 8px; height: 8px; border-radius: 50%; background: ${health.color};" title="${health.severity}"></span>
       </div>
     `;
@@ -448,6 +474,61 @@ class SidebarNavigator {
     if (!data.components || data.components.length === 0) score -= 15;
     if (!data.properties || data.properties.length === 0) score -= 10;
     return Math.max(0, score);
+  }
+  
+  /**
+   * Calculate summary stats for a section
+   */
+  calculateSectionSummary(entities, type) {
+    let critical = 0, warning = 0, healthy = 0;
+    let totalBlockers = 0, totalStructural = 0, totalCompliance = 0;
+    
+    entities.forEach(entity => {
+      const entityName = type === 'hook' ? this.extractHookName(entity) : 
+                        type === 'component' ? this.extractComponentName(entity) :
+                        this.formatPageName(entity);
+      const health = this.getEntityHealth(entityName, type);
+      
+      if (health.severity === 'critical') critical++;
+      else if (health.severity === 'warning') warning++;
+      else healthy++;
+      
+      if (health.issues) {
+        totalBlockers += health.issues.blockers || 0;
+        totalStructural += health.issues.structural || 0;
+        totalCompliance += health.issues.compliance || 0;
+      }
+    });
+    
+    return { critical, warning, healthy, totalBlockers, totalStructural, totalCompliance };
+  }
+
+  /**
+   * Render section summary stats
+   */
+  renderSectionSummary(summary, total) {
+    if (total === 0) return '';
+    
+    let summaryParts = [];
+    if (summary.critical > 0) summaryParts.push(`${summary.critical} critical`);
+    if (summary.warning > 0) summaryParts.push(`${summary.warning} needs attention`);
+    if (summary.healthy > 0) summaryParts.push(`${summary.healthy} healthy`);
+    
+    const bucketStats = summary.totalBlockers + summary.totalStructural + summary.totalCompliance > 0 
+      ? ` • ${summary.totalBlockers}B ${summary.totalStructural}S ${summary.totalCompliance}C` 
+      : '';
+    
+    return `
+      <div style="
+        padding: 8px 16px; 
+        background: #0f0f0f; 
+        font-size: 10px; 
+        color: #64748b;
+        border-top: 1px solid #1a1a1a;
+      ">
+        ${summaryParts.join(', ')}${bucketStats}
+      </div>
+    `;
   }
   
   // Data extraction helpers
