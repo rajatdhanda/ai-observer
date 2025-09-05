@@ -851,15 +851,29 @@
         }
       }
       
-      // Calculate file-level changes from last two snapshots
+      // Calculate file-level changes from snapshots with actual differences
       let fileChanges = [];
       if (snapshots.length >= 2) {
         try {
-          // Get full data for last two snapshots for comparison
-          const prevResponse = await fetch(`/api/snapshots/${snapshots[1].filename}`);
-          const prevSnapshot = await prevResponse.json();
-          const currResponse = await fetch(`/api/snapshots/${snapshots[0].filename}`);
-          const currSnapshot = await currResponse.json();
+          // Find snapshots with different totals for meaningful comparison
+          let prevSnapshot = null, currSnapshot = null;
+          for (let i = 0; i < snapshots.length - 1; i++) {
+            if (snapshots[i].total !== snapshots[i + 1].total) {
+              const currResponse = await fetch(`/api/snapshots/${snapshots[i].filename}`);
+              currSnapshot = await currResponse.json();
+              const prevResponse = await fetch(`/api/snapshots/${snapshots[i + 1].filename}`);
+              prevSnapshot = await prevResponse.json();
+              break;
+            }
+          }
+          
+          // If no differences found, use latest 2
+          if (!prevSnapshot || !currSnapshot) {
+            const prevResponse = await fetch(`/api/snapshots/${snapshots[1].filename}`);
+            prevSnapshot = await prevResponse.json();
+            const currResponse = await fetch(`/api/snapshots/${snapshots[0].filename}`);
+            currSnapshot = await currResponse.json();
+          }
           
           // Compare issue buckets to find specific file changes
           const prevFiles = new Map(); // file -> issue count
@@ -943,15 +957,15 @@
             
             <div class="card" style="background: var(--bg-card); padding: 16px;">
               <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 8px;">24h Change</div>
-              <div style="color: ${trend24h > 0 ? 'var(--status-success)' : trend24h < 0 ? 'var(--status-error)' : 'var(--text-muted)'}; font-size: 28px; font-weight: bold;">
-                ${trend24h > 0 ? '📉 -' + trend24h : trend24h < 0 ? '📈 +' + Math.abs(trend24h) : '➡️ 0'}
+              <div style="color: ${trend24h < 0 ? 'var(--status-success)' : trend24h > 0 ? 'var(--status-error)' : 'var(--text-muted)'}; font-size: 28px; font-weight: bold;">
+                ${trend24h < 0 ? '📉 ' + trend24h : trend24h > 0 ? '📈 +' + trend24h : '➡️ 0'}
               </div>
             </div>
             
             <div class="card" style="background: var(--bg-card); padding: 16px;">
               <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 8px;">7d Change</div>
-              <div style="color: ${trend7d > 0 ? 'var(--status-success)' : trend7d < 0 ? 'var(--status-error)' : 'var(--text-muted)'}; font-size: 28px; font-weight: bold;">
-                ${trend7d > 0 ? '📉 -' + trend7d : trend7d < 0 ? '📈 +' + Math.abs(trend7d) : '➡️ 0'}
+              <div style="color: ${trend7d < 0 ? 'var(--status-success)' : trend7d > 0 ? 'var(--status-error)' : 'var(--text-muted)'}; font-size: 28px; font-weight: bold;">
+                ${trend7d < 0 ? '📉 ' + trend7d : trend7d > 0 ? '📈 +' + trend7d : '➡️ 0'}
               </div>
             </div>
           </div>
