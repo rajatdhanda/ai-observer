@@ -102,8 +102,6 @@ class SidebarNavigator {
         ${this.renderImprovementIndicator()}
       </div>
       
-      ${this.renderImprovementLog()}
-      
       ${this.renderTableSection()}
       ${this.renderHookSection()}
       ${this.renderComponentSection()}

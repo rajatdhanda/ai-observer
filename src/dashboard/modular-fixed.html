@@ -294,6 +294,7 @@
     <button class="tab" onclick="switchTab('9rules')">9 Rules</button>
     <button class="tab" onclick="switchTab('files')">File Analysis</button>
     <button class="tab" onclick="switchTab('smart')">🤖 Smart Analysis</button>
+    <button class="tab" onclick="switchTab('log')">📊 Log</button>
   </div>
   
   <!-- Main Container -->
@@ -751,6 +752,12 @@
           loadSmartAnalysisView();
           break;
           
+        case 'log':
+          // Hide query inspector for log view
+          if (rightPanel) rightPanel.style.display = 'none';
+          loadLogView();
+          break;
+          
         default:
           break;
       }
@@ -768,6 +775,95 @@
     window.loadSmartAnalysisView = async function() {
       const smartView = new SmartAnalysisView('mainContent');
       await smartView.render();
+    };
+    
+    // Log View loader  
+    window.loadLogView = async function() {
+      const mainContent = document.getElementById('mainContent');
+      const history = JSON.parse(localStorage.getItem('ai-observer-history') || '[]');
+      const currentTotal = 157; // Will be updated from API
+      
+      // Calculate trends
+      const last24h = history.filter(e => new Date() - new Date(e.timestamp) < 86400000);
+      const last7d = history.filter(e => new Date() - new Date(e.timestamp) < 604800000);
+      
+      const trend24h = last24h.reduce((sum, e) => sum + (e.diff || 0), 0);
+      const trend7d = last7d.reduce((sum, e) => sum + (e.diff || 0), 0);
+      
+      mainContent.innerHTML = `
+        <div style="padding: 24px; background: var(--bg-dark); min-height: 100vh;">
+          <h2 style="color: var(--text-primary); margin-bottom: 24px;">📊 Issue Tracking Log</h2>
+          
+          <!-- Summary Cards -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
+            <div class="card" style="background: var(--bg-card); padding: 16px;">
+              <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 8px;">Current Total</div>
+              <div style="color: var(--text-primary); font-size: 28px; font-weight: bold;">${currentTotal}</div>
+            </div>
+            
+            <div class="card" style="background: var(--bg-card); padding: 16px;">
+              <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 8px;">24h Change</div>
+              <div style="color: ${trend24h > 0 ? 'var(--status-success)' : trend24h < 0 ? 'var(--status-error)' : 'var(--text-muted)'}; font-size: 28px; font-weight: bold;">
+                ${trend24h > 0 ? '📉 -' + trend24h : trend24h < 0 ? '📈 +' + Math.abs(trend24h) : '➡️ 0'}
+              </div>
+            </div>
+            
+            <div class="card" style="background: var(--bg-card); padding: 16px;">
+              <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 8px;">7d Change</div>
+              <div style="color: ${trend7d > 0 ? 'var(--status-success)' : trend7d < 0 ? 'var(--status-error)' : 'var(--text-muted)'}; font-size: 28px; font-weight: bold;">
+                ${trend7d > 0 ? '📉 -' + trend7d : trend7d < 0 ? '📈 +' + Math.abs(trend7d) : '➡️ 0'}
+              </div>
+            </div>
+          </div>
+          
+          <!-- History Table -->
+          <div class="card" style="background: var(--bg-card); padding: 24px;">
+            <h3 style="color: var(--text-primary); margin-bottom: 16px;">History (Last 20 Changes)</h3>
+            
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--border);">
+                    <th style="padding: 12px; text-align: left; color: var(--text-muted);">Time</th>
+                    <th style="padding: 12px; text-align: left; color: var(--text-muted);">Total</th>
+                    <th style="padding: 12px; text-align: left; color: var(--text-muted);">Change</th>
+                    <th style="padding: 12px; text-align: left; color: var(--text-muted);">Direction</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${history.slice().reverse().map(entry => `
+                    <tr style="border-bottom: 1px solid var(--border-dark);">
+                      <td style="padding: 12px; color: var(--text-secondary);">${entry.time || new Date(entry.timestamp).toLocaleString()}</td>
+                      <td style="padding: 12px; color: var(--text-primary); font-weight: bold;">${entry.total}</td>
+                      <td style="padding: 12px; color: ${entry.diff > 0 ? 'var(--status-success)' : entry.diff < 0 ? 'var(--status-error)' : 'var(--text-muted)'};">
+                        ${entry.diff > 0 ? '-' + entry.diff : entry.diff < 0 ? '+' + Math.abs(entry.diff) : '0'}
+                      </td>
+                      <td style="padding: 12px;">
+                        ${entry.diff > 0 ? '<span style="color: var(--status-success);">✅ Improved</span>' : 
+                          entry.diff < 0 ? '<span style="color: var(--status-error);">⚠️ Regressed</span>' : 
+                          '<span style="color: var(--text-muted);">➡️ No Change</span>'}
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+              ${history.length === 0 ? '<div style="padding: 32px; text-align: center; color: var(--text-muted);">No history recorded yet. Fix some issues to start tracking!</div>' : ''}
+            </div>
+            
+            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-dark);">
+              <button onclick="localStorage.removeItem('ai-observer-history'); loadLogView();" style="
+                background: var(--status-error);
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 12px;
+              ">Clear History</button>
+            </div>
+          </div>
+        </div>
+      `;
     };
   </script>
   
