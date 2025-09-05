@@ -184,4 +184,12 @@ class IssueFilterPanel {
 
 // Make it globally available
 window.IssueFilterPanel = IssueFilterPanel;
-window.issueFilter = new IssueFilterPanel();
+
+// Initialize when DOM is ready or immediately if already ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    window.issueFilter = new IssueFilterPanel();
+  });
+} else {
+  window.issueFilter = new IssueFilterPanel();
+}

@@ -86,6 +86,16 @@ class SmartAnalysisView {
     // Store analysis data globally for filter panel
     window.smartAnalysisData = analysis;
     
+    // Initialize filter panel if needed
+    if (!window.issueFilter && window.IssueFilterPanel) {
+      window.issueFilter = new window.IssueFilterPanel();
+    }
+    
+    // Generate filter panel HTML
+    const filterPanelHTML = window.issueFilter ? window.issueFilter.render(analysis) : '';
+    console.log('Filter panel available:', !!window.issueFilter);
+    console.log('Filter panel HTML length:', filterPanelHTML.length);
+    
     return `
       <div style="padding: 20px;">
         <!-- Live Status Bar -->
@@ -134,7 +144,7 @@ class SmartAnalysisView {
         </div>
 
         <!-- Issue Filter Panel -->
-        ${window.issueFilter ? window.issueFilter.render(analysis) : ''}
+        ${filterPanelHTML}
 
         <!-- Filter Bar -->
         ${hasBuckets ? `
