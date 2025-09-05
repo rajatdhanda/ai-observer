@@ -142,14 +142,20 @@ class Dashboard {
           res.writeHead(500, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: error.message }));
         }
-      } else if (req.url === '/api/run-smart-analysis') {
-        // Run the smart analyzer
+      } else if (req.url === '/api/run-smart-analysis' && (req.method === 'POST' || req.method === 'GET')) {
+        // Run the smart analyzer - accepts both GET and POST
         try {
+          console.log(`🔄 Running Smart Analysis for ${this.projectPath}...`);
           const { SmartIssueAnalyzer } = require('../analyzer/smart-issue-analyzer');
           const analyzer = new SmartIssueAnalyzer(this.projectPath);
-          await analyzer.analyze();
+          const result = await analyzer.analyze();
+          console.log(`✅ Smart Analysis complete - found ${result?.issue_buckets?.BLOCKERS?.length || 0} blockers, ${result?.issue_buckets?.STRUCTURAL?.length || 0} structural issues`);
           res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ success: true }));
+          res.end(JSON.stringify({ success: true, summary: {
+            blockers: result?.issue_buckets?.BLOCKERS?.length || 0,
+            structural: result?.issue_buckets?.STRUCTURAL?.length || 0,
+            compliance: result?.issue_buckets?.COMPLIANCE?.length || 0
+          }}));
         } catch (error: any) {
           this.logger.error('Smart analysis failed', error);
           res.writeHead(500, { 'Content-Type': 'application/json' });

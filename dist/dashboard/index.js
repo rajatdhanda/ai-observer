@@ -177,14 +177,20 @@ class Dashboard {
                     res.end(JSON.stringify({ error: error.message }));
                 }
             }
-            else if (req.url === '/api/run-smart-analysis') {
-                // Run the smart analyzer
+            else if (req.url === '/api/run-smart-analysis' && (req.method === 'POST' || req.method === 'GET')) {
+                // Run the smart analyzer - accepts both GET and POST
                 try {
+                    console.log(`🔄 Running Smart Analysis for ${this.projectPath}...`);
                     const { SmartIssueAnalyzer } = require('../analyzer/smart-issue-analyzer');
                     const analyzer = new SmartIssueAnalyzer(this.projectPath);
-                    await analyzer.analyze();
+                    const result = await analyzer.analyze();
+                    console.log(`✅ Smart Analysis complete - found ${result?.issue_buckets?.BLOCKERS?.length || 0} blockers, ${result?.issue_buckets?.STRUCTURAL?.length || 0} structural issues`);
                     res.writeHead(200, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ success: true }));
+                    res.end(JSON.stringify({ success: true, summary: {
+                            blockers: result?.issue_buckets?.BLOCKERS?.length || 0,
+                            structural: result?.issue_buckets?.STRUCTURAL?.length || 0,
+                            compliance: result?.issue_buckets?.COMPLIANCE?.length || 0
+                        } }));
                 }
                 catch (error) {
                     this.logger.error('Smart analysis failed', error);
@@ -549,6 +555,19 @@ Available projects: ${this.availableProjects.length}
         const errorDeduction = Math.min(errors * 20, 80);
         const warningDeduction = Math.min(warnings * 5, 20);
         return Math.max(0, 100 - errorDeduction - warningDeduction);
+    }
+    // New method to calculate health based on smart analysis buckets
+    calculateSmartHealthScore(blockers, structural, compliance) {
+        if (blockers === 0 && structural === 0 && compliance === 0)
+            return 100;
+        // Smart scoring based on issue type:
+        // - BLOCKERS: 30 points each (these will break the app!)
+        // - STRUCTURAL: 10 points each (architecture issues)
+        // - COMPLIANCE: 2 points each (code quality)
+        const blockerDeduction = Math.min(blockers * 30, 70); // Max 70% deduction
+        const structuralDeduction = Math.min(structural * 10, 20); // Max 20% deduction
+        const complianceDeduction = Math.min(compliance * 2, 10); // Max 10% deduction
+        return Math.max(0, 100 - blockerDeduction - structuralDeduction - complianceDeduction);
     }
     async runContractValidation() {
         console.log('📋 Running contract validation...');
