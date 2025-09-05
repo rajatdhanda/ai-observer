@@ -63,6 +63,39 @@ class ValidationService {
   getViolationsForEntity(entityName, validationData, entityType = 'any') {
     const violations = [];
     
+    // PRIORITY: Use Smart Analysis as the single source of truth if available
+    if (validationData?.smartAnalysis?.analysis?.issue_buckets) {
+      // Get violations from Smart Analysis buckets (the golden reference)
+      validationData.smartAnalysis.analysis.issue_buckets.forEach(bucket => {
+        bucket.issues?.forEach(issue => {
+          if (this.smartAnalysisMatchesEntity(issue, entityName, entityType)) {
+            violations.push({
+              type: 'smartAnalysis',
+              bucket: bucket.name,
+              bucketTitle: bucket.title,
+              priority: bucket.priority,
+              severity: this.mapSmartAnalysisSeverity(bucket.name, issue.severity),
+              message: issue.message,
+              fix: issue.fix,
+              rule: issue.rule,
+              category: issue.category,
+              location: issue.file,
+              file: issue.file,
+              line: issue.line || 0,
+              formattedLocation: this.formatFileLocation(issue.file, issue.line),
+              color: bucket.color
+            });
+          }
+        });
+      });
+      
+      // Return Smart Analysis violations if we found any
+      if (violations.length > 0) {
+        return violations.sort((a, b) => a.priority - b.priority);
+      }
+    }
+
+    // FALLBACK: Use old validation systems only if Smart Analysis is not available
     if (validationData?.contracts?.violations) {
       validationData.contracts.violations.forEach(v => {
         if (this.violationMatchesEntity(v, entityName, entityType)) {
@@ -371,6 +404,68 @@ class ValidationService {
     }
     
     return name;
+  }
+
+  /**
+   * Match entity using Smart Analysis file patterns (more flexible)
+   */
+  smartAnalysisMatchesEntity(issue, entityName, entityType) {
+    if (!issue.file) return false;
+    
+    const fileName = issue.file.toLowerCase();
+    const entityLower = entityName.toLowerCase();
+    
+    // Match by file patterns based on entity type
+    switch (entityType) {
+      case 'component':
+        return (
+          fileName.includes(`/${entityLower}/`) ||
+          fileName.includes(`${entityLower}.tsx`) ||
+          fileName.includes(`${entityLower}.ts`) ||
+          fileName.includes(`${entityLower}.jsx`) ||
+          fileName.includes(`${entityLower}.js`) ||
+          fileName.endsWith(`/${entityLower}/${entityLower}.tsx`) ||
+          fileName.endsWith(`/${entityLower}/${entityLower}.ts`)
+        );
+      
+      case 'hook':
+        return (
+          fileName.includes(`/hooks/${entityLower}.ts`) ||
+          fileName.includes(`/hooks/${entityLower}.js`) ||
+          fileName.includes(`${entityLower}.ts`) ||
+          fileName.includes(`${entityLower}.js`)
+        );
+      
+      case 'page':
+        if (entityName.includes(' > ')) {
+          const pageName = entityName.split(' > ')[1]?.toLowerCase();
+          return fileName.includes(`/${pageName}/page.tsx`) || fileName.includes(`/${pageName}/page.ts`);
+        } else if (entityLower === 'home') {
+          return fileName.includes('/page.tsx') || fileName.includes('/home/page.tsx');
+        } else {
+          return fileName.includes(`/${entityLower}/page.tsx`) || fileName.includes(`/${entityLower}/page.ts`);
+        }
+      
+      default:
+        return fileName.includes(entityLower);
+    }
+  }
+
+  /**
+   * Map Smart Analysis severity to standard severity levels
+   */
+  mapSmartAnalysisSeverity(bucketName, issueSeverity) {
+    // Priority mapping based on bucket
+    switch (bucketName) {
+      case 'BLOCKERS':
+        return 'critical';  // Always critical for blockers
+      case 'STRUCTURAL':
+        return issueSeverity === 'critical' ? 'critical' : 'warning';  // Can be critical or warning
+      case 'COMPLIANCE':
+        return issueSeverity === 'critical' ? 'warning' : 'info';     // Compliance issues are warning/info
+      default:
+        return issueSeverity || 'info';
+    }
   }
 }
 

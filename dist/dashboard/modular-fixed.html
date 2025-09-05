@@ -405,22 +405,24 @@
         tableViewer = new TableDetailsViewer('mainContent');
         sidebarNav = new SidebarNavigator('sidebarContent');
         
-        // Load data
+        // Load data - add smart analysis as the golden reference
         const responses = await Promise.all([
           fetch('/api/project-info'),
           fetch('/api/table-mapping'),
           fetch('/api/architecture-data'),
           fetch('/api/contracts'),
           fetch('/api/nine-rules'),
-          fetch('/api/boundaries')
+          fetch('/api/boundaries'),
+          fetch('/api/smart-analysis')  // Add smart analysis
         ]);
         
-        const [project, tables, architecture, contracts, nineRules, boundaries] = await Promise.all(
+        const [project, tables, architecture, contracts, nineRules, boundaries, smartAnalysis] = await Promise.all(
           responses.map(r => r.json())
         );
         
-        // Update state - keep old structure for compatibility
+        // Update state - add smart analysis as the golden reference
         state.validationData = { 
+          smartAnalysis: smartAnalysis,  // PRIORITY: Smart analysis as single source of truth
           contracts: contracts,  // Keep full contracts object for existing code
           contractViolations: contracts.violations,  // Also expose violations directly
           nineRules,
