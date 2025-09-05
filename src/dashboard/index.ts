@@ -289,6 +289,102 @@ class Dashboard {
         const designResults = this.runDesignSystemValidation();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(designResults));
+      } else if (req.url === '/api/snapshots' && req.method === 'POST') {
+        // Save a new snapshot to .observer/snapshots/
+        let body = '';
+        req.on('data', (chunk) => {
+          body += chunk.toString();
+        });
+        req.on('end', () => {
+          try {
+            const snapshot = JSON.parse(body);
+            const snapshotsDir = path.join(this.projectPath, '.observer', 'snapshots');
+            
+            // Ensure directory exists
+            if (!fs.existsSync(snapshotsDir)) {
+              fs.mkdirSync(snapshotsDir, { recursive: true });
+            }
+            
+            // Generate filename with timestamp
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const filename = `snapshot-${timestamp}.json`;
+            const filePath = path.join(snapshotsDir, filename);
+            
+            // Save snapshot
+            fs.writeFileSync(filePath, JSON.stringify(snapshot, null, 2));
+            
+            // Cleanup old snapshots (keep last 10)
+            const files = fs.readdirSync(snapshotsDir)
+              .filter(f => f.startsWith('snapshot-') && f.endsWith('.json'))
+              .map(f => ({ name: f, path: path.join(snapshotsDir, f), stats: fs.statSync(path.join(snapshotsDir, f)) }))
+              .sort((a, b) => b.stats.mtime.getTime() - a.stats.mtime.getTime());
+            
+            // Remove old files (keep newest 10)
+            files.slice(10).forEach(file => {
+              fs.unlinkSync(file.path);
+            });
+            
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, filename }));
+          } catch (error: any) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: error.message }));
+          }
+        });
+      } else if (req.url === '/api/snapshots' && req.method === 'GET') {
+        // Get list of snapshots
+        try {
+          const snapshotsDir = path.join(this.projectPath, '.observer', 'snapshots');
+          
+          if (!fs.existsSync(snapshotsDir)) {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ snapshots: [] }));
+            return;
+          }
+          
+          const files = fs.readdirSync(snapshotsDir)
+            .filter(f => f.startsWith('snapshot-') && f.endsWith('.json'))
+            .map(f => {
+              const filePath = path.join(snapshotsDir, f);
+              const stats = fs.statSync(filePath);
+              const content = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+              return {
+                filename: f,
+                timestamp: content.timestamp,
+                total: content.total,
+                blockers: content.blockers,
+                structural: content.structural,
+                compliance: content.compliance,
+                diff: content.diff || 0
+              };
+            })
+            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+          
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ snapshots: files }));
+        } catch (error: any) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      } else if (req.url?.startsWith('/api/snapshots/') && req.method === 'GET') {
+        // Get specific snapshot with full data for comparison
+        try {
+          const filename = req.url.split('/').pop();
+          const snapshotsDir = path.join(this.projectPath, '.observer', 'snapshots');
+          const filePath = path.join(snapshotsDir, filename || '');
+          
+          if (fs.existsSync(filePath)) {
+            const content = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(content));
+          } else {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Snapshot not found' }));
+          }
+        } catch (error: any) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: error.message }));
+        }
       } else if (req.url === '/modular-fixed') {
         const modularFixedPath = path.join(__dirname, 'modular-fixed.html');
         const html = fs.readFileSync(modularFixedPath, 'utf-8');

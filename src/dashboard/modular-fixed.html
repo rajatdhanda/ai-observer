@@ -780,25 +780,165 @@
     // Log View loader  
     window.loadLogView = async function() {
       const mainContent = document.getElementById('mainContent');
-      const history = JSON.parse(localStorage.getItem('ai-observer-history') || '[]');
-      const currentTotal = 157; // Will be updated from API
+      
+      // Get current Smart Analysis data
+      let currentData = null;
+      let currentTotal = 0;
+      let blockers = 0, structural = 0, compliance = 0;
+      
+      try {
+        const response = await fetch('/api/smart-analysis');
+        currentData = await response.json();
+        
+        if (currentData && currentData.analysis && currentData.analysis.issue_buckets) {
+          const buckets = currentData.analysis.issue_buckets;
+          const blockersBucket = buckets.find(b => b.name === 'BLOCKERS') || { count: 0 };
+          const structuralBucket = buckets.find(b => b.name === 'STRUCTURAL') || { count: 0 };
+          const complianceBucket = buckets.find(b => b.name === 'COMPLIANCE') || { count: 0 };
+          
+          blockers = blockersBucket.count;
+          structural = structuralBucket.count;
+          compliance = complianceBucket.count;
+          currentTotal = blockers + structural + compliance;
+        }
+      } catch (error) {
+        console.log('Failed to fetch current analysis:', error);
+      }
+      
+      // Get existing snapshots from server
+      let snapshots = [];
+      try {
+        const snapshotsResponse = await fetch('/api/snapshots');
+        const snapshotsData = await snapshotsResponse.json();
+        snapshots = snapshotsData.snapshots || [];
+      } catch (error) {
+        console.log('Failed to fetch snapshots:', error);
+      }
+      
+      const lastSnapshot = snapshots[0]; // snapshots are sorted newest first
+      const now = new Date();
+      
+      // Add new snapshot if data changed or if it's been more than 10 minutes
+      const shouldAddSnapshot = !lastSnapshot || 
+        lastSnapshot.total !== currentTotal || 
+        (new Date() - new Date(lastSnapshot.timestamp)) > 600000;
+      
+      if (shouldAddSnapshot && currentData) {
+        const newSnapshot = {
+          timestamp: now.toISOString(),
+          total: currentTotal,
+          blockers,
+          structural,
+          compliance,
+          data: currentData,
+          diff: lastSnapshot ? currentTotal - lastSnapshot.total : 0
+        };
+        
+        // Save new snapshot to server
+        try {
+          await fetch('/api/snapshots', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newSnapshot)
+          });
+          
+          // Refresh snapshots list
+          const updatedResponse = await fetch('/api/snapshots');
+          const updatedData = await updatedResponse.json();
+          snapshots = updatedData.snapshots || [];
+        } catch (error) {
+          console.log('Failed to save snapshot:', error);
+        }
+      }
+      
+      // Calculate file-level changes from last two snapshots
+      let fileChanges = [];
+      if (snapshots.length >= 2) {
+        try {
+          // Get full data for last two snapshots for comparison
+          const prevResponse = await fetch(`/api/snapshots/${snapshots[1].filename}`);
+          const prevSnapshot = await prevResponse.json();
+          const currResponse = await fetch(`/api/snapshots/${snapshots[0].filename}`);
+          const currSnapshot = await currResponse.json();
+          
+          // Compare issue buckets to find specific file changes
+          const prevFiles = new Map(); // file -> issue count
+          const currFiles = new Map(); // file -> issue count
+          
+          prevSnapshot.data?.analysis?.issue_buckets?.forEach(bucket => {
+            bucket.issues?.forEach(issue => {
+              prevFiles.set(issue.file, (prevFiles.get(issue.file) || 0) + 1);
+            });
+          });
+          
+          currSnapshot.data?.analysis?.issue_buckets?.forEach(bucket => {
+            bucket.issues?.forEach(issue => {
+              currFiles.set(issue.file, (currFiles.get(issue.file) || 0) + 1);
+            });
+          });
+          
+          // Find files with changes
+          const allFiles = new Set([...prevFiles.keys(), ...currFiles.keys()]);
+          const deltaChanges = [];
+          
+          for (const file of allFiles) {
+            const prevCount = prevFiles.get(file) || 0;
+            const currCount = currFiles.get(file) || 0;
+            const diff = currCount - prevCount;
+            
+            if (diff > 0) {
+              deltaChanges.push({ file, type: 'worse', action: `+${diff} errors`, prevCount, currCount });
+            } else if (diff < 0) {
+              deltaChanges.push({ file, type: 'better', action: `${diff} errors`, prevCount, currCount });
+            } else if (prevCount === 0 && currCount > 0) {
+              deltaChanges.push({ file, type: 'new', action: '⚠️ New file', prevCount, currCount });
+            } else if (prevCount > 0 && currCount === 0) {
+              deltaChanges.push({ file, type: 'fixed', action: '✅ Fixed', prevCount, currCount });
+            }
+          }
+          
+          fileChanges = deltaChanges;
+        } catch (error) {
+          console.log('Failed to calculate file changes:', error);
+        }
+      }
       
       // Calculate trends
-      const last24h = history.filter(e => new Date() - new Date(e.timestamp) < 86400000);
-      const last7d = history.filter(e => new Date() - new Date(e.timestamp) < 604800000);
+      const last24h = snapshots.filter(e => new Date() - new Date(e.timestamp) < 86400000);
+      const last7d = snapshots.filter(e => new Date() - new Date(e.timestamp) < 604800000);
       
-      const trend24h = last24h.reduce((sum, e) => sum + (e.diff || 0), 0);
-      const trend7d = last7d.reduce((sum, e) => sum + (e.diff || 0), 0);
+      const trend24h = last24h.length > 1 ? last24h[0].total - last24h[last24h.length - 1].total : 0;
+      const trend7d = last7d.length > 1 ? last7d[0].total - last7d[last7d.length - 1].total : 0;
+      
+      // Calculate top-level summary for improved/regressed files
+      const improvedFiles = fileChanges.filter(c => c.type === 'better' || c.type === 'fixed').length;
+      const regressedFiles = fileChanges.filter(c => c.type === 'worse' || c.type === 'new').length;
+      const direction = trend24h > 0 ? 'improving' : trend24h < 0 ? 'regressing' : 'stable';
       
       mainContent.innerHTML = `
         <div style="padding: 24px; background: var(--bg-dark); min-height: 100vh;">
           <h2 style="color: var(--text-primary); margin-bottom: 24px;">📊 Issue Tracking Log</h2>
+          
+          <!-- Top Level Summary -->
+          ${fileChanges.length > 0 ? `
+            <div class="card" style="background: var(--bg-card); padding: 16px; margin-bottom: 24px; border-left: 4px solid ${direction === 'improving' ? '#10b981' : direction === 'regressing' ? '#ef4444' : '#64748b'};">
+              <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="font-size: 18px; color: var(--text-primary); font-weight: bold;">
+                  ${direction === 'improving' ? '📈 Progress Detected' : direction === 'regressing' ? '⚠️ Regression Detected' : '➡️ Stable'}
+                </div>
+                <div style="color: var(--text-secondary);">
+                  ${improvedFiles} files improved • ${regressedFiles} files regressed
+                </div>
+              </div>
+            </div>
+          ` : ''}
           
           <!-- Summary Cards -->
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
             <div class="card" style="background: var(--bg-card); padding: 16px;">
               <div style="color: var(--text-muted); font-size: 12px; margin-bottom: 8px;">Current Total</div>
               <div style="color: var(--text-primary); font-size: 28px; font-weight: bold;">${currentTotal}</div>
+              <div style="color: var(--text-secondary); font-size: 11px;">${blockers}B ${structural}S ${compliance}C</div>
             </div>
             
             <div class="card" style="background: var(--bg-card); padding: 16px;">
@@ -818,7 +958,58 @@
           
           <!-- History Table -->
           <div class="card" style="background: var(--bg-card); padding: 24px;">
-            <h3 style="color: var(--text-primary); margin-bottom: 16px;">History (Last 20 Changes)</h3>
+            ${fileChanges.length > 0 ? `
+              <div style="background: var(--bg-dark); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+                <h4 style="color: var(--text-primary); margin-bottom: 12px;">📊 Latest Changes (vs previous snapshot)</h4>
+                <div style="display: grid; gap: 8px;">
+                  ${fileChanges.filter(c => c.type === 'worse').length > 0 ? `
+                    <div style="margin-bottom: 12px;">
+                      <div style="color: #ef4444; font-weight: bold; margin-bottom: 8px;">FILES WITH MORE ERRORS:</div>
+                      ${fileChanges.filter(c => c.type === 'worse').map(change => `
+                        <div style="display: flex; align-items: center; gap: 12px; padding: 8px; background: rgba(239,68,68,0.1); border-radius: 4px; margin-bottom: 4px;">
+                          <span style="color: #ef4444;">+ ${change.file}: ${change.action} (was ${change.prevCount}, now ${change.currCount})</span>
+                        </div>
+                      `).join('')}
+                    </div>
+                  ` : ''}
+                  
+                  ${fileChanges.filter(c => c.type === 'better').length > 0 ? `
+                    <div style="margin-bottom: 12px;">
+                      <div style="color: #10b981; font-weight: bold; margin-bottom: 8px;">FILES WITH FEWER ERRORS:</div>
+                      ${fileChanges.filter(c => c.type === 'better').map(change => `
+                        <div style="display: flex; align-items: center; gap: 12px; padding: 8px; background: rgba(16,185,129,0.1); border-radius: 4px; margin-bottom: 4px;">
+                          <span style="color: #10b981;">- ${change.file}: ${change.action} (was ${change.prevCount}, now ${change.currCount})</span>
+                        </div>
+                      `).join('')}
+                    </div>
+                  ` : ''}
+                  
+                  ${fileChanges.filter(c => c.type === 'new').length > 0 ? `
+                    <div style="margin-bottom: 12px;">
+                      <div style="color: #f59e0b; font-weight: bold; margin-bottom: 8px;">NEW ERROR FILES:</div>
+                      ${fileChanges.filter(c => c.type === 'new').map(change => `
+                        <div style="display: flex; align-items: center; gap: 12px; padding: 8px; background: rgba(245,158,11,0.1); border-radius: 4px; margin-bottom: 4px;">
+                          <span style="color: #f59e0b;">${change.action} ${change.file}: ${change.currCount} new errors</span>
+                        </div>
+                      `).join('')}
+                    </div>
+                  ` : ''}
+                  
+                  ${fileChanges.filter(c => c.type === 'fixed').length > 0 ? `
+                    <div style="margin-bottom: 12px;">
+                      <div style="color: #10b981; font-weight: bold; margin-bottom: 8px;">FIXED FILES:</div>
+                      ${fileChanges.filter(c => c.type === 'fixed').map(change => `
+                        <div style="display: flex; align-items: center; gap: 12px; padding: 8px; background: rgba(16,185,129,0.1); border-radius: 4px; margin-bottom: 4px;">
+                          <span style="color: #10b981;">${change.action} ${change.file}: 0 errors (was ${change.prevCount})</span>
+                        </div>
+                      `).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            ` : ''}
+            
+            <h3 style="color: var(--text-primary); margin-bottom: 16px;">History (Last 10 Snapshots)</h3>
             
             <div style="overflow-x: auto;">
               <table style="width: 100%; border-collapse: collapse;">
@@ -826,32 +1017,34 @@
                   <tr style="border-bottom: 2px solid var(--border);">
                     <th style="padding: 12px; text-align: left; color: var(--text-muted);">Time</th>
                     <th style="padding: 12px; text-align: left; color: var(--text-muted);">Total</th>
+                    <th style="padding: 12px; text-align: left; color: var(--text-muted);">B/S/C</th>
                     <th style="padding: 12px; text-align: left; color: var(--text-muted);">Change</th>
                     <th style="padding: 12px; text-align: left; color: var(--text-muted);">Direction</th>
                   </tr>
                 </thead>
                 <tbody>
-                  ${history.slice().reverse().map(entry => `
+                  ${snapshots.slice().reverse().map(entry => `
                     <tr style="border-bottom: 1px solid var(--border-dark);">
-                      <td style="padding: 12px; color: var(--text-secondary);">${entry.time || new Date(entry.timestamp).toLocaleString()}</td>
+                      <td style="padding: 12px; color: var(--text-secondary); font-size: 11px;">${new Date(entry.timestamp).toLocaleString()}</td>
                       <td style="padding: 12px; color: var(--text-primary); font-weight: bold;">${entry.total}</td>
-                      <td style="padding: 12px; color: ${entry.diff > 0 ? 'var(--status-success)' : entry.diff < 0 ? 'var(--status-error)' : 'var(--text-muted)'};">
-                        ${entry.diff > 0 ? '-' + entry.diff : entry.diff < 0 ? '+' + Math.abs(entry.diff) : '0'}
+                      <td style="padding: 12px; color: var(--text-secondary); font-size: 11px;">${entry.blockers}B ${entry.structural}S ${entry.compliance}C</td>
+                      <td style="padding: 12px; color: ${entry.diff > 0 ? 'var(--status-error)' : entry.diff < 0 ? 'var(--status-success)' : 'var(--text-muted)'};">
+                        ${entry.diff > 0 ? '+' + entry.diff : entry.diff < 0 ? entry.diff : '0'}
                       </td>
                       <td style="padding: 12px;">
-                        ${entry.diff > 0 ? '<span style="color: var(--status-success);">✅ Improved</span>' : 
-                          entry.diff < 0 ? '<span style="color: var(--status-error);">⚠️ Regressed</span>' : 
+                        ${entry.diff > 0 ? '<span style="color: var(--status-error);">⚠️ Regressed</span>' : 
+                          entry.diff < 0 ? '<span style="color: var(--status-success);">✅ Improved</span>' : 
                           '<span style="color: var(--text-muted);">➡️ No Change</span>'}
                       </td>
                     </tr>
                   `).join('')}
                 </tbody>
               </table>
-              ${history.length === 0 ? '<div style="padding: 32px; text-align: center; color: var(--text-muted);">No history recorded yet. Fix some issues to start tracking!</div>' : ''}
+              ${snapshots.length === 0 ? '<div style="padding: 32px; text-align: center; color: var(--text-muted);">No snapshots recorded yet. Analysis data will be tracked automatically!</div>' : ''}
             </div>
             
             <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-dark);">
-              <button onclick="localStorage.removeItem('ai-observer-history'); loadLogView();" style="
+              <button onclick="localStorage.removeItem('ai-observer-snapshots'); loadLogView();" style="
                 background: var(--status-error);
                 color: white;
                 border: none;

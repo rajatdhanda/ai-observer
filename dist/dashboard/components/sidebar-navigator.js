@@ -17,6 +17,7 @@ class SidebarNavigator {
     this.selectedItem = null;
     this.selectedType = null;
     this.validationData = null;
+    this.smartAnalysisData = null;
   }
   
   async render(data) {
@@ -63,9 +64,6 @@ class SidebarNavigator {
   }
   
   renderSidebar() {
-    // Calculate grand totals for validation
-    const grandTotal = this.calculateGrandTotal();
-    
     this.container.innerHTML = `
       <div style="padding: 16px;">
         <input 
@@ -81,25 +79,11 @@ class SidebarNavigator {
             color: #e2e8f0;
             font-size: 14px;
             box-sizing: border-box;
-            margin-bottom: 16px;
           "
         >
-        
-        <!-- Grand Total Validation -->
-        <div style="
-          background: #1a1a1a;
-          padding: 12px;
-          border-radius: 8px;
-          border: 1px solid #333;
-          margin-bottom: 16px;
-          font-size: 11px;
-          font-family: monospace;
-        ">
-          <div style="color: #94a3b8; margin-bottom: 4px;">📊 TOTAL ISSUES</div>
-          <div style="color: #e2e8f0;">${grandTotal.blockers}B ${grandTotal.structural}S ${grandTotal.compliance}C = ${grandTotal.total} issues</div>
-        </div>
       </div>
       
+      ${this.renderSmartAnalysisTotal()}
       ${this.renderTableSection()}
       ${this.renderHookSection()}
       ${this.renderComponentSection()}
@@ -108,8 +92,50 @@ class SidebarNavigator {
     `;
   }
   
+  renderSmartAnalysisTotal() {
+    const total = this.getSmartAnalysisTotal();
+    if (total.blockers === 0 && total.structural === 0 && total.compliance === 0) {
+      return ''; // Don't show if no data
+    }
+    
+    return `
+      <div id="smartAnalysisTotal" style="
+        background: #1a1a1a;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        margin: 0 16px 16px 16px;
+      ">
+        <div style="color: #94a3b8; margin-bottom: 4px;">📊 SMART ANALYSIS TOTAL</div>
+        <div style="display: flex; gap: 8px; font-size: 12px;">
+          <span style="color: #ef4444;">${total.blockers}B</span>
+          <span style="color: #f59e0b;">${total.structural}S</span>
+          <span style="color: #3b82f6;">${total.compliance}C</span>
+          <span style="color: #64748b;">= ${total.blockers + total.structural + total.compliance} total</span>
+        </div>
+      </div>
+    `;
+  }
+  
   renderTableSection() {
-    const tables = Object.entries(this.data.tables);
+    const tables = Object.entries(this.data.tables)
+      .sort(([nameA, dataA], [nameB, dataB]) => {
+        const healthA = this.getEntityHealth(nameA, 'table');
+        const healthB = this.getEntityHealth(nameB, 'table');
+        
+        // Sort by severity priority: Blockers > Structural > Compliance > Total
+        if (healthB.blockers !== healthA.blockers) {
+          return healthB.blockers - healthA.blockers;
+        }
+        if (healthB.structural !== healthA.structural) {
+          return healthB.structural - healthA.structural;
+        }
+        if (healthB.compliance !== healthA.compliance) {
+          return healthB.compliance - healthA.compliance;
+        }
+        return (healthB.blockers + healthB.structural + healthB.compliance) - 
+               (healthA.blockers + healthA.structural + healthA.compliance);
+      });
     const count = tables.length;
     
     return `
@@ -127,8 +153,7 @@ class SidebarNavigator {
   }
   
   renderTableItem(name, data) {
-    const score = this.calculateTableHealth(data);
-    const healthColor = score >= 80 ? '#10b981' : score >= 40 ? '#f59e0b' : '#ef4444';
+    const health = this.getEntityHealth(name, 'table');
     
     return `
       <div 
@@ -146,18 +171,41 @@ class SidebarNavigator {
         "
         onmouseover="this.style.background='#252525'"
         onmouseout="this.style.background='transparent'"
+        title="${health.total > 0 ? `${health.blockers}B ${health.structural}S ${health.compliance}C` : 'No issues'}"
       >
         <span style="font-size: 16px;">📊</span>
         <span style="flex: 1; color: #e2e8f0; font-size: 13px;">${name}</span>
-        <span style="font-size: 11px; color: #64748b; margin-right: 4px;">${score}%</span>
-        <span style="width: 8px; height: 8px; border-radius: 50%; background: ${healthColor};"></span>
+        ${health.total > 0 ? 
+          `<span style="font-size: 11px; color: #64748b; margin-right: 4px;">${health.blockers}B ${health.structural}S ${health.compliance}C</span>` : 
+          ''
+        }
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: ${health.color};"></span>
       </div>
     `;
   }
   
   renderHookSection() {
-    const count = this.data.hooks.length;
-    const summary = this.calculateSectionSummary(this.data.hooks, 'hook');
+    const sortedHooks = [...this.data.hooks]
+      .sort((hookA, hookB) => {
+        const nameA = this.extractHookName(hookA);
+        const nameB = this.extractHookName(hookB);
+        const healthA = this.getEntityHealth(nameA, 'hook');
+        const healthB = this.getEntityHealth(nameB, 'hook');
+        
+        // Sort by severity priority: Blockers > Structural > Compliance > Total
+        if (healthB.blockers !== healthA.blockers) {
+          return healthB.blockers - healthA.blockers;
+        }
+        if (healthB.structural !== healthA.structural) {
+          return healthB.structural - healthA.structural;
+        }
+        if (healthB.compliance !== healthA.compliance) {
+          return healthB.compliance - healthA.compliance;
+        }
+        return (healthB.blockers + healthB.structural + healthB.compliance) - 
+               (healthA.blockers + healthA.structural + healthA.compliance);
+      });
+    const count = sortedHooks.length;
     
     return `
       <div class="entity-section" style="border-bottom: 1px solid #252525;">
@@ -167,20 +215,35 @@ class SidebarNavigator {
         </div>
         <div id="hooksList">
           ${count === 0 ? this.renderEmptyState('hooks') : 
-            this.getSortedEntities(this.data.hooks, 'hook')
-              .slice(0, 15)
-              .map(hook => this.renderSimpleItem(this.extractHookName(hook), 'hook', '🔗'))
-              .join('')}
+            sortedHooks.slice(0, 15).map(hook => 
+              this.renderSimpleItem(this.extractHookName(hook), 'hook', '🔗')
+            ).join('')}
           ${count > 15 ? this.renderMoreIndicator(count - 15, 'hooks') : ''}
         </div>
-        ${this.renderSectionSummary(summary, count)}
       </div>
     `;
   }
   
   renderComponentSection() {
-    const count = this.data.components.length;
-    const summary = this.calculateSectionSummary(this.data.components, 'component');
+    const sortedComponents = [...this.data.components]
+      .sort((compA, compB) => {
+        const healthA = this.getEntityHealth(compA, 'component');
+        const healthB = this.getEntityHealth(compB, 'component');
+        
+        // Sort by severity priority: Blockers > Structural > Compliance > Total
+        if (healthB.blockers !== healthA.blockers) {
+          return healthB.blockers - healthA.blockers;
+        }
+        if (healthB.structural !== healthA.structural) {
+          return healthB.structural - healthA.structural;
+        }
+        if (healthB.compliance !== healthA.compliance) {
+          return healthB.compliance - healthA.compliance;
+        }
+        return (healthB.blockers + healthB.structural + healthB.compliance) - 
+               (healthA.blockers + healthA.structural + healthA.compliance);
+      });
+    const count = sortedComponents.length;
     
     return `
       <div class="entity-section" style="border-bottom: 1px solid #252525;">
@@ -190,20 +253,37 @@ class SidebarNavigator {
         </div>
         <div id="componentsList">
           ${count === 0 ? this.renderEmptyState('components') : 
-            this.getSortedEntities(this.data.components, 'component')
-              .slice(0, 15)
-              .map(comp => this.renderSimpleItem(comp, 'component', '🧩'))
-              .join('')}
+            sortedComponents.slice(0, 15).map(comp => 
+              this.renderSimpleItem(comp, 'component', '🧩')
+            ).join('')}
           ${count > 15 ? this.renderMoreIndicator(count - 15, 'components') : ''}
         </div>
-        ${this.renderSectionSummary(summary, count)}
       </div>
     `;
   }
   
   renderPageSection() {
-    const count = this.data.pages.length;
-    const summary = this.calculateSectionSummary(this.data.pages, 'page');
+    const sortedPages = [...this.data.pages]
+      .sort((pageA, pageB) => {
+        const nameA = this.formatPageName(pageA);
+        const nameB = this.formatPageName(pageB);
+        const healthA = this.getEntityHealth(nameA, 'page');
+        const healthB = this.getEntityHealth(nameB, 'page');
+        
+        // Sort by severity priority: Blockers > Structural > Compliance > Total
+        if (healthB.blockers !== healthA.blockers) {
+          return healthB.blockers - healthA.blockers;
+        }
+        if (healthB.structural !== healthA.structural) {
+          return healthB.structural - healthA.structural;
+        }
+        if (healthB.compliance !== healthA.compliance) {
+          return healthB.compliance - healthA.compliance;
+        }
+        return (healthB.blockers + healthB.structural + healthB.compliance) - 
+               (healthA.blockers + healthA.structural + healthA.compliance);
+      });
+    const count = sortedPages.length;
     
     return `
       <div class="entity-section" style="border-bottom: 1px solid #252525;">
@@ -213,13 +293,12 @@ class SidebarNavigator {
         </div>
         <div id="pagesList">
           ${count === 0 ? this.renderEmptyState('pages') : 
-            this.data.pages.slice(0, 15).map(page => {
+            sortedPages.slice(0, 15).map(page => {
               const displayName = this.formatPageName(page);
               return this.renderSimpleItem(displayName, 'page', '📄', page);
             }).join('')}
           ${count > 15 ? this.renderMoreIndicator(count - 15, 'pages') : ''}
         </div>
-        ${this.renderSectionSummary(summary, count)}
       </div>
     `;
   }
@@ -250,18 +329,11 @@ class SidebarNavigator {
 
   async updateValidationCounts() {
     try {
-      // Fetch both validation data and smart analysis data
-      const [validationResponse, smartAnalysisResponse] = await Promise.all([
-        fetch('/api/map-validation'),
-        fetch('/api/smart-analysis')
-      ]);
+      const response = await fetch('/api/map-validation');
+      const data = await response.json();
       
-      const validationData = await validationResponse.json();
-      const smartAnalysisData = await smartAnalysisResponse.json();
-      
-      // Update validation counts in UI
-      if (validationData && validationData.summary && validationData.summary.bySeverity) {
-        const counts = validationData.summary.bySeverity;
+      if (data && data.summary && data.summary.bySeverity) {
+        const counts = data.summary.bySeverity;
         
         const criticalEl = document.getElementById('criticalCount');
         const warningEl = document.getElementById('warningCount');  
@@ -272,124 +344,117 @@ class SidebarNavigator {
         if (infoEl) infoEl.textContent = counts.info || 0;
       }
       
-      // Store both validation data and smart analysis for entity health mapping
-      this.validationData = validationData;
-      this.smartAnalysisData = smartAnalysisData;
+      // Store validation data for entity health mapping
+      this.validationData = data;
+      
+      // Also fetch Smart Analysis data
+      try {
+        const smartResponse = await fetch('/api/smart-analysis');
+        const smartData = await smartResponse.json();
+        this.smartAnalysisData = smartData;
+        
+        // Re-render only the Smart Analysis Total section if it exists
+        const totalElement = document.querySelector('#smartAnalysisTotal');
+        if (totalElement) {
+          totalElement.outerHTML = this.renderSmartAnalysisTotal();
+        }
+      } catch (smartError) {
+        console.error('Failed to fetch smart analysis data:', smartError);
+      }
     } catch (error) {
       console.error('Failed to fetch validation counts:', error);
     }
   }
 
-  // Calculate entity health based on smart analysis buckets (BLOCKERS/STRUCTURAL/COMPLIANCE)
+  // Calculate entity health based on Smart Analysis data
   getEntityHealth(entityName, entityType) {
-    // Default to healthy if no smart analysis data
     if (!this.smartAnalysisData || !this.smartAnalysisData.analysis || !this.smartAnalysisData.analysis.issue_buckets) {
-      return { score: 100, color: '#10b981', severity: 'healthy' };
+      return { 
+        score: 100, 
+        color: '#10b981', 
+        severity: 'healthy',
+        blockers: 0,
+        structural: 0,
+        compliance: 0
+      };
     }
 
-    let blockerCount = 0;
-    let structuralCount = 0;
-    let complianceCount = 0;
+    let blockers = 0;
+    let structural = 0;
+    let compliance = 0;
     
     // Map entity names to file patterns for matching
     let filePatterns = [];
     switch (entityType) {
+      case 'table':
+        // For tables, match by table name in file paths or content
+        filePatterns = [entityName.toLowerCase()];
+        break;
       case 'hook':
         filePatterns = [`src/hooks/${entityName}.ts`, `src/hooks/${entityName}.js`];
         break;
       case 'component':
-        // Check multiple possible component locations
-        filePatterns = [
-          `src/components/core/${entityName}.tsx`, 
-          `src/components/core/${entityName}.ts`, 
-          `src/components/core/${entityName}.js`,
-          `src/components/${entityName}.tsx`,
-          `src/components/${entityName}.ts`, 
-          `app/ui-components/${entityName}/${entityName}.tsx`,
-          `app/ui-components/${entityName}/${entityName}.ts`
-        ];
+        filePatterns = [entityName.toLowerCase()];
         break;
       case 'page':
-        // Handle different page path formats
-        if (entityName.includes(' > ')) {
-          const pageName = entityName.split(' > ')[1] || entityName;
-          filePatterns = [`app/(main)/${pageName}/page.tsx`, `app/${pageName}/page.tsx`];
-        } else if (entityName.toLowerCase() === 'home') {
-          filePatterns = ['app/page.tsx', 'app/home/page.tsx'];
+        // Handle page path mapping - convert "admin/children" to proper file patterns
+        if (entityName.includes('/')) {
+          filePatterns = [`app/${entityName}/page.tsx`];
         } else {
-          filePatterns = [`app/${entityName.toLowerCase()}/page.tsx`, `app/(main)/${entityName.toLowerCase()}/page.tsx`];
+          filePatterns = [`app/${entityName}/page.tsx`, `app/(main)/${entityName}/page.tsx`];
         }
         break;
       default:
-        filePatterns = [];
+        filePatterns = [entityName.toLowerCase()];
     }
 
-    // Count issues from smart analysis buckets for this entity
+    // Count issues from Smart Analysis buckets
     this.smartAnalysisData.analysis.issue_buckets.forEach(bucket => {
       bucket.issues?.forEach(issue => {
         const matchesEntity = filePatterns.some(pattern => 
-          issue.file?.includes(pattern) || 
-          issue.file?.includes(entityName.toLowerCase()) ||
-          issue.file?.endsWith(`${entityName.toLowerCase()}.tsx`) ||
-          issue.file?.endsWith(`${entityName.toLowerCase()}.ts`) ||
-          issue.file?.includes(`/${entityName}/`) ||  // Match component folder
-          issue.file?.includes(`${entityName}.tsx`) ||
-          issue.file?.includes(`${entityName}.ts`)
+          issue.file.toLowerCase().includes(pattern.toLowerCase()) || 
+          issue.file.toLowerCase().includes(entityName.toLowerCase())
         );
         
         if (matchesEntity) {
-          switch (bucket.name) {
-            case 'BLOCKERS':
-              blockerCount++;
-              break;
-            case 'STRUCTURAL':
-              structuralCount++;
-              break;
-            case 'COMPLIANCE':
-              complianceCount++;
-              break;
-          }
+          if (bucket.name === 'BLOCKERS') blockers++;
+          else if (bucket.name === 'STRUCTURAL') structural++;  
+          else if (bucket.name === 'COMPLIANCE') compliance++;
         }
       });
     });
 
-    // Calculate smart health score using the same logic from the server
-    const health = this.calculateSmartHealthScore(blockerCount, structuralCount, complianceCount);
+    const totalIssues = blockers + structural + compliance;
+    
+    // Calculate health score and color based on issue severity
+    let score, color, severity;
+    if (blockers > 0) {
+      score = 0;
+      color = '#ef4444';
+      severity = 'critical';
+    } else if (structural > 0) {
+      score = 40;
+      color = '#f59e0b'; 
+      severity = 'warning';
+    } else if (compliance > 0) {
+      score = 70;
+      color = '#3b82f6';
+      severity = 'info';
+    } else {
+      score = 100;
+      color = '#10b981';
+      severity = 'healthy';
+    }
     
     return {
-      score: health.score,
-      color: health.color,
-      severity: health.severity,
-      issues: { blockers: blockerCount, structural: structuralCount, compliance: complianceCount }
+      score,
+      color,
+      severity,
+      blockers,
+      structural,
+      compliance,
+      total: totalIssues
     };
-  }
-
-  // Smart health score calculation (matches server-side logic)
-  calculateSmartHealthScore(blockers, structural, compliance) {
-    if (blockers === 0 && structural === 0 && compliance === 0) {
-      return { score: 100, color: '#10b981', severity: 'healthy' };
-    }
-    
-    // Smart scoring based on issue type:
-    // - BLOCKERS: 30 points each (these will break the app!)
-    // - STRUCTURAL: 10 points each (architecture issues) 
-    // - COMPLIANCE: 2 points each (code quality)
-    const blockerDeduction = Math.min(blockers * 30, 70);
-    const structuralDeduction = Math.min(structural * 10, 20);
-    const complianceDeduction = Math.min(compliance * 2, 10);
-    
-    const score = Math.max(0, 100 - blockerDeduction - structuralDeduction - complianceDeduction);
-    
-    // Determine color and severity based on score and issue types
-    if (blockers > 0) {
-      return { score, color: '#ef4444', severity: 'critical' }; // Red for blockers
-    } else if (structural > 0) {
-      return { score, color: '#f59e0b', severity: 'warning' };   // Orange for structural
-    } else if (compliance > 0) {
-      return { score, color: '#3b82f6', severity: 'info' };      // Blue for compliance
-    } else {
-      return { score: 100, color: '#10b981', severity: 'healthy' }; // Green for healthy
-    }
   }
   
   renderSimpleItem(displayName, type, icon, actualName = null) {
@@ -397,25 +462,6 @@ class SidebarNavigator {
     
     // Get health status based on validation data
     const health = this.getEntityHealth(displayName, type);
-    
-    // Format compact issue counts (only show if there are issues)
-    let issueCounts = '';
-    if (health.issues && (health.issues.blockers > 0 || health.issues.structural > 0 || health.issues.compliance > 0)) {
-      const b = health.issues.blockers || 0;
-      const s = health.issues.structural || 0;
-      const c = health.issues.compliance || 0;
-      issueCounts = `
-        <span style="
-          font-size: 10px; 
-          color: #64748b; 
-          margin-right: 6px;
-          font-family: monospace;
-          background: #0f0f0f;
-          padding: 2px 4px;
-          border-radius: 3px;
-        ">${b}B ${s}S ${c}C</span>
-      `;
-    }
     
     return `
       <div 
@@ -427,17 +473,20 @@ class SidebarNavigator {
           cursor: pointer;
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 10px;
           transition: background 0.2s;
           border-left: 3px solid transparent;
         "
         onmouseover="this.style.background='#252525'"
         onmouseout="this.style.background='transparent'"
-        title="${health.severity === 'critical' ? `${health.issues.blockers} blockers, ${health.issues.structural} structural, ${health.issues.compliance} compliance` : health.severity === 'warning' ? `${health.issues.structural} structural issues, ${health.issues.compliance} compliance` : health.severity === 'info' ? `${health.issues.compliance} compliance issues` : 'No issues detected'}"
+        title="${health.total > 0 ? `${health.blockers}B ${health.structural}S ${health.compliance}C` : 'No issues'}"
       >
         <span style="font-size: 14px;">${icon}</span>
         <span style="color: #e2e8f0; font-size: 13px; flex: 1; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${displayName}</span>
-        ${issueCounts}
+        ${health.total > 0 ? 
+          `<span style="font-size: 11px; color: #64748b; margin-right: 4px;">${health.blockers}B ${health.structural}S ${health.compliance}C</span>` : 
+          ''
+        }
         <span style="width: 8px; height: 8px; border-radius: 50%; background: ${health.color};" title="${health.severity}"></span>
       </div>
     `;
@@ -475,14 +524,25 @@ class SidebarNavigator {
   }
   
   formatPageName(path) {
-    if (path.includes('(main)')) {
-      const parts = path.split('/');
-      const mainIdx = parts.findIndex(p => p === '(main)');
-      if (mainIdx >= 0 && mainIdx < parts.length - 1) {
-        return `(main) > ${parts[mainIdx + 1]}`;
-      }
-    }
     const parts = path.split('/');
+    
+    // Handle all app/* paths - show everything after app/ as route
+    if (parts.includes('app')) {
+      const appIdx = parts.findIndex(p => p === 'app');
+      let relevantParts = parts.slice(appIdx + 1, -1); // Remove 'app' and 'page.tsx'
+      
+      // Filter out empty parts and special Next.js patterns
+      relevantParts = relevantParts.filter(part => 
+        part && !part.startsWith('(') && !part.endsWith(')') && part !== 'ui-components'
+      );
+      
+      if (relevantParts.length > 0) {
+        return relevantParts.join('/');
+      }
+      return 'Home';
+    }
+    
+    // Fallback for other patterns
     const name = parts[parts.length - 2];
     return name === 'app' ? 'Home' : name;
   }
@@ -496,108 +556,6 @@ class SidebarNavigator {
     return Math.max(0, score);
   }
   
-  /**
-   * Sort entities by blocker count (worst first, then by name)
-   */
-  getSortedEntities(entities, type) {
-    return [...entities].sort((a, b) => {
-      const entityA = type === 'hook' ? this.extractHookName(a) : 
-                     type === 'component' ? this.extractComponentName(a) :
-                     this.formatPageName(a);
-      const entityB = type === 'hook' ? this.extractHookName(b) : 
-                     type === 'component' ? this.extractComponentName(b) :
-                     this.formatPageName(b);
-      
-      const healthA = this.getEntityHealth(entityA, type);
-      const healthB = this.getEntityHealth(entityB, type);
-      
-      const blockersA = healthA.issues?.blockers || 0;
-      const blockersB = healthB.issues?.blockers || 0;
-      
-      // Sort by blockers desc, then by name asc
-      if (blockersA !== blockersB) return blockersB - blockersA;
-      return entityA.localeCompare(entityB);
-    });
-  }
-  
-  /**
-   * Calculate grand total for validation
-   */
-  calculateGrandTotal() {
-    let totalBlockers = 0, totalStructural = 0, totalCompliance = 0;
-    
-    // Sum from all sections
-    const componentSummary = this.calculateSectionSummary(this.data.components, 'component');
-    const hookSummary = this.calculateSectionSummary(this.data.hooks, 'hook');
-    const pageSummary = this.calculateSectionSummary(this.data.pages, 'page');
-    
-    totalBlockers = componentSummary.totalBlockers + hookSummary.totalBlockers + pageSummary.totalBlockers;
-    totalStructural = componentSummary.totalStructural + hookSummary.totalStructural + pageSummary.totalStructural;
-    totalCompliance = componentSummary.totalCompliance + hookSummary.totalCompliance + pageSummary.totalCompliance;
-    
-    return {
-      blockers: totalBlockers,
-      structural: totalStructural, 
-      compliance: totalCompliance,
-      total: totalBlockers + totalStructural + totalCompliance
-    };
-  }
-
-  /**
-   * Calculate summary stats for a section
-   */
-  calculateSectionSummary(entities, type) {
-    let critical = 0, warning = 0, healthy = 0;
-    let totalBlockers = 0, totalStructural = 0, totalCompliance = 0;
-    
-    entities.forEach(entity => {
-      const entityName = type === 'hook' ? this.extractHookName(entity) : 
-                        type === 'component' ? this.extractComponentName(entity) :
-                        this.formatPageName(entity);
-      const health = this.getEntityHealth(entityName, type);
-      
-      if (health.severity === 'critical') critical++;
-      else if (health.severity === 'warning') warning++;
-      else healthy++;
-      
-      if (health.issues) {
-        totalBlockers += health.issues.blockers || 0;
-        totalStructural += health.issues.structural || 0;
-        totalCompliance += health.issues.compliance || 0;
-      }
-    });
-    
-    return { critical, warning, healthy, totalBlockers, totalStructural, totalCompliance };
-  }
-
-  /**
-   * Render section summary stats
-   */
-  renderSectionSummary(summary, total) {
-    if (total === 0) return '';
-    
-    let summaryParts = [];
-    if (summary.critical > 0) summaryParts.push(`${summary.critical} critical`);
-    if (summary.warning > 0) summaryParts.push(`${summary.warning} needs attention`);
-    if (summary.healthy > 0) summaryParts.push(`${summary.healthy} healthy`);
-    
-    const bucketStats = summary.totalBlockers + summary.totalStructural + summary.totalCompliance > 0 
-      ? ` • ${summary.totalBlockers}B ${summary.totalStructural}S ${summary.totalCompliance}C` 
-      : '';
-    
-    return `
-      <div style="
-        padding: 8px 16px; 
-        background: #0f0f0f; 
-        font-size: 10px; 
-        color: #64748b;
-        border-top: 1px solid #1a1a1a;
-      ">
-        ${summaryParts.join(', ')}${bucketStats}
-      </div>
-    `;
-  }
-  
   // Data extraction helpers
   extractHookName(hook) {
     if (typeof hook === 'string') return hook;
@@ -607,6 +565,23 @@ class SidebarNavigator {
   extractComponentName(comp) {
     if (typeof comp === 'string') return comp;
     return comp.name || comp.componentName || comp.displayName || 'Unknown Component';
+  }
+  
+  getSmartAnalysisTotal() {
+    if (!this.smartAnalysisData || !this.smartAnalysisData.analysis || !this.smartAnalysisData.analysis.issue_buckets) {
+      return { blockers: 0, structural: 0, compliance: 0 };
+    }
+    
+    const buckets = this.smartAnalysisData.analysis.issue_buckets;
+    const blockersBucket = buckets.find(b => b.name === 'BLOCKERS') || { count: 0 };
+    const structuralBucket = buckets.find(b => b.name === 'STRUCTURAL') || { count: 0 };
+    const complianceBucket = buckets.find(b => b.name === 'COMPLIANCE') || { count: 0 };
+    
+    return {
+      blockers: blockersBucket.count,
+      structural: structuralBucket.count,
+      compliance: complianceBucket.count
+    };
   }
   
   attachEventListeners() {
