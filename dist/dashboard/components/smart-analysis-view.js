@@ -93,8 +93,6 @@ class SmartAnalysisView {
     
     // Generate filter panel HTML
     const filterPanelHTML = window.issueFilter ? window.issueFilter.render(analysis) : '';
-    console.log('Filter panel available:', !!window.issueFilter);
-    console.log('Filter panel HTML length:', filterPanelHTML.length);
     
     return `
       <div style="padding: 20px;">
@@ -191,54 +189,6 @@ class SmartAnalysisView {
           </div>
         </div>
         ` : ''}
-
-        <!-- Summary Cards -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
-          <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
-                      padding: 20px; border-radius: 12px;">
-            <div style="font-size: 32px; font-weight: bold; color: white;">
-              ${hasBuckets ? (stats.issues_shown || 0) : (stats.critical_shown || groups.reduce((sum, g) => sum + g.fixes.length, 0) || 0)}
-            </div>
-            <div style="color: rgba(255,255,255,0.9); font-size: 13px; margin-top: 4px;">
-              ${hasBuckets ? 'Issues Visible' : 'Critical Issues to Fix'}
-            </div>
-          </div>
-          
-          <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
-                      padding: 20px; border-radius: 12px;">
-            <div style="font-size: 32px; font-weight: bold; color: white;">
-              ${hasBuckets ? (stats.visibility_percentage || 100) : (stats.groups_shown || groups.length || 0)}%
-            </div>
-            <div style="color: rgba(255,255,255,0.9); font-size: 13px; margin-top: 4px;">
-              ${hasBuckets ? 'Visibility' : 'Fix Groups'}
-            </div>
-          </div>
-          
-          <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-                      padding: 20px; border-radius: 12px;">
-            <div style="font-size: 32px; font-weight: bold; color: white;">
-              ${stats.total_issues_found || stats.total_issues || 0}
-            </div>
-            <div style="color: rgba(255,255,255,0.9); font-size: 13px; margin-top: 4px;">
-              Total Issues Found
-            </div>
-          </div>
-        </div>
-
-        <!-- Instructions -->
-        <div style="background: #1a1a1a; border: 1px solid #333; border-radius: 12px; 
-                    padding: 20px; margin-bottom: 24px;">
-          <h3 style="color: #f8fafc; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-            📋 AI Instructions
-            <span style="background: #10b981; color: white; padding: 2px 8px; 
-                         border-radius: 4px; font-size: 11px; font-weight: normal;">
-              ${analysis.README || 'Fix in order'}
-            </span>
-          </h3>
-          <div style="color: #94a3b8; font-size: 13px; line-height: 1.8;">
-            ${this.renderInstructions(analysis.instructions)}
-          </div>
-        </div>
 
         <!-- Issue Buckets (Enhanced) or Fix Groups (Legacy) -->
         ${hasBuckets ? 
