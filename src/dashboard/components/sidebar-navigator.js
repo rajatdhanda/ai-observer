@@ -110,7 +110,14 @@ class SidebarNavigator {
   }
   
   renderTableSection() {
-    const tables = Object.entries(this.data.tables);
+    const tables = Object.entries(this.data.tables)
+      .sort(([nameA, dataA], [nameB, dataB]) => {
+        const healthA = this.getEntityHealth(nameA, 'table');
+        const healthB = this.getEntityHealth(nameB, 'table');
+        // Sort by total issues (higher first)
+        return (healthB.blockers + healthB.structural + healthB.compliance) - 
+               (healthA.blockers + healthA.structural + healthA.compliance);
+      });
     const count = tables.length;
     
     return `
@@ -157,6 +164,13 @@ class SidebarNavigator {
   }
   
   renderHookSection() {
+    // Sort hooks by issue count (highest first)
+    this.data.hooks.sort((a, b) => {
+      const healthA = this.getEntityHealth(a.name, 'hook');
+      const healthB = this.getEntityHealth(b.name, 'hook');
+      return (healthB.blockers + healthB.structural + healthB.compliance) - 
+             (healthA.blockers + healthA.structural + healthA.compliance);
+    });
     const count = this.data.hooks.length;
     const summary = this.calculateSectionSummary(this.data.hooks, 'hook');
     
@@ -185,6 +199,13 @@ class SidebarNavigator {
   }
   
   renderComponentSection() {
+    // Sort components by issue count (highest first)
+    this.data.components.sort((a, b) => {
+      const healthA = this.getEntityHealth(a.name, 'component');
+      const healthB = this.getEntityHealth(b.name, 'component');
+      return (healthB.blockers + healthB.structural + healthB.compliance) - 
+             (healthA.blockers + healthA.structural + healthA.compliance);
+    });
     const count = this.data.components.length;
     const summary = this.calculateSectionSummary(this.data.components, 'component');
     
@@ -213,6 +234,13 @@ class SidebarNavigator {
   }
   
   renderPageSection() {
+    // Sort pages by issue count (highest first)
+    this.data.pages.sort((a, b) => {
+      const healthA = this.getEntityHealth(a.name, 'page');
+      const healthB = this.getEntityHealth(b.name, 'page');
+      return (healthB.blockers + healthB.structural + healthB.compliance) - 
+             (healthA.blockers + healthA.structural + healthA.compliance);
+    });
     const count = this.data.pages.length;
     const summary = this.calculateSectionSummary(this.data.pages, 'page');
     
