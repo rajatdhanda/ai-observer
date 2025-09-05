@@ -9,6 +9,7 @@ import { ContractValidator } from '../validator/contract-validator';
 import { BoundaryValidator } from '../validator/boundary-validator';
 import { VersionValidator } from '../validator/version-validator';
 import { DesignSystemValidator } from '../validator/design-system-validator';
+import { CTAValidator } from '../validator/cta-validator';
 import { logger as RemoteLogger } from '../utils/remote-logger';
 
 // Auto-find next available port starting from 3001
@@ -39,6 +40,8 @@ class Dashboard {
   private nineRulesResults: any = null;
   private contractValidator: ContractValidator | null = null;
   private contractResults: any = null;
+  private ctaValidator: CTAValidator | null = null;
+  private ctaResults: any = null;
   private logger: typeof RemoteLogger;
   private startTime: Date = new Date();
   private errorCount: number = 0;
@@ -269,6 +272,21 @@ class Dashboard {
             project: this.projectPath
           }));
         }
+      } else if (req.url === '/api/cta-analysis') {
+        try {
+          const results = await this.runCTAValidation();
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(results));
+        } catch (error: any) {
+          this.errorCount++;
+          this.logger.error('CTA validation failed', error);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            error: 'CTA validation failed',
+            message: error.message,
+            project: this.projectPath
+          }));
+        }
       } else if (req.url === '/api/contracts') {
         try {
           const results = await this.runContractValidation();
@@ -417,6 +435,16 @@ class Dashboard {
           res.writeHead(404);
           res.end();
         }
+      } else if (req.url === '/components/cta-analysis-view.js') {
+        const ctaPath = path.join(__dirname, 'components', 'cta-analysis-view.js');
+        if (fs.existsSync(ctaPath)) {
+          const js = fs.readFileSync(ctaPath, 'utf-8');
+          res.writeHead(200, { 'Content-Type': 'application/javascript' });
+          res.end(js);
+        } else {
+          res.writeHead(404);
+          res.end();
+        }
       } else if (req.url?.startsWith('/components/') && req.url?.endsWith('.js')) {
         // Serve component JavaScript files
         const componentName = req.url.replace('/components/', '');
@@ -471,6 +499,12 @@ Available projects: ${this.availableProjects.length}
     this.nineRulesValidator = new NineRulesValidator(this.projectPath);
     this.nineRulesResults = await this.nineRulesValidator.validateAll();
     return this.nineRulesResults;
+  }
+
+  private async runCTAValidation() {
+    this.ctaValidator = new CTAValidator(this.projectPath);
+    this.ctaResults = await this.ctaValidator.validate();
+    return this.ctaResults;
   }
 
   private async getArchitectureData(type: 'table' | 'hook' | 'component' | 'api' | 'page'): Promise<any[]> {

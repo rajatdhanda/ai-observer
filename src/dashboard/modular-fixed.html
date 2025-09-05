@@ -295,6 +295,7 @@
     <button class="tab" onclick="switchTab('files')">File Analysis</button>
     <button class="tab" onclick="switchTab('smart')">🤖 Smart Analysis</button>
     <button class="tab" onclick="switchTab('log')">📊 Log</button>
+    <button class="tab" onclick="switchTab('cta')">🎯 CTAs</button>
   </div>
   
   <!-- Main Container -->
@@ -759,6 +760,12 @@
           loadLogView();
           break;
           
+        case 'cta':
+          // Hide query inspector for CTA view
+          if (rightPanel) rightPanel.style.display = 'none';
+          loadCTAView();
+          break;
+          
         default:
           break;
       }
@@ -1072,6 +1079,52 @@
           </div>
         </div>
       `;
+    };
+    
+    // CTA View loader
+    window.loadCTAView = async function() {
+      const mainContent = document.getElementById('mainContent');
+      const sidebar = document.getElementById('sidebarContent');
+      
+      // Hide sidebar for CTA view
+      if (sidebar) sidebar.style.display = 'none';
+      
+      try {
+        // Fetch CTA analysis data
+        const response = await fetch('/api/cta-analysis');
+        const ctaData = await response.json();
+        
+        // Load the CTA component script if not already loaded
+        if (!window.renderCTAAnalysis) {
+          const script = document.createElement('script');
+          script.src = '/components/cta-analysis-view.js';
+          document.head.appendChild(script);
+          
+          // Wait for script to load
+          await new Promise(resolve => {
+            script.onload = resolve;
+          });
+        }
+        
+        // Render CTA analysis
+        mainContent.innerHTML = window.renderCTAAnalysis(ctaData);
+        
+        // Add toggle function for categories
+        window.toggleCategory = function(type) {
+          const content = document.getElementById(`category-${type}`);
+          if (content) {
+            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+          }
+        };
+      } catch (error) {
+        console.error('Failed to load CTA analysis:', error);
+        mainContent.innerHTML = `
+          <div style="padding: 32px; text-align: center;">
+            <h3 style="color: var(--status-error);">Failed to load CTA Analysis</h3>
+            <p style="color: var(--text-muted); margin-top: 8px;">${error.message}</p>
+          </div>
+        `;
+      }
     };
   </script>
   
