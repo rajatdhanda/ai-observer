@@ -41,6 +41,9 @@ const validator_runner_1 = require("../observer/validator-runner");
 const design_system_validator_1 = require("../validator/design-system-validator");
 const cross_layer_validator_1 = require("../validator/cross-layer-validator");
 const comprehensive_contract_validator_1 = require("../validator/comprehensive-contract-validator");
+const project_context_detector_1 = require("./project-context-detector");
+const fix_file_generator_1 = require("./fix-file-generator");
+const issue_bucket_classifier_1 = require("./issue-bucket-classifier");
 class SmartIssueAnalyzer {
     projectPath;
     issues = [];
@@ -49,8 +52,11 @@ class SmartIssueAnalyzer {
     hasAuth = false;
     hasDatabase = false;
     hasAPI = false;
+    contextDetector;
+    fixFileGenerator;
     constructor(projectPath) {
         this.projectPath = projectPath;
+        this.contextDetector = new project_context_detector_1.ProjectContextDetector(projectPath);
     }
     // Main entry point - Enhanced with bucket classification
     async analyze() {
@@ -60,9 +66,11 @@ class SmartIssueAnalyzer {
         // 2. Collect ALL issues from validator system + legacy checks
         await this.collectAllIssues();
         // 3. Organize issues into importance buckets
-        const buckets = this.organizeBuckets();
+        const classifier = new issue_bucket_classifier_1.IssueBucketClassifier(this.issues);
+        const buckets = classifier.organizeBuckets();
         // 4. Generate enhanced FIX_THIS.json with all issues visible
-        this.generateEnhancedFixFile(buckets);
+        this.fixFileGenerator = new fix_file_generator_1.FixFileGenerator(this.projectPath, this.issues, this.projectType, this.hasPayments, this.hasAuth, this.hasDatabase, this.hasAPI, this.contextDetector);
+        this.fixFileGenerator.generateEnhancedFixFile(buckets);
         console.log(`✅ Enhanced analysis complete. All ${this.issues.length} issues organized by importance.`);
         console.log('📊 Bucket distribution:', buckets.map(b => `${b.name}: ${b.count}`).join(', '));
     }
@@ -251,91 +259,6 @@ class SmartIssueAnalyzer {
     categorizeRule(rule) {
         return this.categorizeValidatorRule(rule);
     }
-    organizeBuckets() {
-        const buckets = [
-            {
-                name: 'BLOCKERS',
-                title: 'Critical Runtime Issues',
-                description: 'Issues that prevent the application from running or cause crashes',
-                color: '#ef4444',
-                priority: 1,
-                issues: [],
-                count: 0
-            },
-            {
-                name: 'STRUCTURAL',
-                title: 'Important Architectural Issues',
-                description: 'Issues that affect code organization, maintainability, and reliability',
-                color: '#f59e0b',
-                priority: 2,
-                issues: [],
-                count: 0
-            },
-            {
-                name: 'COMPLIANCE',
-                title: 'Code Quality & Standards Issues',
-                description: 'Issues that improve code quality, consistency, and best practices',
-                color: '#3b82f6',
-                priority: 3,
-                issues: [],
-                count: 0
-            }
-        ];
-        // Classify issues into buckets based on rule and severity
-        for (const issue of this.issues) {
-            if (this.isBlockerIssue(issue)) {
-                buckets[0].issues.push(issue);
-            }
-            else if (this.isStructuralIssue(issue)) {
-                buckets[1].issues.push(issue);
-            }
-            else {
-                buckets[2].issues.push(issue);
-            }
-        }
-        // Update counts
-        buckets.forEach(bucket => {
-            bucket.count = bucket.issues.length;
-        });
-        return buckets.filter(bucket => bucket.count > 0); // Only return buckets with issues
-    }
-    isBlockerIssue(issue) {
-        // BLOCKERS: Critical runtime issues that prevent the app from working
-        if (issue.severity === 'critical') {
-            return (issue.rule === 'Contract Compliance' ||
-                issue.rule === 'Contract Violation' || // ADDED: Cross-layer contract violations
-                issue.type === 'contract_violation' || // ADDED: Direct check for contract violations
-                issue.rule === 'Type-Database Alignment' ||
-                issue.rule === 'Export Completeness' ||
-                issue.type === 'missing_contracts' ||
-                issue.type === 'typescript_error' ||
-                issue.type === 'export_completeness' ||
-                issue.type === 'security' ||
-                issue.category === 'setup' ||
-                issue.category === 'api_completeness');
-        }
-        return false;
-    }
-    isStructuralIssue(issue) {
-        // STRUCTURAL: Important architectural issues affecting maintainability
-        return (issue.rule === 'Error Handling' ||
-            issue.rule === 'Cache Invalidation' ||
-            issue.rule === 'Hook-Database Pattern' ||
-            issue.rule === 'API Type Safety' ||
-            issue.rule === 'Auth Guards' ||
-            issue.rule === 'File Size Warnings' ||
-            issue.rule === 'Duplicate Functions' ||
-            issue.rule === 'Export Completeness' ||
-            issue.type === 'file_size_warnings' ||
-            issue.type === 'duplicate_functions' ||
-            issue.type === 'export_completeness' ||
-            issue.category === 'architecture' ||
-            issue.category === 'performance' ||
-            issue.category === 'maintainability' ||
-            issue.category === 'code_drift' ||
-            issue.category === 'api_completeness');
-    }
-    // All other issues fall into COMPLIANCE bucket
     runTypeScriptCheck() {
         const issues = [];
         try {
@@ -662,272 +585,6 @@ class SmartIssueAnalyzer {
             });
         }
         return groups;
-    }
-    loadPreviousState() {
-        const statePath = path.join(this.projectPath, '.observer', 'analysis_state.json');
-        if (fs.existsSync(statePath)) {
-            try {
-                return JSON.parse(fs.readFileSync(statePath, 'utf-8'));
-            }
-            catch (e) {
-                return null;
-            }
-        }
-        return null;
-    }
-    saveState(state) {
-        const statePath = path.join(this.projectPath, '.observer', 'analysis_state.json');
-        fs.writeFileSync(statePath, JSON.stringify(state, null, 2));
-    }
-    generateEnhancedFixFile(buckets) {
-        const outputDir = path.join(this.projectPath, '.observer');
-        if (!fs.existsSync(outputDir)) {
-            fs.mkdirSync(outputDir, { recursive: true });
-        }
-        // Load previous state to track progress
-        const previousState = this.loadPreviousState();
-        const isFirstRun = !previousState;
-        const previousIssuesCount = previousState?.total_issues || 0;
-        const fixedCount = previousIssuesCount > this.issues.length ?
-            previousIssuesCount - this.issues.length : 0;
-        const totalIssues = this.issues.length;
-        const criticalIssues = this.issues.filter(i => i.severity === 'critical').length;
-        const enhancedFixFile = {
-            README: isFirstRun ?
-                `ALL ${totalIssues} issues organized by importance buckets. Fix BLOCKERS first.` :
-                `${fixedCount} issues fixed! ${totalIssues} remaining in ${buckets.length} buckets.`,
-            generated: new Date().toISOString(),
-            project: this.projectPath,
-            project_type: this.projectType,
-            detected_features: {
-                has_payments: this.hasPayments,
-                has_auth: this.hasAuth,
-                has_database: this.hasDatabase,
-                has_api: this.hasAPI
-            },
-            // NEW: Bucket-based organization showing ALL issues
-            issue_buckets: buckets.map(bucket => ({
-                name: bucket.name,
-                title: bucket.title,
-                description: bucket.description,
-                color: bucket.color,
-                priority: bucket.priority,
-                count: bucket.count,
-                issues: bucket.issues.map(issue => ({
-                    file: issue.file,
-                    line: issue.line,
-                    rule: issue.rule || issue.type,
-                    severity: issue.severity,
-                    message: issue.message,
-                    fix: issue.suggestion || 'Fix required',
-                    category: issue.category
-                }))
-            })),
-            // Enhanced stats showing complete visibility
-            stats: {
-                total_issues_found: totalIssues,
-                issues_shown: totalIssues, // NOW SHOWING ALL ISSUES
-                visibility_percentage: 100, // 100% visibility instead of 24%
-                by_bucket: buckets.map(b => ({ name: b.name, count: b.count })),
-                by_severity: {
-                    critical: this.issues.filter(i => i.severity === 'critical').length,
-                    high: this.issues.filter(i => i.severity === 'high').length,
-                    medium: this.issues.filter(i => i.severity === 'medium').length,
-                    low: this.issues.filter(i => i.severity === 'low').length
-                },
-                by_rule: this.getIssuesByRule(),
-                buckets_total: buckets.length,
-                fixed_since_last_run: fixedCount,
-                remaining_issues: totalIssues
-            },
-            // Context without step-by-step instructions
-            context: {
-                total: `${totalIssues} issues in ${buckets.length} priority buckets`,
-                bucket_priorities: buckets.map(b => ({ [b.name]: b.description }))
-            },
-            progress: {
-                session_started: previousState?.session_started || new Date().toISOString(),
-                runs_count: (previousState?.runs_count || 0) + 1,
-                total_fixed: (previousState?.total_fixed || 0) + fixedCount,
-                enhancement_note: "Enhanced with bucket classification - showing ALL issues"
-            }
-        };
-        // Write the enhanced file to .observer
-        fs.writeFileSync(path.join(outputDir, 'FIX_THIS.json'), JSON.stringify(enhancedFixFile, null, 2));
-        // Also save to src/contracts/fixes.json for new project structure
-        const contractsDir = path.join(this.projectPath, 'src', 'contracts');
-        if (!fs.existsSync(contractsDir)) {
-            fs.mkdirSync(contractsDir, { recursive: true });
-        }
-        fs.writeFileSync(path.join(contractsDir, 'fixes.json'), JSON.stringify(enhancedFixFile, null, 2));
-        // Save context.json with essential project info for AI
-        const contextFile = {
-            analyzed_at: new Date().toISOString(),
-            project_path: this.projectPath,
-            total_files: this.issues.filter((i, idx, arr) => arr.findIndex(x => x.file === i.file) === idx).length,
-            framework: this.detectFramework(),
-            entry_points: this.findEntryPoints(),
-            api_routes: this.findApiRoutes(),
-            database_type: this.detectDatabase(),
-            key_dependencies: this.getKeyDependencies(),
-            environment_vars: this.detectEnvVars(),
-            build_commands: this.getBuildCommands()
-        };
-        fs.writeFileSync(path.join(contractsDir, 'context.json'), JSON.stringify(contextFile, null, 2));
-        // Save current state for next run
-        this.saveState({
-            total_issues: totalIssues,
-            session_started: enhancedFixFile.progress.session_started,
-            runs_count: enhancedFixFile.progress.runs_count,
-            total_fixed: enhancedFixFile.progress.total_fixed,
-            last_run: new Date().toISOString(),
-            enhancement: 'bucket_classification'
-        });
-        console.log(`📊 Enhanced analysis complete: ${totalIssues} total issues in ${buckets.length} buckets`);
-        console.log('📈 Visibility improved from 24% to 100% - AI now sees ALL issues!');
-        if (fixedCount > 0) {
-            console.log(`✨ Great progress! ${fixedCount} issues fixed since last run`);
-        }
-        if (totalIssues === 0) {
-            console.log(`🎉 All issues resolved! Project is clean.`);
-        }
-    }
-    getIssuesByRule() {
-        const byRule = {};
-        for (const issue of this.issues) {
-            const rule = issue.rule || issue.type || 'other';
-            byRule[rule] = (byRule[rule] || 0) + 1;
-        }
-        return byRule;
-    }
-    detectFramework() {
-        const packagePath = path.join(this.projectPath, 'package.json');
-        if (fs.existsSync(packagePath)) {
-            const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
-            const deps = { ...pkg.dependencies, ...pkg.devDependencies };
-            if (deps.next)
-                return 'Next.js';
-            if (deps.react)
-                return 'React';
-            if (deps.vue)
-                return 'Vue';
-            if (deps.express)
-                return 'Express';
-            if (deps.fastify)
-                return 'Fastify';
-        }
-        return 'Unknown';
-    }
-    findEntryPoints() {
-        const entries = [];
-        const patterns = [
-            'src/index.ts', 'src/main.ts', 'src/app.ts',
-            'src/app/page.tsx', 'src/app/layout.tsx',
-            'pages/index.tsx', 'pages/_app.tsx'
-        ];
-        for (const pattern of patterns) {
-            const fullPath = path.join(this.projectPath, pattern);
-            if (fs.existsSync(fullPath)) {
-                entries.push(pattern);
-            }
-        }
-        return entries;
-    }
-    findApiRoutes() {
-        const routes = [];
-        const apiDirs = [
-            path.join(this.projectPath, 'src/app/api'),
-            path.join(this.projectPath, 'pages/api'),
-            path.join(this.projectPath, 'api')
-        ];
-        for (const dir of apiDirs) {
-            if (fs.existsSync(dir)) {
-                this.walkDir(dir, (file) => {
-                    if (file.endsWith('.ts') || file.endsWith('.tsx') || file.endsWith('.js')) {
-                        routes.push(file.replace(this.projectPath, ''));
-                    }
-                });
-            }
-        }
-        return routes;
-    }
-    detectDatabase() {
-        const packagePath = path.join(this.projectPath, 'package.json');
-        if (fs.existsSync(packagePath)) {
-            const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
-            const deps = { ...pkg.dependencies, ...pkg.devDependencies };
-            if (deps.prisma || deps['@prisma/client'])
-                return 'Prisma/PostgreSQL';
-            if (deps.mongoose)
-                return 'MongoDB';
-            if (deps.pg)
-                return 'PostgreSQL';
-            if (deps.mysql2)
-                return 'MySQL';
-            if (deps.sqlite3)
-                return 'SQLite';
-        }
-        return 'None detected';
-    }
-    getKeyDependencies() {
-        const packagePath = path.join(this.projectPath, 'package.json');
-        if (fs.existsSync(packagePath)) {
-            const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
-            const important = ['next', 'react', 'typescript', 'prisma', '@prisma/client',
-                'tailwindcss', 'zod', 'express', 'fastify'];
-            const result = {};
-            for (const dep of important) {
-                if (pkg.dependencies?.[dep])
-                    result[dep] = pkg.dependencies[dep];
-                if (pkg.devDependencies?.[dep])
-                    result[dep] = pkg.devDependencies[dep];
-            }
-            return result;
-        }
-        return {};
-    }
-    detectEnvVars() {
-        const envExample = path.join(this.projectPath, '.env.example');
-        const envLocal = path.join(this.projectPath, '.env.local.example');
-        const vars = new Set();
-        for (const file of [envExample, envLocal]) {
-            if (fs.existsSync(file)) {
-                const content = fs.readFileSync(file, 'utf-8');
-                const matches = content.match(/^([A-Z_]+)=/gm);
-                if (matches) {
-                    matches.forEach(m => vars.add(m.replace('=', '')));
-                }
-            }
-        }
-        return Array.from(vars);
-    }
-    getBuildCommands() {
-        const packagePath = path.join(this.projectPath, 'package.json');
-        if (fs.existsSync(packagePath)) {
-            const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf-8'));
-            const important = ['dev', 'build', 'start', 'test', 'lint', 'typecheck'];
-            const result = {};
-            for (const script of important) {
-                if (pkg.scripts?.[script]) {
-                    result[script] = pkg.scripts[script];
-                }
-            }
-            return result;
-        }
-        return {};
-    }
-    walkDir(dir, callback) {
-        const files = fs.readdirSync(dir);
-        files.forEach(file => {
-            const fullPath = path.join(dir, file);
-            const stat = fs.statSync(fullPath);
-            if (stat.isDirectory() && !file.startsWith('.')) {
-                this.walkDir(fullPath, callback);
-            }
-            else {
-                callback(fullPath);
-            }
-        });
     }
     runComprehensiveContractValidation() {
         const issues = [];

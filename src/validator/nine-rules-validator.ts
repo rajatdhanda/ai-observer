@@ -6,44 +6,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as ts from 'typescript';
+import { ValidationResult, ValidationIssue, ValidationSummary } from '../types/validation-types';
 
-export interface ValidationResult {
-  rule: string;
-  ruleNumber: number;
-  status: 'pass' | 'fail' | 'warning';
-  score: number; // 0-100
-  issues: ValidationIssue[];
-  coverage: {
-    checked: number;
-    passed: number;
-    total: number;
-  };
-}
-
-export interface ValidationIssue {
-  severity: 'critical' | 'warning' | 'info';
-  file: string;
-  line?: number;
-  message: string;
-  suggestion: string;
-  codeSnippet?: string;
-}
-
-export interface ValidationSummary {
-  overallScore: number;
-  passedRules: number;
-  totalRules: number;
-  criticalIssues: number;
-  warnings: number;
-  results: ValidationResult[];
-  metrics: {
-    contractCoverage: number;
-    parseCoverage: number;
-    dbDriftScore: number;
-    cacheHygiene: number;
-    authCoverage: number;
-  };
-}
 
 export class NineRulesValidator {
   private projectPath: string;

@@ -1,0 +1,32 @@
+export declare class SmartIssueAnalyzer {
+    private projectPath;
+    private issues;
+    private projectType;
+    private hasPayments;
+    private hasAuth;
+    private hasDatabase;
+    private hasAPI;
+    private contextDetector;
+    private fixFileGenerator?;
+    constructor(projectPath: string);
+    analyze(): Promise<void>;
+    private detectProjectFeatures;
+    private collectAllIssues;
+    private checkObserverSetup;
+    private getValidatorSystemIssues;
+    private categorizeValidatorRule;
+    private categorizeRule;
+    private runTypeScriptCheck;
+    private checkEnvironmentVariables;
+    private runESLintCheck;
+    private checkSecurityIssues;
+    private runDesignSystemValidation;
+    private runCrossLayerValidation;
+    private isCriticalEnvVar;
+    private getErrorSeverity;
+    private categorizeError;
+    private getSuggestion;
+    private createSmartGroups;
+    private runComprehensiveContractValidation;
+}
+//# sourceMappingURL=smart-issue-analyzer.d.ts.map

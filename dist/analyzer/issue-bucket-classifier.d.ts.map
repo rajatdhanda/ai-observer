@@ -1,0 +1,1 @@
+{"version":3,"file":"issue-bucket-classifier.d.ts","sourceRoot":"","sources":["../../src/analyzer/issue-bucket-classifier.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,EAAE,WAAW,EAAE,MAAM,yBAAyB,CAAC;AAE7D,qBAAa,qBAAqB;IACpB,OAAO,CAAC,MAAM;gBAAN,MAAM,EAAE,KAAK,EAAE;IAEnC,eAAe,IAAI,WAAW,EAAE;IAkDhC,OAAO,CAAC,cAAc;IAoBtB,OAAO,CAAC,iBAAiB;CAuB1B"}
