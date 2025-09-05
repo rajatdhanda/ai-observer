@@ -102,6 +102,8 @@ class SidebarNavigator {
         ${this.renderImprovementIndicator()}
       </div>
       
+      ${this.renderImprovementLog()}
+      
       ${this.renderTableSection()}
       ${this.renderHookSection()}
       ${this.renderComponentSection()}
@@ -486,16 +488,37 @@ class SidebarNavigator {
   }
   
   formatPageName(path) {
+    const parts = path.split('/');
+    const pageName = parts[parts.length - 2]; // Get folder name (e.g., 'meals')
+    
+    // Handle special cases
     if (path.includes('(main)')) {
-      const parts = path.split('/');
       const mainIdx = parts.findIndex(p => p === '(main)');
       if (mainIdx >= 0 && mainIdx < parts.length - 1) {
-        return `(main) > ${parts[mainIdx + 1]}`;
+        return `main/${parts[mainIdx + 1]}`;
       }
     }
-    const parts = path.split('/');
-    const name = parts[parts.length - 2];
-    return name === 'app' ? 'Home' : name;
+    
+    // Check if it's directly under app/
+    if (parts.includes('app')) {
+      const appIdx = parts.findIndex(p => p === 'app');
+      if (appIdx === parts.length - 3) {
+        // Direct child of app/
+        return pageName === 'app' ? 'app' : `app/${pageName}`;
+      } else if (appIdx < parts.length - 3) {
+        // Has parent folder like app/admin/
+        const parent = parts[parts.length - 3];
+        return `${parent}/${pageName}`;
+      }
+    }
+    
+    // For src/ pages
+    if (parts.includes('src') && parts.length > 3) {
+      const parent = parts[parts.length - 3];
+      return `${parent}/${pageName}`;
+    }
+    
+    return pageName;
   }
   
   calculateTableHealth(data) {
@@ -624,6 +647,109 @@ class SidebarNavigator {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
     return `${Math.floor(diffMins / 1440)}d ago`;
+  }
+
+  renderImprovementLog() {
+    const history = JSON.parse(localStorage.getItem('ai-observer-history') || '[]');
+    const showLog = localStorage.getItem('ai-observer-show-log') === 'true';
+    
+    // Add current state to history if changed
+    this.updateImprovementHistory();
+    
+    if (!history.length) return '';
+    
+    // Get last 5 entries
+    const recentHistory = history.slice(-5).reverse();
+    
+    return `
+      <div style="
+        background: #0f0f0f;
+        border: 1px solid #252525;
+        border-radius: 8px;
+        margin: 0 16px 16px 16px;
+        overflow: hidden;
+      ">
+        <div 
+          style="
+            padding: 8px 12px;
+            background: #1a1a1a;
+            border-bottom: 1px solid #252525;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #94a3b8;
+          "
+          onclick="
+            const showLog = localStorage.getItem('ai-observer-show-log') === 'true';
+            localStorage.setItem('ai-observer-show-log', !showLog ? 'true' : 'false');
+            document.getElementById('improvement-log-content').style.display = !showLog ? 'block' : 'none';
+            document.getElementById('log-toggle-icon').innerHTML = !showLog ? '▼' : '▶';
+          "
+        >
+          <span>📈 Improvement Log</span>
+          <span id="log-toggle-icon">${showLog ? '▼' : '▶'}</span>
+        </div>
+        <div 
+          id="improvement-log-content" 
+          style="
+            padding: 8px;
+            font-size: 10px;
+            font-family: monospace;
+            display: ${showLog ? 'block' : 'none'};
+            max-height: 120px;
+            overflow-y: auto;
+          "
+        >
+          ${recentHistory.length === 0 ? 
+            '<div style="color: #6b7280; text-align: center; padding: 8px;">No history yet</div>' :
+            recentHistory.map(entry => {
+              const diff = entry.diff;
+              const indicator = diff > 0 ? '📉' : diff < 0 ? '📈' : '➡️';
+              const color = diff > 0 ? '#10b981' : diff < 0 ? '#ef4444' : '#6b7280';
+              const text = diff > 0 ? `-${diff}` : diff < 0 ? `+${Math.abs(diff)}` : '0';
+              return `
+                <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  padding: 4px 4px;
+                  border-bottom: 1px solid #1a1a1a;
+                  color: ${color};
+                ">
+                  <span>${indicator} ${text}</span>
+                  <span style="color: #6b7280;">${entry.time}</span>
+                </div>
+              `;
+            }).join('')
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  updateImprovementHistory() {
+    const currentTotal = this.getSmartAnalysisTotal('ALL') || 157;
+    const history = JSON.parse(localStorage.getItem('ai-observer-history') || '[]');
+    const lastEntry = history[history.length - 1];
+    
+    if (!lastEntry || lastEntry.total !== currentTotal) {
+      const now = new Date();
+      const entry = {
+        total: currentTotal,
+        diff: lastEntry ? lastEntry.total - currentTotal : 0,
+        timestamp: now.toISOString(),
+        time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      };
+      
+      history.push(entry);
+      // Keep only last 20 entries
+      if (history.length > 20) {
+        history.shift();
+      }
+      
+      localStorage.setItem('ai-observer-history', JSON.stringify(history));
+    }
   }
 
   /**
