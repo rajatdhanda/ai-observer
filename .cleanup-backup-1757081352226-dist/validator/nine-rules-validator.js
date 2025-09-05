@@ -1,0 +1,1022 @@
+"use strict";
+/**
+ * 9 Core Validation Rules for AI-Generated Code
+ * Detects drift and issues in existing codebases
+ */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NineRulesValidator = void 0;
+exports.runValidation = runValidation;
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const ts = __importStar(require("typescript"));
+class NineRulesValidator {
+    projectPath;
+    program;
+    checker;
+    results = [];
+    constructor(projectPath) {
+        // Resolve relative paths to absolute
+        this.projectPath = path.isAbsolute(projectPath) ? projectPath : path.resolve(process.cwd(), projectPath);
+        const configPath = ts.findConfigFile(this.projectPath, ts.sys.fileExists, 'tsconfig.json');
+        if (configPath) {
+            const { config } = ts.readConfigFile(configPath, ts.sys.readFile);
+            const { options, fileNames } = ts.parseJsonConfigFileContent(config, ts.sys, projectPath);
+            this.program = ts.createProgram(fileNames, options);
+            this.checker = this.program.getTypeChecker();
+        }
+        else {
+            // Fallback to basic program
+            this.program = ts.createProgram([], {});
+            this.checker = this.program.getTypeChecker();
+        }
+    }
+    async validateAll() {
+        console.log('🔍 Running 9 Core Validation Rules...\n');
+        // Run all 9 validation rules
+        await this.rule1_TypeDatabaseAlignment();
+        await this.rule2_HookDatabasePattern();
+        await this.rule3_ErrorHandlingChain();
+        await this.rule4_LoadingStates();
+        await this.rule5_APITypeSafety();
+        await this.rule6_RegistryUsage();
+        await this.rule7_MutationHygiene();
+        await this.rule8_FormValidation();
+        await this.rule9_AuthGuardMatrix();
+        // Additional critical checks for AI drift prevention
+        await this.checkFileSizeWarnings();
+        await this.checkDuplicateFunctions();
+        await this.checkExportCompleteness();
+        return this.generateSummary();
+    }
+    /**
+     * Rule 1: Type-Database Alignment (30% of bugs)
+     * Two-way checking: Zod ↔ DB
+     * Enhanced with runtime validation detection
+     */
+    async rule1_TypeDatabaseAlignment() {
+        const result = {
+            rule: 'Type-Database Alignment',
+            ruleNumber: 1,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        // Find all Zod schemas and type definitions
+        const schemaFiles = this.findFiles('**/*.schema.ts', '**/*.contract.ts', '**/*.types.ts');
+        const dbFiles = this.findFiles('**/db/**/*.ts', '**/database/**/*.ts', '**/supabase/**/*.ts', '**/prisma/**/*.ts');
+        for (const schemaFile of schemaFiles) {
+            result.coverage.total++;
+            result.coverage.checked++;
+            const schemaContent = fs.readFileSync(schemaFile, 'utf-8');
+            const schemaName = path.basename(schemaFile, '.ts').replace('.schema', '').replace('.contract', '');
+            // Check if schema is used with .parse() in DB files
+            let hasProperParsing = false;
+            for (const dbFile of dbFiles) {
+                const dbContent = fs.readFileSync(dbFile, 'utf-8');
+                // Check for proper parsing patterns
+                const parsePatterns = [
+                    `${schemaName}Schema.parse`,
+                    `${schemaName}.parse`,
+                    `z.object\\(.*${schemaName}`,
+                ];
+                if (parsePatterns.some(pattern => new RegExp(pattern, 'i').test(dbContent))) {
+                    hasProperParsing = true;
+                    result.coverage.passed++;
+                    break;
+                }
+            }
+            if (!hasProperParsing) {
+                result.issues.push({
+                    severity: 'critical',
+                    file: schemaFile,
+                    message: `Schema '${schemaName}' not used with .parse() in database layer`,
+                    suggestion: `Add ${schemaName}Schema.parse(data) when fetching from database`,
+                });
+            }
+        }
+        // Check for DB queries without schema validation
+        for (const dbFile of dbFiles) {
+            const dbContent = fs.readFileSync(dbFile, 'utf-8');
+            // Enhanced patterns for DB queries without parse
+            const queryPatterns = [
+                /from\(['"`](\w+)['"`]\)(?![\s\S]*\.parse)/g,
+                /\.select\(\)(?![\s\S]*\.parse)/g,
+                /\.insert\([^)]+\)(?![\s\S]*\.parse)/g,
+            ];
+            // Check for two-way validation
+            const hasTwoWayValidation = this.checkTwoWayValidation(dbContent);
+            for (const pattern of queryPatterns) {
+                const matches = dbContent.match(pattern);
+                if (matches) {
+                    result.issues.push({
+                        severity: 'critical',
+                        file: dbFile,
+                        message: 'Database query without schema validation',
+                        suggestion: 'Add .parse() after database operations',
+                        codeSnippet: matches[0]
+                    });
+                }
+            }
+            // Check for response validation
+            if (!hasTwoWayValidation) {
+                const hasInputValidation = /\.parse\(.*(?:req|request|input|data)/gi.test(dbContent);
+                const hasOutputValidation = /\.parse\(.*(?:result|response|output|rows)/gi.test(dbContent);
+                if (hasInputValidation && !hasOutputValidation) {
+                    result.issues.push({
+                        severity: 'warning',
+                        file: dbFile,
+                        message: 'One-way validation detected: Input validated but not output',
+                        suggestion: 'Add ResponseSchema.parse(result) to validate DB responses'
+                    });
+                }
+                else if (!hasInputValidation && hasOutputValidation) {
+                    result.issues.push({
+                        severity: 'warning',
+                        file: dbFile,
+                        message: 'One-way validation detected: Output validated but not input',
+                        suggestion: 'Add InputSchema.parse(data) before DB operations'
+                    });
+                }
+            }
+            // Check for runtime type assertions
+            const hasRuntimeAssertion = /as\s+\w+(?:\[\])?(?:\s|;|$)/g.test(dbContent);
+            if (hasRuntimeAssertion) {
+                result.issues.push({
+                    severity: 'warning',
+                    file: dbFile,
+                    message: 'Type assertion detected - runtime validation preferred',
+                    suggestion: 'Replace "as Type" with Schema.parse() for runtime safety'
+                });
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+    /**
+     * Rule 2: Hook-Database Pattern (25% of bugs)
+     * Component → Hook → DB (never direct)
+     * Enhanced with cross-layer type checking
+     */
+    async rule2_HookDatabasePattern() {
+        const result = {
+            rule: 'Hook-Database Pattern',
+            ruleNumber: 2,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        const componentFiles = this.findFiles('**/components/**/*.tsx', '**/app/**/*.tsx');
+        const hookFiles = this.findFiles('**/hooks/**/*.ts', '**/hooks/**/*.tsx', '**/use*.ts');
+        // Check components for direct DB access
+        for (const componentFile of componentFiles) {
+            result.coverage.total++;
+            result.coverage.checked++;
+            const content = fs.readFileSync(componentFile, 'utf-8');
+            // Patterns indicating direct DB access
+            const dbPatterns = [
+                /from ['"].*\/db/,
+                /from ['"].*\/database/,
+                /import.*supabase/i,
+                /import.*prisma/i,
+                /\.from\(['"`]/,
+            ];
+            const hasDirectDBAccess = dbPatterns.some(pattern => pattern.test(content));
+            if (hasDirectDBAccess) {
+                result.issues.push({
+                    severity: 'critical',
+                    file: componentFile,
+                    message: 'Component has direct database access',
+                    suggestion: 'Components should use hooks for data fetching, not direct DB calls'
+                });
+            }
+            else {
+                result.coverage.passed++;
+            }
+        }
+        // Check if hooks properly wrap DB calls with type safety
+        for (const hookFile of hookFiles) {
+            const content = fs.readFileSync(hookFile, 'utf-8');
+            // Check if hook imports from DB layer
+            const hasDBImport = /from ['"].*\/(db|database)/.test(content);
+            const hasUsePrefix = /export.*use[A-Z]/.test(content);
+            if (hasDBImport && !hasUsePrefix) {
+                result.issues.push({
+                    severity: 'warning',
+                    file: hookFile,
+                    message: 'DB access not properly wrapped in a hook',
+                    suggestion: 'Export a hook function starting with "use"'
+                });
+            }
+            // Enhanced: Check for generic type usage in hooks
+            const hasGenericType = /<\w+(?:,\s*\w+)*>/.test(content);
+            const usesUseQuery = /useQuery|useMutation|useSWR/.test(content);
+            if (usesUseQuery && !hasGenericType) {
+                result.issues.push({
+                    severity: 'warning',
+                    file: hookFile,
+                    message: 'Hook using untyped query - missing generic type',
+                    suggestion: 'Add generic type: useQuery<YourType>() for type safety'
+                });
+            }
+            // Check for any type usage
+            const hasAnyType = /:\s*any(?:\s|;|\)|,)/g.test(content);
+            if (hasAnyType) {
+                result.issues.push({
+                    severity: 'critical',
+                    file: hookFile,
+                    message: 'Hook using "any" type - breaks type safety',
+                    suggestion: 'Replace "any" with specific type or unknown'
+                });
+            }
+            // Check if hook return type is explicitly defined
+            const hasReturnType = /\):\s*\{[\s\S]*?\}|return\s+{[\s\S]*?}/.test(content);
+            const functionDeclaration = /export\s+(?:const|function)\s+use\w+/.test(content);
+            if (functionDeclaration && !hasReturnType && !hasGenericType) {
+                result.issues.push({
+                    severity: 'warning',
+                    file: hookFile,
+                    message: 'Hook missing explicit return type',
+                    suggestion: 'Define return type for better type inference'
+                });
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+    /**
+     * Rule 3: Error Handling Chain (20% of bugs)
+     */
+    async rule3_ErrorHandlingChain() {
+        const result = {
+            rule: 'Error Handling Chain',
+            ruleNumber: 3,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        // Check DB layer for try-catch
+        const dbFiles = this.findFiles('**/db/**/*.ts', '**/database/**/*.ts');
+        for (const file of dbFiles) {
+            result.coverage.total++;
+            result.coverage.checked++;
+            const content = fs.readFileSync(file, 'utf-8');
+            const hasTryCatch = /try\s*{[\s\S]*?}\s*catch/g.test(content);
+            const hasAsyncFunction = /async\s+function|async\s*\(/g.test(content);
+            if (hasAsyncFunction && !hasTryCatch) {
+                result.issues.push({
+                    severity: 'critical',
+                    file,
+                    message: 'Async database function without try-catch',
+                    suggestion: 'Wrap database operations in try-catch blocks'
+                });
+            }
+            else {
+                result.coverage.passed++;
+            }
+        }
+        // Check hooks for error state
+        const hookFiles = this.findFiles('**/hooks/**/*.ts', '**/hooks/**/*.tsx');
+        for (const file of hookFiles) {
+            result.coverage.total++;
+            result.coverage.checked++;
+            const content = fs.readFileSync(file, 'utf-8');
+            const hasErrorState = /error|Error|isError|hasError/g.test(content);
+            const hasUseState = /useState|useQuery|useMutation/g.test(content);
+            if (hasUseState && !hasErrorState) {
+                result.issues.push({
+                    severity: 'warning',
+                    file,
+                    message: 'Hook missing error state management',
+                    suggestion: 'Add error state: const [error, setError] = useState(null)'
+                });
+            }
+            else {
+                result.coverage.passed++;
+            }
+        }
+        // Check components for error UI
+        const componentFiles = this.findFiles('**/components/**/*.tsx');
+        for (const file of componentFiles) {
+            const content = fs.readFileSync(file, 'utf-8');
+            const usesHook = /use[A-Z]\w+\(/g.test(content);
+            const hasErrorUI = /\{error\s*&&|error\s*\?|<Error/g.test(content);
+            if (usesHook && !hasErrorUI) {
+                result.coverage.total++;
+                result.coverage.checked++;
+                result.issues.push({
+                    severity: 'warning',
+                    file,
+                    message: 'Component missing error UI handling',
+                    suggestion: 'Add {error && <ErrorMessage />} to handle errors'
+                });
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+    /**
+     * Rule 4: Loading States (15% of bugs)
+     */
+    async rule4_LoadingStates() {
+        const result = {
+            rule: 'Loading States',
+            ruleNumber: 4,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        // Check hooks for loading state
+        const hookFiles = this.findFiles('**/hooks/**/*.ts', '**/hooks/**/*.tsx');
+        for (const file of hookFiles) {
+            result.coverage.total++;
+            result.coverage.checked++;
+            const content = fs.readFileSync(file, 'utf-8');
+            const hasLoadingState = /loading|Loading|isLoading|isPending|isFetching/gi.test(content);
+            const hasAsyncOperation = /useQuery|useMutation|fetch|axios/gi.test(content);
+            if (hasAsyncOperation && !hasLoadingState) {
+                result.issues.push({
+                    severity: 'warning',
+                    file,
+                    message: 'Hook with async operation missing loading state',
+                    suggestion: 'Add isLoading or isPending state'
+                });
+            }
+            else {
+                result.coverage.passed++;
+            }
+        }
+        // Check components for loading UI
+        const componentFiles = this.findFiles('**/components/**/*.tsx', '**/app/**/*.tsx');
+        for (const file of componentFiles) {
+            const content = fs.readFileSync(file, 'utf-8');
+            const usesAsyncHook = /use\w*(Query|Mutation|Fetch)/g.test(content);
+            const hasLoadingUI = /\{.*loading.*\?|<.*Skeleton|<.*Spinner|<.*Loading/gi.test(content);
+            if (usesAsyncHook && !hasLoadingUI) {
+                result.coverage.total++;
+                result.coverage.checked++;
+                result.issues.push({
+                    severity: 'warning',
+                    file,
+                    message: 'Component missing loading UI',
+                    suggestion: 'Add {isLoading && <Skeleton />} or similar loading state'
+                });
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+    /**
+     * Rule 5: API Type Safety (10% of bugs)
+     */
+    async rule5_APITypeSafety() {
+        const result = {
+            rule: 'API Type Safety',
+            ruleNumber: 5,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        // Check API routes
+        const apiFiles = this.findFiles('**/api/**/*.ts', '**/api/**/*.tsx');
+        for (const file of apiFiles) {
+            result.coverage.total++;
+            result.coverage.checked++;
+            const content = fs.readFileSync(file, 'utf-8');
+            // Check for request validation
+            const hasRequestParse = /\.parse\(.*req\.body|\.parse\(.*request\.json/gi.test(content);
+            const hasPostOrPut = /export.*POST|export.*PUT|export.*PATCH/gi.test(content);
+            if (hasPostOrPut && !hasRequestParse) {
+                result.issues.push({
+                    severity: 'critical',
+                    file,
+                    message: 'API endpoint missing request validation',
+                    suggestion: 'Add RequestSchema.parse(req.body) to validate input'
+                });
+            }
+            else if (hasPostOrPut) {
+                result.coverage.passed++;
+            }
+            // Check for response validation
+            const hasResponseParse = /return.*\.parse\(|Response\.json\(.*\.parse/gi.test(content);
+            const returnsData = /return.*Response|return.*res\./gi.test(content);
+            if (returnsData && !hasResponseParse) {
+                result.issues.push({
+                    severity: 'warning',
+                    file,
+                    message: 'API endpoint missing response validation',
+                    suggestion: 'Validate response with ResponseSchema.parse(data) before returning'
+                });
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+    /**
+     * Rule 6: Registry Usage - No Raw Strings
+     */
+    async rule6_RegistryUsage() {
+        const result = {
+            rule: 'Registry Usage (No Raw Strings)',
+            ruleNumber: 6,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        const allTsFiles = this.findFiles('**/*.ts', '**/*.tsx');
+        for (const file of allTsFiles) {
+            // Skip node_modules and .next
+            if (file.includes('node_modules') || file.includes('.next'))
+                continue;
+            const content = fs.readFileSync(file, 'utf-8');
+            const lines = content.split('\n');
+            // Check for raw route strings
+            const rawRoutes = content.match(/['"`]\/(?!\/)[a-zA-Z][^'"`]*['"`]/g);
+            if (rawRoutes) {
+                // Deduplicate routes
+                const uniqueRoutes = [...new Set(rawRoutes)];
+                result.coverage.total += uniqueRoutes.length;
+                result.coverage.checked += uniqueRoutes.length;
+                uniqueRoutes.forEach(route => {
+                    // Skip imports and certain patterns
+                    if (!route.includes('import') && !route.includes('require')) {
+                        // Find line number
+                        let lineNum = 0;
+                        for (let i = 0; i < lines.length; i++) {
+                            if (lines[i].includes(route)) {
+                                lineNum = i + 1;
+                                break;
+                            }
+                        }
+                        result.issues.push({
+                            severity: 'warning',
+                            file,
+                            line: lineNum,
+                            message: `Raw route string found: ${route}`,
+                            suggestion: 'Use Routes.routeName from constants/registry',
+                            codeSnippet: route
+                        });
+                    }
+                    else {
+                        result.coverage.passed++;
+                    }
+                });
+            }
+            // Check for raw query keys
+            const rawQueryKeys = content.match(/\[['"`]\w+['"`]\]/g);
+            if (rawQueryKeys) {
+                // Deduplicate keys
+                const uniqueKeys = [...new Set(rawQueryKeys)];
+                result.coverage.total += uniqueKeys.length;
+                result.coverage.checked += uniqueKeys.length;
+                uniqueKeys.forEach(key => {
+                    // Find line number
+                    let lineNum = 0;
+                    for (let i = 0; i < lines.length; i++) {
+                        if (lines[i].includes(key)) {
+                            lineNum = i + 1;
+                            break;
+                        }
+                    }
+                    result.issues.push({
+                        severity: 'warning',
+                        file,
+                        line: lineNum,
+                        message: `Raw query key found: ${key}`,
+                        suggestion: 'Use QueryKeys.keyName() from constants/registry',
+                        codeSnippet: key
+                    });
+                });
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+    /**
+     * Rule 7: Mutation Hygiene
+     */
+    async rule7_MutationHygiene() {
+        const result = {
+            rule: 'Mutation Hygiene',
+            ruleNumber: 7,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        const hookFiles = this.findFiles('**/hooks/**/*.ts', '**/hooks/**/*.tsx');
+        for (const file of hookFiles) {
+            const content = fs.readFileSync(file, 'utf-8');
+            if (content.includes('useMutation')) {
+                result.coverage.total++;
+                result.coverage.checked++;
+                const hasInvalidation = /invalidateQueries|setQueryData|refetch/gi.test(content);
+                const hasOptimisticUpdate = /optimisticUpdate|onMutate.*setQueryData/gi.test(content);
+                const hasRollback = hasOptimisticUpdate ? /onError.*setQueryData/gi.test(content) : true;
+                if (!hasInvalidation) {
+                    result.issues.push({
+                        severity: 'critical',
+                        file,
+                        message: 'Mutation missing cache invalidation',
+                        suggestion: 'Add queryClient.invalidateQueries() in onSuccess callback'
+                    });
+                }
+                else {
+                    result.coverage.passed++;
+                }
+                if (hasOptimisticUpdate && !hasRollback) {
+                    result.issues.push({
+                        severity: 'warning',
+                        file,
+                        message: 'Optimistic update without rollback',
+                        suggestion: 'Add rollback logic in onError callback'
+                    });
+                }
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+    /**
+     * Rule 8: Form Validation (Both Sides)
+     */
+    async rule8_FormValidation() {
+        const result = {
+            rule: 'Form Validation (Both Sides)',
+            ruleNumber: 8,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        // Check client-side forms
+        const formFiles = this.findFiles('**/components/**/*.tsx', '**/app/**/*.tsx');
+        for (const file of formFiles) {
+            const content = fs.readFileSync(file, 'utf-8');
+            if (content.includes('<form') || content.includes('useForm')) {
+                result.coverage.total++;
+                result.coverage.checked++;
+                const hasZodResolver = /zodResolver|yupResolver/gi.test(content);
+                const hasValidation = /validate|validation|rules/gi.test(content);
+                if (!hasZodResolver && !hasValidation) {
+                    result.issues.push({
+                        severity: 'warning',
+                        file,
+                        message: 'Form without client-side validation',
+                        suggestion: 'Use useForm({ resolver: zodResolver(Schema) })'
+                    });
+                }
+                else {
+                    result.coverage.passed++;
+                }
+            }
+        }
+        // Check server-side validation in API routes
+        const apiFiles = this.findFiles('**/api/**/*.ts');
+        for (const file of apiFiles) {
+            const content = fs.readFileSync(file, 'utf-8');
+            if (/POST|PUT|PATCH/gi.test(content)) {
+                const hasServerValidation = /\.parse\(|\.safeParse\(/gi.test(content);
+                if (!hasServerValidation) {
+                    result.issues.push({
+                        severity: 'critical',
+                        file,
+                        message: 'API endpoint without server-side validation',
+                        suggestion: 'Add Schema.parse(req.body) before processing'
+                    });
+                }
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+    /**
+     * Rule 9: Auth Guard Matrix
+     */
+    async rule9_AuthGuardMatrix() {
+        const result = {
+            rule: 'Auth Guard Matrix',
+            ruleNumber: 9,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        // Define protected route patterns
+        const protectedRoutePatterns = [
+            'admin', 'dashboard', 'settings', 'profile', 'account',
+            'billing', 'subscription', 'api/admin', 'api/user'
+        ];
+        // Check page routes for auth guards
+        const pageFiles = this.findFiles('**/app/**/page.tsx', '**/pages/**/*.tsx');
+        for (const file of pageFiles) {
+            const routePath = file.toLowerCase();
+            const isProtected = protectedRoutePatterns.some(pattern => routePath.includes(pattern));
+            if (isProtected) {
+                result.coverage.total++;
+                result.coverage.checked++;
+                const content = fs.readFileSync(file, 'utf-8');
+                const hasAuthGuard = /withAuth|requireAuth|useAuth|getServerSession|middleware/gi.test(content);
+                if (!hasAuthGuard) {
+                    result.issues.push({
+                        severity: 'critical',
+                        file,
+                        message: 'Protected route without auth guard',
+                        suggestion: 'Wrap component with withAuth() or add auth check'
+                    });
+                }
+                else {
+                    result.coverage.passed++;
+                }
+            }
+        }
+        // Check API routes for auth
+        const apiFiles = this.findFiles('**/api/**/*.ts');
+        for (const file of apiFiles) {
+            const routePath = file.toLowerCase();
+            const isProtected = protectedRoutePatterns.some(pattern => routePath.includes(pattern));
+            if (isProtected) {
+                result.coverage.total++;
+                result.coverage.checked++;
+                const content = fs.readFileSync(file, 'utf-8');
+                const hasAuthCheck = /verifyAuth|getSession|verifyToken|isAuthenticated/gi.test(content);
+                if (!hasAuthCheck) {
+                    result.issues.push({
+                        severity: 'critical',
+                        file,
+                        message: 'Protected API endpoint without auth verification',
+                        suggestion: 'Add verifyAuth() or session check at the beginning'
+                    });
+                }
+                else {
+                    result.coverage.passed++;
+                }
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+    /**
+     * Helper Methods
+     */
+    checkTwoWayValidation(content) {
+        // Check if both input and output are validated
+        const hasInputValidation = /\.parse\(.*(?:req|request|input|data|body)/gi.test(content);
+        const hasOutputValidation = /\.parse\(.*(?:result|response|output|rows|data)\)/gi.test(content);
+        return hasInputValidation && hasOutputValidation;
+    }
+    findFiles(...patterns) {
+        const files = [];
+        const searchDirs = ['src', 'app', 'pages', 'components', 'lib', 'hooks', 'api'];
+        for (const dir of searchDirs) {
+            const dirPath = path.join(this.projectPath, dir);
+            if (fs.existsSync(dirPath)) {
+                const foundFiles = this.getFilesRecursive(dirPath, patterns);
+                files.push(...foundFiles);
+            }
+        }
+        return files;
+    }
+    getFilesRecursive(dir, patterns) {
+        const files = [];
+        if (!fs.existsSync(dir))
+            return files;
+        const items = fs.readdirSync(dir, { withFileTypes: true });
+        for (const item of items) {
+            const fullPath = path.join(dir, item.name);
+            if (item.isDirectory() && !item.name.startsWith('.') && item.name !== 'node_modules') {
+                files.push(...this.getFilesRecursive(fullPath, patterns));
+            }
+            else if (item.isFile()) {
+                // Check if file matches any pattern
+                const matches = patterns.some(pattern => {
+                    // Handle different pattern types
+                    if (pattern.includes('**/')) {
+                        // Pattern like **/hooks/**/*.ts or **/app/**/*.tsx
+                        const parts = pattern.split('**/').filter(p => p);
+                        // Check each part
+                        for (const part of parts) {
+                            if (part.includes('*')) {
+                                // Handle file extension patterns like *.ts
+                                const ext = part.replace('*', '');
+                                if (!fullPath.endsWith(ext))
+                                    return false;
+                            }
+                            else if (part.includes('/')) {
+                                // Handle folder patterns like hooks/ or components/
+                                const folder = part.replace(/\//g, path.sep).replace(/\*\./g, '');
+                                if (!fullPath.includes(path.sep + folder.replace(/\*$/, '')))
+                                    return false;
+                            }
+                        }
+                        return true;
+                    }
+                    else if (pattern.startsWith('**/')) {
+                        // Pattern like **/*.ts
+                        const ext = pattern.replace('**/', '').replace('*', '');
+                        return fullPath.endsWith(ext);
+                    }
+                    else {
+                        // Simple contains check
+                        return fullPath.includes(pattern);
+                    }
+                });
+                if (matches) {
+                    files.push(fullPath);
+                }
+            }
+        }
+        return files;
+    }
+    calculateScore(coverage) {
+        if (coverage.total === 0)
+            return 100; // No items to check = pass
+        return Math.round((coverage.passed / coverage.total) * 100);
+    }
+    generateSummary() {
+        const criticalIssues = this.results.reduce((sum, r) => sum + r.issues.filter(i => i.severity === 'critical').length, 0);
+        const warnings = this.results.reduce((sum, r) => sum + r.issues.filter(i => i.severity === 'warning').length, 0);
+        const passedRules = this.results.filter(r => r.status === 'pass').length;
+        const overallScore = Math.round(this.results.reduce((sum, r) => sum + r.score, 0) / this.results.length);
+        // Calculate specific metrics
+        const metrics = {
+            contractCoverage: this.results[0]?.score || 0, // Rule 1
+            parseCoverage: (this.results[0]?.score || 0 + this.results[4]?.score || 0) / 2, // Rules 1 & 5
+            dbDriftScore: this.results[0]?.score || 0, // Rule 1
+            cacheHygiene: this.results[6]?.score || 0, // Rule 7
+            authCoverage: this.results[8]?.score || 0, // Rule 9
+        };
+        return {
+            overallScore,
+            passedRules,
+            totalRules: 9,
+            criticalIssues,
+            warnings,
+            results: this.results,
+            metrics
+        };
+    }
+    /**
+     * Generate actionable report
+     */
+    generateReport(summary) {
+        let report = '# 🔍 AI Observer - 9 Rules Validation Report\n\n';
+        // Overall health
+        const grade = summary.overallScore >= 90 ? 'A' :
+            summary.overallScore >= 80 ? 'B' :
+                summary.overallScore >= 70 ? 'C' :
+                    summary.overallScore >= 60 ? 'D' : 'F';
+        report += `## Overall Health: ${grade} (${summary.overallScore}%)\n\n`;
+        report += `- ✅ Passed Rules: ${summary.passedRules}/9\n`;
+        report += `- ❌ Critical Issues: ${summary.criticalIssues}\n`;
+        report += `- ⚠️  Warnings: ${summary.warnings}\n\n`;
+        // Key metrics
+        report += '## Key Metrics\n\n';
+        report += `- Contract Coverage: ${summary.metrics.contractCoverage}%\n`;
+        report += `- Parse Coverage: ${summary.metrics.parseCoverage}%\n`;
+        report += `- DB Drift Score: ${summary.metrics.dbDriftScore}%\n`;
+        report += `- Cache Hygiene: ${summary.metrics.cacheHygiene}%\n`;
+        report += `- Auth Coverage: ${summary.metrics.authCoverage}%\n\n`;
+        // Detailed results
+        report += '## Detailed Results\n\n';
+        for (const result of summary.results) {
+            const icon = result.status === 'pass' ? '✅' :
+                result.status === 'warning' ? '⚠️' : '❌';
+            report += `### ${icon} Rule ${result.ruleNumber}: ${result.rule}\n`;
+            report += `Score: ${result.score}% | Issues: ${result.issues.length}\n\n`;
+            if (result.issues.length > 0) {
+                report += 'Issues found:\n';
+                result.issues.slice(0, 5).forEach(issue => {
+                    report += `- **${issue.severity}**: ${issue.message}\n`;
+                    report += `  File: ${issue.file}\n`;
+                    report += `  Fix: ${issue.suggestion}\n`;
+                });
+                if (result.issues.length > 5) {
+                    report += `\n...and ${result.issues.length - 5} more issues\n`;
+                }
+                report += '\n';
+            }
+        }
+        // Action items
+        report += '## 🎯 Priority Actions\n\n';
+        const criticalResults = summary.results
+            .filter(r => r.issues.some(i => i.severity === 'critical'))
+            .sort((a, b) => a.score - b.score);
+        if (criticalResults.length > 0) {
+            report += '1. **Fix Critical Issues First:**\n';
+            criticalResults.slice(0, 3).forEach(r => {
+                report += `   - ${r.rule}: ${r.issues.filter(i => i.severity === 'critical').length} critical issues\n`;
+            });
+        }
+        return report;
+    }
+    /**
+     * Check for large files that AI might struggle with
+     */
+    async checkFileSizeWarnings() {
+        const result = {
+            rule: 'File Size Warnings',
+            ruleNumber: 10,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        const files = this.findFiles('**/*.ts', '**/*.tsx');
+        for (const file of files) {
+            const content = fs.readFileSync(file, 'utf-8');
+            const lines = content.split('\n').length;
+            result.coverage.total++;
+            result.coverage.checked++;
+            if (lines > 1000) {
+                result.issues.push({
+                    severity: 'critical',
+                    file,
+                    message: `File has ${lines} lines (exceeds 1000 lines)`,
+                    suggestion: 'Split into smaller modules - AI loses context in large files'
+                });
+            }
+            else if (lines > 500) {
+                result.issues.push({
+                    severity: 'warning',
+                    file,
+                    message: `File has ${lines} lines (exceeds 500 lines)`,
+                    suggestion: 'Consider splitting - AI performs better with smaller files'
+                });
+            }
+            else {
+                result.coverage.passed++;
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+    /**
+     * Check for duplicate function definitions
+     */
+    async checkDuplicateFunctions() {
+        const result = {
+            rule: 'Duplicate Functions',
+            ruleNumber: 11,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        const functionMap = new Map();
+        const files = this.findFiles('**/*.ts', '**/*.tsx');
+        for (const file of files) {
+            const content = fs.readFileSync(file, 'utf-8');
+            // Find all function declarations and exports
+            const functionRegex = /(?:export\s+)?(?:async\s+)?function\s+(\w+)|(?:export\s+)?const\s+(\w+)\s*=\s*(?:async\s*)?\(/g;
+            let match;
+            while ((match = functionRegex.exec(content)) !== null) {
+                const funcName = match[1] || match[2];
+                if (funcName) {
+                    if (!functionMap.has(funcName)) {
+                        functionMap.set(funcName, []);
+                    }
+                    functionMap.get(funcName).push(file);
+                }
+            }
+        }
+        // Check for duplicates
+        for (const [funcName, locations] of functionMap.entries()) {
+            result.coverage.total++;
+            result.coverage.checked++;
+            if (locations.length > 1) {
+                result.issues.push({
+                    severity: 'warning',
+                    file: locations.join(', '),
+                    message: `Function '${funcName}' defined in ${locations.length} files`,
+                    suggestion: 'AI might use wrong version - consolidate or rename functions'
+                });
+            }
+            else {
+                result.coverage.passed++;
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+    /**
+     * Check if exports match what's expected (no missing data)
+     */
+    async checkExportCompleteness() {
+        const result = {
+            rule: 'Export Completeness',
+            ruleNumber: 12,
+            status: 'pass',
+            score: 100,
+            issues: [],
+            coverage: { checked: 0, passed: 0, total: 0 }
+        };
+        const hookFiles = this.findFiles('**/hooks/**/*.ts');
+        for (const file of hookFiles) {
+            const content = fs.readFileSync(file, 'utf-8');
+            result.coverage.total++;
+            result.coverage.checked++;
+            // Check if hook returns an object
+            if (content.includes('return {')) {
+                // Extract what's being returned
+                const returnMatch = content.match(/return\s+{([^}]+)}/);
+                if (returnMatch) {
+                    const returnedItems = returnMatch[1].split(',').map(s => s.trim().split(':')[0]);
+                    // Check if common expected items are missing
+                    const expectedItems = ['data', 'loading', 'error'];
+                    const hasDataOperation = /create|update|delete|fetch|get|load/i.test(content);
+                    if (hasDataOperation) {
+                        const missingItems = expectedItems.filter(item => !returnedItems.some(returned => returned.includes(item)));
+                        if (missingItems.length > 0) {
+                            result.issues.push({
+                                severity: 'warning',
+                                file,
+                                message: `Hook may be missing exports: ${missingItems.join(', ')}`,
+                                suggestion: 'AI expects standard returns - add missing properties'
+                            });
+                        }
+                        else {
+                            result.coverage.passed++;
+                        }
+                    }
+                    else {
+                        result.coverage.passed++;
+                    }
+                }
+            }
+            else {
+                result.coverage.passed++;
+            }
+        }
+        result.score = this.calculateScore(result.coverage);
+        result.status = result.score >= 80 ? 'pass' : result.score >= 50 ? 'warning' : 'fail';
+        this.results.push(result);
+    }
+}
+exports.NineRulesValidator = NineRulesValidator;
+// Export for CLI usage
+async function runValidation(projectPath) {
+    const validator = new NineRulesValidator(projectPath || process.cwd());
+    const summary = await validator.validateAll();
+    const report = validator.generateReport(summary);
+    console.log(report);
+    // Save report
+    const reportPath = path.join(projectPath || process.cwd(), '.observer', 'validation-report.md');
+    fs.mkdirSync(path.dirname(reportPath), { recursive: true });
+    fs.writeFileSync(reportPath, report);
+    console.log(`\n📊 Report saved to: ${reportPath}`);
+    // Exit with error if score is too low
+    if (summary.overallScore < 60) {
+        console.error('\n❌ Validation failed! Score below 60%');
+        process.exit(1);
+    }
+}
