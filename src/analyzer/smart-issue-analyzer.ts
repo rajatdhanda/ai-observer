@@ -4,6 +4,7 @@ import { execSync } from 'child_process';
 import { ValidatorRunner } from '../observer/validator-runner';
 import { DesignSystemValidator } from '../validator/design-system-validator';
 import { CrossLayerValidator } from '../validator/cross-layer-validator';
+import { ComprehensiveContractValidator } from '../validator/comprehensive-contract-validator';
 
 export interface Issue {
   file: string;
@@ -158,6 +159,9 @@ export class SmartIssueAnalyzer {
     
     // 6. Cross-layer validation (Types → Contracts → Golden → Components)
     issues.push(...this.runCrossLayerValidation());
+    
+    // 7. Comprehensive contract validation - checks ALL entities thoroughly
+    issues.push(...this.runComprehensiveContractValidation());
 
     // Store ALL issues (don't filter by severity - we need everything for bucket classification)
     this.issues = issues;
@@ -1045,5 +1049,36 @@ export class SmartIssueAnalyzer {
         callback(fullPath);
       }
     });
+  }
+
+  private runComprehensiveContractValidation(): Issue[] {
+    const issues: Issue[] = [];
+
+    try {
+      console.log('🔍 Running COMPREHENSIVE contract validation for ALL entities...');
+      const validator = new ComprehensiveContractValidator(this.projectPath);
+      const violations = validator.validate();
+      
+      console.log(`📋 Found ${violations.length} contract violations across all entities`);
+      
+      // Convert violations to our Issue format
+      for (const violation of violations) {
+        issues.push({
+          file: violation.file,
+          line: violation.line || 0,
+          type: 'contract_violation',
+          severity: 'critical',
+          message: violation.message,
+          category: 'contract',
+          rule: 'Contract Violation',
+          suggestion: violation.fix
+        });
+      }
+      
+    } catch (error: any) {
+      console.log('⚠️ Comprehensive contract validation error:', error?.message);
+    }
+    
+    return issues;
   }
 }

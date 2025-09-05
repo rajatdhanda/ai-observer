@@ -71,5 +71,6 @@ export declare class SmartIssueAnalyzer {
     private detectEnvVars;
     private getBuildCommands;
     private walkDir;
+    private runComprehensiveContractValidation;
 }
 //# sourceMappingURL=smart-issue-analyzer.d.ts.map

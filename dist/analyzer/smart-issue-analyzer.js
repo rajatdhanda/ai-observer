@@ -40,6 +40,7 @@ const child_process_1 = require("child_process");
 const validator_runner_1 = require("../observer/validator-runner");
 const design_system_validator_1 = require("../validator/design-system-validator");
 const cross_layer_validator_1 = require("../validator/cross-layer-validator");
+const comprehensive_contract_validator_1 = require("../validator/comprehensive-contract-validator");
 class SmartIssueAnalyzer {
     projectPath;
     issues = [];
@@ -144,6 +145,8 @@ class SmartIssueAnalyzer {
         issues.push(...this.runDesignSystemValidation());
         // 6. Cross-layer validation (Types → Contracts → Golden → Components)
         issues.push(...this.runCrossLayerValidation());
+        // 7. Comprehensive contract validation - checks ALL entities thoroughly
+        issues.push(...this.runComprehensiveContractValidation());
         // Store ALL issues (don't filter by severity - we need everything for bucket classification)
         this.issues = issues;
         console.log(`📊 Collected ${this.issues.length} total issues from all validation systems`);
@@ -925,6 +928,32 @@ class SmartIssueAnalyzer {
                 callback(fullPath);
             }
         });
+    }
+    runComprehensiveContractValidation() {
+        const issues = [];
+        try {
+            console.log('🔍 Running COMPREHENSIVE contract validation for ALL entities...');
+            const validator = new comprehensive_contract_validator_1.ComprehensiveContractValidator(this.projectPath);
+            const violations = validator.validate();
+            console.log(`📋 Found ${violations.length} contract violations across all entities`);
+            // Convert violations to our Issue format
+            for (const violation of violations) {
+                issues.push({
+                    file: violation.file,
+                    line: violation.line || 0,
+                    type: 'contract_violation',
+                    severity: 'critical',
+                    message: violation.message,
+                    category: 'contract',
+                    rule: 'Contract Violation',
+                    suggestion: violation.fix
+                });
+            }
+        }
+        catch (error) {
+            console.log('⚠️ Comprehensive contract validation error:', error?.message);
+        }
+        return issues;
     }
 }
 exports.SmartIssueAnalyzer = SmartIssueAnalyzer;
