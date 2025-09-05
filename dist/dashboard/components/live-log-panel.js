@@ -219,10 +219,10 @@ class LiveLogPanel {
 
 
   startPolling() {
-    // Fetch real logs every 2 seconds
+    // Fetch real logs every 30 seconds (reduced from 2 seconds to avoid spam)
     this.pollingInterval = setInterval(() => {
       this.fetchLogs();
-    }, 2000);
+    }, 30000);
     
     // Initial fetch
     this.fetchLogs();
