@@ -272,7 +272,16 @@ class SidebarNavigator {
         filePatterns = [`src/hooks/${entityName}.ts`, `src/hooks/${entityName}.js`];
         break;
       case 'component':
-        filePatterns = [`src/components/core/${entityName}.tsx`, `src/components/core/${entityName}.ts`, `src/components/core/${entityName}.js`];
+        // Check multiple possible component locations
+        filePatterns = [
+          `src/components/core/${entityName}.tsx`, 
+          `src/components/core/${entityName}.ts`, 
+          `src/components/core/${entityName}.js`,
+          `src/components/${entityName}.tsx`,
+          `src/components/${entityName}.ts`, 
+          `app/ui-components/${entityName}/${entityName}.tsx`,
+          `app/ui-components/${entityName}/${entityName}.ts`
+        ];
         break;
       case 'page':
         // Handle different page path formats
@@ -296,7 +305,10 @@ class SidebarNavigator {
           issue.file?.includes(pattern) || 
           issue.file?.includes(entityName.toLowerCase()) ||
           issue.file?.endsWith(`${entityName.toLowerCase()}.tsx`) ||
-          issue.file?.endsWith(`${entityName.toLowerCase()}.ts`)
+          issue.file?.endsWith(`${entityName.toLowerCase()}.ts`) ||
+          issue.file?.includes(`/${entityName}/`) ||  // Match component folder
+          issue.file?.includes(`${entityName}.tsx`) ||
+          issue.file?.includes(`${entityName}.ts`)
         );
         
         if (matchesEntity) {
