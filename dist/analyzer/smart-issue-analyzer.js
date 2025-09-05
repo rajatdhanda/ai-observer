@@ -38,6 +38,7 @@ const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const child_process_1 = require("child_process");
 const validator_runner_1 = require("../observer/validator-runner");
+const design_system_validator_1 = require("../validator/design-system-validator");
 class SmartIssueAnalyzer {
     projectPath;
     issues = [];
@@ -138,6 +139,8 @@ class SmartIssueAnalyzer {
         }
         // 4. Security checks
         issues.push(...this.checkSecurityIssues());
+        // 5. Design system validation
+        issues.push(...this.runDesignSystemValidation());
         // Store ALL issues (don't filter by severity - we need everything for bucket classification)
         this.issues = issues;
         console.log(`📊 Collected ${this.issues.length} total issues from all validation systems`);
@@ -473,6 +476,43 @@ class SmartIssueAnalyzer {
         }
         catch (error) {
             // grep might fail, that's okay
+        }
+        return issues;
+    }
+    runDesignSystemValidation() {
+        const issues = [];
+        try {
+            console.log('🎨 Running design system validation...');
+            const validator = new design_system_validator_1.DesignSystemValidator(this.projectPath);
+            const results = validator.validate();
+            console.log(`🎨 Design system validation found ${results.violations.length} violations`);
+            // Convert design system violations to our Issue format
+            for (const violation of results.violations) {
+                issues.push({
+                    file: violation.file.replace(this.projectPath + '/', ''),
+                    line: violation.line,
+                    type: 'design_system',
+                    severity: violation.severity === 'error' ? 'high' : 'medium',
+                    message: violation.message,
+                    category: 'design_system',
+                    suggestion: violation.suggestion
+                });
+            }
+            console.log(`📊 Design system score: ${results.score}/100, Path: ${results.designSystemPath}`);
+        }
+        catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.log('⚠️ Design system validation failed:', errorMessage);
+            // Add a warning issue if validation fails
+            issues.push({
+                file: 'design-system-check',
+                line: 0,
+                type: 'design_system_error',
+                severity: 'low',
+                message: 'Design system validation could not run: ' + errorMessage,
+                category: 'design_system',
+                suggestion: 'Check if project has React/Vue components to validate'
+            });
         }
         return issues;
     }

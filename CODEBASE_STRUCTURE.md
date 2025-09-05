@@ -1,7 +1,7 @@
 # AI Observer Codebase Structure
 
-**Total Lines of Code: 18,552**  
-**Last Updated:** September 4, 2025
+**Total Lines of Code: 18,590** (+38 lines for design system integration)  
+**Last Updated:** September 4, 2025 (Design system validation added)
 
 ## Directory Structure Overview
 
@@ -30,7 +30,7 @@
 **Purpose:** Advanced code analysis and intelligence
 - `enhanced-data-flow.ts` (863) - Tracks data flow patterns and dependencies
 - `business-logic-analyzer.ts` (742) - Extracts business rules and logic patterns
-- `smart-issue-analyzer.ts` (536) - AI-powered issue prioritization and grouping
+- `smart-issue-analyzer.ts` (574) - AI-powered issue prioritization and grouping + design system validation
 - `rule-generator.ts` (339) - Auto-generates validation rules from patterns
 - `data-flow-mapper.ts` (300) - Maps component-to-database relationships
 - `entity-identifier.ts` (235) - Identifies domain entities and relationships
