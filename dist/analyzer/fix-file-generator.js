@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FixFileGenerator = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+const child_process_1 = require("child_process");
 class FixFileGenerator {
     projectPath;
     issues;
@@ -128,14 +129,34 @@ class FixFileGenerator {
                 enhancement_note: "Enhanced with bucket classification - showing ALL issues"
             }
         };
+        // Run Python pattern analyzer to add AI insights
+        let finalFixFile = enhancedFixFile;
+        try {
+            const pythonScriptPath = path.join(__dirname, 'pattern-insights.py');
+            const result = (0, child_process_1.execSync)(`python3 "${pythonScriptPath}"`, {
+                input: JSON.stringify(enhancedFixFile),
+                encoding: 'utf8',
+                maxBuffer: 10 * 1024 * 1024 // 10MB buffer
+            });
+            // Parse the result which should have ai_insights added
+            const enhancedWithInsights = JSON.parse(result);
+            if (enhancedWithInsights.ai_insights) {
+                finalFixFile = enhancedWithInsights;
+                console.log('✨ Added AI-powered pattern insights');
+            }
+        }
+        catch (error) {
+            console.log('⚠️ Pattern insights skipped (Python not available or error)');
+            // Continue without insights if Python fails
+        }
         // Write the enhanced file to .observer
-        fs.writeFileSync(path.join(outputDir, 'FIX_THIS.json'), JSON.stringify(enhancedFixFile, null, 2));
+        fs.writeFileSync(path.join(outputDir, 'FIX_THIS.json'), JSON.stringify(finalFixFile, null, 2));
         // Also save to src/contracts/fixes.json for new project structure
         const contractsDir = path.join(this.projectPath, 'src', 'contracts');
         if (!fs.existsSync(contractsDir)) {
             fs.mkdirSync(contractsDir, { recursive: true });
         }
-        fs.writeFileSync(path.join(contractsDir, 'fixes.json'), JSON.stringify(enhancedFixFile, null, 2));
+        fs.writeFileSync(path.join(contractsDir, 'fixes.json'), JSON.stringify(finalFixFile, null, 2));
         // Save context.json with essential project info for AI
         const contextFile = {
             analyzed_at: new Date().toISOString(),

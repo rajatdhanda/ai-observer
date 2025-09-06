@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { execSync } from 'child_process';
 import { Issue, IssueBucket } from '../types/analysis-types';
 import { ProjectContextDetector } from './project-context-detector';
 
@@ -98,10 +99,34 @@ export class FixFileGenerator {
       }
     };
     
+    // Run Python pattern analyzer to add AI insights
+    let finalFixFile = enhancedFixFile;
+    try {
+      const pythonScriptPath = path.join(__dirname, 'pattern-insights.py');
+      const result = execSync(
+        `python3 "${pythonScriptPath}"`,
+        {
+          input: JSON.stringify(enhancedFixFile),
+          encoding: 'utf8',
+          maxBuffer: 10 * 1024 * 1024 // 10MB buffer
+        }
+      );
+      
+      // Parse the result which should have ai_insights added
+      const enhancedWithInsights = JSON.parse(result);
+      if (enhancedWithInsights.ai_insights) {
+        finalFixFile = enhancedWithInsights;
+        console.log('✨ Added AI-powered pattern insights');
+      }
+    } catch (error) {
+      console.log('⚠️ Pattern insights skipped (Python not available or error)');
+      // Continue without insights if Python fails
+    }
+    
     // Write the enhanced file to .observer
     fs.writeFileSync(
       path.join(outputDir, 'FIX_THIS.json'),
-      JSON.stringify(enhancedFixFile, null, 2)
+      JSON.stringify(finalFixFile, null, 2)
     );
     
     // Also save to src/contracts/fixes.json for new project structure
@@ -111,7 +136,7 @@ export class FixFileGenerator {
     }
     fs.writeFileSync(
       path.join(contractsDir, 'fixes.json'),
-      JSON.stringify(enhancedFixFile, null, 2)
+      JSON.stringify(finalFixFile, null, 2)
     );
     
     // Save context.json with essential project info for AI

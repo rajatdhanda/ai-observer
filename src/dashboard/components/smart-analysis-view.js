@@ -141,6 +141,49 @@ class SmartAnalysisView {
           </div>
         </div>
 
+        <!-- AI Insights Section -->
+        ${analysis.ai_insights ? `
+        <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+          <h3 style="color: #f8fafc; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+            ✨ AI Pattern Insights
+            <span style="background: #8b5cf6; color: white; font-size: 10px; padding: 2px 8px; border-radius: 12px;">AI Powered</span>
+          </h3>
+          
+          ${analysis.ai_insights.patterns && analysis.ai_insights.patterns.length > 0 ? `
+          <div style="margin-bottom: 16px;">
+            <h4 style="color: #94a3b8; font-size: 12px; margin: 0 0 8px 0; text-transform: uppercase;">Key Patterns</h4>
+            ${analysis.ai_insights.patterns.map(pattern => `
+              <div style="color: #f8fafc; font-size: 13px; padding: 6px 0; border-left: 2px solid #8b5cf6; padding-left: 12px; margin-bottom: 4px;">
+                ${pattern}
+              </div>
+            `).join('')}
+          </div>
+          ` : ''}
+          
+          ${analysis.ai_insights.hotspots && analysis.ai_insights.hotspots.length > 0 ? `
+          <div style="margin-bottom: 16px;">
+            <h4 style="color: #94a3b8; font-size: 12px; margin: 0 0 8px 0; text-transform: uppercase;">Hot Spots</h4>
+            ${analysis.ai_insights.hotspots.map(hotspot => `
+              <div style="color: #ef4444; font-size: 12px; font-family: monospace; padding: 4px 8px; background: rgba(239,68,68,0.1); border-radius: 4px; margin-bottom: 4px;">
+                🔥 ${hotspot}
+              </div>
+            `).join('')}
+          </div>
+          ` : ''}
+          
+          ${analysis.ai_insights.recommendations && analysis.ai_insights.recommendations.length > 0 ? `
+          <div>
+            <h4 style="color: #94a3b8; font-size: 12px; margin: 0 0 8px 0; text-transform: uppercase;">Recommendations</h4>
+            ${analysis.ai_insights.recommendations.map((rec, idx) => `
+              <div style="color: #10b981; font-size: 13px; padding: 8px 12px; background: rgba(16,185,129,0.1); border-radius: 6px; margin-bottom: 6px;">
+                💡 ${rec}
+              </div>
+            `).join('')}
+          </div>
+          ` : ''}
+        </div>
+        ` : ''}
+
         <!-- Issue Filter Panel -->
         ${filterPanelHTML}
 

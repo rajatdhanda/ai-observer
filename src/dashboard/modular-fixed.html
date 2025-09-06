@@ -687,11 +687,53 @@
       });
     };
     
-    window.runValidations = function() {
-      document.getElementById('lastRun').textContent = 'Running...';
-      setTimeout(() => {
-        document.getElementById('lastRun').textContent = 'Last run: ' + new Date().toLocaleTimeString();
-      }, 2000);
+    window.runValidations = async function() {
+      const lastRunEl = document.getElementById('lastRun');
+      const button = event.target;
+      
+      // Disable button and show running state
+      button.disabled = true;
+      button.textContent = '⏳ Running Analysis...';
+      lastRunEl.textContent = 'Analysis in progress...';
+      
+      try {
+        // Call the API to run smart analysis
+        const response = await fetch('/api/run-smart-analysis', {
+          method: 'GET'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          lastRunEl.textContent = 'Last run: ' + new Date().toLocaleTimeString();
+          button.textContent = '✅ Analysis Complete';
+          
+          // Refresh the current view to show new data
+          const activeTab = document.querySelector('.tab.active');
+          if (activeTab && activeTab.textContent.includes('Smart Analysis')) {
+            // Reload smart analysis view
+            loadSmartAnalysisView();
+          }
+          
+          // Reset button text after 3 seconds
+          setTimeout(() => {
+            button.textContent = '🔄 Run Validations';
+            button.disabled = false;
+          }, 3000);
+        } else {
+          throw new Error(result.error || 'Analysis failed');
+        }
+      } catch (error) {
+        console.error('Analysis failed:', error);
+        lastRunEl.textContent = 'Analysis failed: ' + error.message;
+        button.textContent = '❌ Analysis Failed';
+        
+        // Reset button after error
+        setTimeout(() => {
+          button.textContent = '🔄 Run Validations';
+          button.disabled = false;
+        }, 3000);
+      }
     };
     
     window.exportReport = function() {
