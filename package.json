@@ -6,7 +6,8 @@
     "ai-observer": "./bin/ai-analyze"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy-assets",
+    "copy-assets": "cp -r src/dashboard/components dist/dashboard/ && cp src/dashboard/*.html dist/dashboard/ && cp src/dashboard/*.css dist/dashboard/ 2>/dev/null || true",
     "dashboard": "ts-node src/dashboard/index.ts",
     "dashboard:here": "ts-node src/dashboard/index.ts .",
     "dashboard:streax": "ts-node src/dashboard/index.ts test-projects/streax",
