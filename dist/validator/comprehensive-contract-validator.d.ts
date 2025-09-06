@@ -30,6 +30,13 @@ export declare class ComprehensiveContractValidator {
     private validateComponentFile;
     private validateTypeDefinitions;
     private validateDatabaseSchemas;
+    private isForeignKeyReference;
+    private isDescriptiveUIField;
+    private determineEntityContext;
+    getStats(): {
+        total: number;
+        critical: number;
+    };
 }
 export {};
 //# sourceMappingURL=comprehensive-contract-validator.d.ts.map

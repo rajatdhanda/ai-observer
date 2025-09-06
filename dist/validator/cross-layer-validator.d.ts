@@ -42,6 +42,8 @@ export declare class CrossLayerValidator {
     private hasContractProperty;
     private snakeToCamel;
     private screenNameToType;
+    private isEntityContext;
+    private isDescriptiveUIField;
     getStats(): {
         total: number;
         critical: number;

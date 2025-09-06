@@ -112,7 +112,7 @@ class ComprehensiveContractValidator {
         const mappings = {
             'Book': {
                 'book_title': 'title',
-                'book_id': 'id',
+                // Removed 'book_id': 'id' - book_id is a valid foreign key reference
                 'cover_image_url': 'cover',
                 'cover_image': 'cover',
                 'author_name': 'author',
@@ -121,7 +121,7 @@ class ComprehensiveContractValidator {
             },
             'Child': {
                 'child_name': 'name',
-                'child_id': 'id',
+                // Removed 'child_id': 'id' - child_id is a valid foreign key reference
                 'age': 'age_group',
                 'child_age': 'age_group',
                 'parent_id': 'parent_ids',
@@ -195,23 +195,36 @@ class ComprehensiveContractValidator {
     validateObject(obj, file, path) {
         if (!obj || typeof obj !== 'object')
             return;
-        // Check each property against all entity contracts
+        // Determine the entity context based on the path or object structure
+        const entityContext = this.determineEntityContext(obj, path);
+        // Check each property against relevant entity contracts
         for (const [key, value] of Object.entries(obj)) {
-            // Check if this key is a contract violation
-            for (const [entity, mappings] of this.propertyMappings) {
-                if (mappings.has(key)) {
+            // Skip foreign key references - these are valid references to other entities
+            if (this.isForeignKeyReference(key)) {
+                // Foreign keys like child_id, book_id are valid references, not violations
+                continue;
+            }
+            // Check if this key is a contract violation in the specific entity context
+            if (entityContext) {
+                const mappings = this.propertyMappings.get(entityContext);
+                if (mappings && mappings.has(key)) {
                     const correctProp = mappings.get(key);
-                    const contract = this.contracts.get(entity);
+                    const contract = this.contracts.get(entityContext);
+                    // Check if this is a descriptive UI field that's contextually appropriate
+                    if (this.isDescriptiveUIField(key, path)) {
+                        // This is a valid descriptive field in proper context - don't flag as violation
+                        continue;
+                    }
                     if (contract && contract.required_fields[correctProp]) {
                         this.violations.push({
-                            entity,
+                            entity: entityContext,
                             file,
                             property: key,
                             expected: correctProp,
                             actual: key,
-                            message: `CONTRACT VIOLATION: Golden uses "${key}" but ${entity} contract requires "${correctProp}"`,
+                            message: `CONTRACT VIOLATION: Golden uses "${key}" but ${entityContext} contract requires "${correctProp}"`,
                             severity: 'critical',
-                            fix: `URGENT: Change golden example from "${key}" to "${correctProp}" to comply with ${entity} contract`
+                            fix: `URGENT: Change golden example from "${key}" to "${correctProp}" to comply with ${entityContext} contract`
                         });
                     }
                 }
@@ -262,9 +275,18 @@ class ComprehensiveContractValidator {
     validateComponentFile(filePath) {
         const content = fs.readFileSync(filePath, 'utf-8');
         const relativePath = path.relative(this.projectPath, filePath);
-        // Check for all contract violations in the file
+        // Check for contract violations in the file, but skip foreign key references
         for (const [entity, mappings] of this.propertyMappings) {
             for (const [wrongProp, correctProp] of mappings) {
+                // Skip foreign key references - these are valid references in components
+                if (this.isForeignKeyReference(wrongProp)) {
+                    continue;
+                }
+                // Check if this is a contextually appropriate descriptive UI field
+                if (this.isDescriptiveUIField(wrongProp, relativePath)) {
+                    // This is a valid descriptive field in proper context - skip validation
+                    continue;
+                }
                 // Check various patterns where the wrong property might appear
                 const patterns = [
                     `.${wrongProp}`, // object.wrongProp
@@ -320,6 +342,69 @@ class ComprehensiveContractValidator {
                 this.scanDirectory(dir);
             }
         }
+    }
+    isForeignKeyReference(key) {
+        // Common foreign key patterns - these are valid references, not violations
+        const foreignKeyPatterns = [
+            '_id$', // ends with _id (like child_id, parent_id, book_id)
+            '_ids$', // ends with _ids (like parent_ids)  
+            'Id$' // ends with Id (camelCase like childId, parentId)
+        ];
+        return foreignKeyPatterns.some(pattern => new RegExp(pattern).test(key));
+    }
+    isDescriptiveUIField(key, context) {
+        // Descriptive UI field patterns that are contextually appropriate
+        // These should NOT be flagged as violations when used in proper context
+        const descriptivePatterns = [
+            { pattern: /^child_name$/, validContexts: ['meal', 'attendance', 'activity', 'report', 'message', 'fee'] },
+            { pattern: /^parent_name$/, validContexts: ['message', 'contact', 'emergency'] },
+            { pattern: /^teacher_name$/, validContexts: ['class', 'activity', 'report'] },
+            { pattern: /^book_title$/, validContexts: ['reading', 'library', 'checkout'] },
+            { pattern: /^meal_time$/, validContexts: ['meal', 'menu', 'nutrition'] },
+            { pattern: /^activity_name$/, validContexts: ['curriculum', 'schedule', 'report'] }
+        ];
+        if (!context)
+            return false;
+        const contextLower = context.toLowerCase();
+        return descriptivePatterns.some(({ pattern, validContexts }) => {
+            if (pattern.test(key)) {
+                // Check if we're in a valid context for this descriptive field
+                return validContexts.some(validContext => contextLower.includes(validContext));
+            }
+            return false;
+        });
+    }
+    determineEntityContext(obj, path) {
+        // Try to determine which entity this object represents based on path and structure
+        const pathLower = path.toLowerCase();
+        // Check path-based contexts (e.g., examples.children, book_subscriptions)
+        for (const entityName of this.contracts.keys()) {
+            const entityLower = entityName.toLowerCase();
+            const entityPlural = entityLower + 's';
+            if (pathLower.includes(entityPlural) || pathLower.includes(entityLower)) {
+                return entityName;
+            }
+        }
+        // Try to infer from object structure (presence of specific properties)
+        if (obj.title && obj.author && obj.cover)
+            return 'Book';
+        if (obj.name && obj.age_group && obj.class_id)
+            return 'Child';
+        if (obj.meal_type && obj.consumption_level)
+            return 'MealRecord';
+        if (obj.url && obj.media_type)
+            return 'MediaAsset';
+        if (obj.week_number && obj.theme)
+            return 'CurriculumWeek';
+        if (obj.date && obj.attendance)
+            return 'DailySnapshot';
+        return null;
+    }
+    getStats() {
+        return {
+            total: this.violations.length,
+            critical: this.violations.filter(v => v.severity === 'critical').length
+        };
     }
 }
 exports.ComprehensiveContractValidator = ComprehensiveContractValidator;

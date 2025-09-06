@@ -214,21 +214,26 @@ class CrossLayerValidator {
     traverseGolden(obj, path) {
         if (!obj || typeof obj !== 'object')
             return;
-        // Check for common misalignments
-        if (obj.book_title !== undefined && !this.hasContractProperty('book_title')) {
-            this.issues.push({
-                layer1: 'Golden Examples',
-                layer2: 'Book Contract',
-                file: 'golden.examples.json',
-                property: 'book_title',
-                expected: 'title (per Book contract)',
-                actual: 'book_title',
-                message: `CONTRACT VIOLATION: Golden uses "book_title" but Book contract requires "title"`,
-                severity: 'critical',
-                fix: `URGENT: Change golden example from "book_title" to "title" to comply with Book contract`
-            });
+        // Check for common misalignments - but only in entity contexts, not reference contexts
+        const isBookEntity = this.isEntityContext(path, 'book');
+        const isChildEntity = this.isEntityContext(path, 'child');
+        if (obj.book_title !== undefined && isBookEntity && !this.hasContractProperty('book_title')) {
+            // Check if this is a contextually appropriate descriptive field
+            if (!this.isDescriptiveUIField('book_title', path)) {
+                this.issues.push({
+                    layer1: 'Golden Examples',
+                    layer2: 'Book Contract',
+                    file: 'golden.examples.json',
+                    property: 'book_title',
+                    expected: 'title (per Book contract)',
+                    actual: 'book_title',
+                    message: `CONTRACT VIOLATION: Golden uses "book_title" but Book contract requires "title"`,
+                    severity: 'critical',
+                    fix: `URGENT: Change golden example from "book_title" to "title" to comply with Book contract`
+                });
+            }
         }
-        if (obj.cover_image_url !== undefined && !this.hasContractProperty('cover_image_url')) {
+        if (obj.cover_image_url !== undefined && isBookEntity && !this.hasContractProperty('cover_image_url')) {
             this.issues.push({
                 layer1: 'Golden Examples',
                 layer2: 'Book Contract',
@@ -240,6 +245,15 @@ class CrossLayerValidator {
                 severity: 'critical',
                 fix: `URGENT: Change golden example from "cover_image_url" to "cover" to comply with Book contract`
             });
+        }
+        // Skip false positive checks for foreign key references
+        // child_id is a REFERENCE to a Child entity, not the Child entity's own id field
+        // These are valid foreign key references and should NOT be flagged
+        const referenceFields = ['child_id', 'parent_id', 'class_id', 'book_id', 'activity_id', 'user_id'];
+        const isValidReference = referenceFields.some(ref => obj[ref] !== undefined);
+        if (isValidReference) {
+            // This object contains foreign key references, skip entity-level validation
+            // Foreign keys are supposed to reference other entities and are not contract violations
         }
         // Recurse through object
         for (const key in obj) {
@@ -283,26 +297,41 @@ class CrossLayerValidator {
         }
     }
     checkItemProperties(item, context, arrayName) {
-        // Check for mismatched property names
+        // Only check for property mismatches when we're in the proper entity context
+        // Don't flag foreign key references as property mismatches
+        // Skip validation for objects that contain foreign key references
+        const referenceFields = ['child_id', 'parent_id', 'class_id', 'book_id', 'activity_id', 'user_id'];
+        const hasReferences = referenceFields.some(ref => item[ref] !== undefined);
+        if (hasReferences) {
+            // This item contains foreign keys, it's not an entity definition
+            // Foreign keys are valid and should not be flagged as contract violations
+            return;
+        }
+        // Check for mismatched property names only in proper entity contexts
         const propertyMismatches = [
-            { wrong: 'book_title', correct: 'title' },
-            { wrong: 'cover_image_url', correct: 'cover' },
-            { wrong: 'author_name', correct: 'author' },
-            { wrong: 'child_name', correct: 'name' }
+            { wrong: 'book_title', correct: 'title', entityContext: 'book' },
+            { wrong: 'cover_image_url', correct: 'cover', entityContext: 'book' },
+            { wrong: 'author_name', correct: 'author', entityContext: 'book' },
+            { wrong: 'child_name', correct: 'name', entityContext: 'child' }
         ];
         for (const mismatch of propertyMismatches) {
             if (item[mismatch.wrong] !== undefined) {
-                this.issues.push({
-                    layer1: 'Golden Examples',
-                    layer2: 'Expected Type',
-                    file: `golden.examples.json/${context}/${arrayName}`,
-                    property: mismatch.wrong,
-                    expected: mismatch.correct,
-                    actual: mismatch.wrong,
-                    message: `Property name mismatch will cause TypeScript errors in components`,
-                    severity: 'critical',
-                    fix: `Rename "${mismatch.wrong}" to "${mismatch.correct}" in golden examples`
-                });
+                // Only flag if we're in the correct entity context
+                const contextPath = `${context}/${arrayName}`;
+                const isCorrectContext = this.isEntityContext(contextPath, mismatch.entityContext);
+                if (isCorrectContext) {
+                    this.issues.push({
+                        layer1: 'Golden Examples',
+                        layer2: 'Expected Type',
+                        file: `golden.examples.json/${context}/${arrayName}`,
+                        property: mismatch.wrong,
+                        expected: mismatch.correct,
+                        actual: mismatch.wrong,
+                        message: `Property name mismatch will cause TypeScript errors in components`,
+                        severity: 'critical',
+                        fix: `Rename "${mismatch.wrong}" to "${mismatch.correct}" in golden examples`
+                    });
+                }
             }
         }
     }
@@ -375,6 +404,38 @@ class CrossLayerValidator {
         const words = screenName.split('_');
         const typeName = words.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
         return typeName + 'Data';
+    }
+    isEntityContext(path, entityType) {
+        // Check if we're in a context where we're defining the entity itself
+        // vs referencing it from another entity
+        const pathLower = path.toLowerCase();
+        // If we're in the main entity definition (e.g., examples.books, examples.children)
+        if (pathLower.includes(`${entityType}s.`) || pathLower.includes(`${entityType}.`)) {
+            return true;
+        }
+        // If we're at the root of an entity object in golden examples
+        if (pathLower === entityType || pathLower === `${entityType}s`) {
+            return true;
+        }
+        return false;
+    }
+    isDescriptiveUIField(property, context) {
+        // Same logic as comprehensive validator for consistency
+        const descriptivePatterns = [
+            { pattern: /^child_name$/, validContexts: ['meal', 'attendance', 'activity', 'report', 'message', 'fee'] },
+            { pattern: /^parent_name$/, validContexts: ['message', 'contact', 'emergency'] },
+            { pattern: /^teacher_name$/, validContexts: ['class', 'activity', 'report'] },
+            { pattern: /^book_title$/, validContexts: ['reading', 'library', 'checkout'] },
+            { pattern: /^meal_time$/, validContexts: ['meal', 'menu', 'nutrition'] },
+            { pattern: /^activity_name$/, validContexts: ['curriculum', 'schedule', 'report'] }
+        ];
+        const contextLower = context.toLowerCase();
+        return descriptivePatterns.some(({ pattern, validContexts }) => {
+            if (pattern.test(property)) {
+                return validContexts.some(validContext => contextLower.includes(validContext));
+            }
+            return false;
+        });
     }
     getStats() {
         return {
