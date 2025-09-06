@@ -304,6 +304,7 @@ class RefactoringAnalysisView {
             color: white; border: none; padding: 12px 24px;
             border-radius: 8px; cursor: pointer; font-size: 14px;
             font-weight: 600; transition: transform 0.2s; width: 100%;
+            margin-top: 24px; margin-bottom: 24px; display: block; position: relative;
           " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
             🔧 Analyze Refactoring Impact
           </button>
