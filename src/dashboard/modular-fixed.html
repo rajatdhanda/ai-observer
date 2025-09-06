@@ -455,9 +455,8 @@
           pages: state.pages
         });
         
-        // Select first table
-        const firstTable = Object.keys(state.tables)[0];
-        if (firstTable) selectItem(firstTable, 'table');
+        // Load the overview view initially (since Overview tab is active by default)
+        loadOverviewView();
         
       } catch (error) {
         console.error('Init failed:', error);
@@ -699,6 +698,28 @@
       alert('Export functionality coming soon!');
     };
     
+    // Load overview view - shows selected entity details
+    function loadOverviewView() {
+      // If an item is selected, show it
+      if (state.selectedItem) {
+        selectItem(state.selectedItem, state.selectedType);
+      } else {
+        // Otherwise show the first table or a welcome message
+        const firstTable = Object.keys(state.tables)[0];
+        if (firstTable) {
+          selectItem(firstTable, 'table');
+        } else {
+          const mainContent = document.getElementById('mainContent');
+          mainContent.innerHTML = `
+            <div style="padding: 32px; text-align: center;">
+              <h2 style="color: var(--text-primary); margin-bottom: 16px;">📊 Entity Overview</h2>
+              <p style="color: var(--text-muted);">Select an entity from the sidebar to view details</p>
+            </div>
+          `;
+        }
+      }
+    }
+
     // Tab switching functionality
     window.switchTab = function(tab) {
       // Remove active class from all tabs
@@ -721,13 +742,8 @@
           // Show query inspector for overview
           if (rightPanel) rightPanel.style.display = 'block';
           
-          // Restore the selected item view (or select first table if none)
-          if (state.selectedItem) {
-            selectItem(state.selectedItem, state.selectedType);
-          } else {
-            const firstTable = Object.keys(state.tables)[0];
-            if (firstTable) selectItem(firstTable, 'table');
-          }
+          // Load overview content (entity details view)
+          loadOverviewView();
           break;
           
         case 'architecture':
