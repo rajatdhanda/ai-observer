@@ -96,7 +96,7 @@ class RefactoringAnalysisView {
                   <select id="addColumnEntityField" style="
                     width: 100%; padding: 8px 12px; background: #2d2d2d; border: 1px solid #444;
                     border-radius: 6px; color: #f8fafc; font-size: 14px;
-                  ">
+                  " onchange="showExistingFields('addColumn')">
                     <option value="">Select entity</option>
                     <option value="Child">Child</option>
                     <option value="Lead">Lead</option>
@@ -141,6 +141,10 @@ class RefactoringAnalysisView {
                   width: 100%; padding: 8px 12px; background: #2d2d2d; border: 1px solid #444;
                   border-radius: 6px; color: #f8fafc; font-size: 14px;
                 " />
+              </div>
+              <div id="addColumnExistingFields" style="margin-top: 15px; padding: 12px; background: #1a1a1a; border-radius: 6px; border: 1px solid #333; display: none;">
+                <label style="color: #64748b; font-size: 13px; display: block; margin-bottom: 8px;">📋 Existing fields in this entity:</label>
+                <div id="addColumnFieldsList" style="color: #94a3b8; font-size: 13px; font-family: monospace;"></div>
               </div>
             </div>
             
@@ -880,6 +884,47 @@ function showFieldInfo() {
   }
 }
 
+// Show existing fields when entity is selected (for Add Column scenario)
+async function showExistingFields(refactoringType) {
+  let entity = '';
+  let displayDiv = null;
+  let listDiv = null;
+  
+  if (refactoringType === 'addColumn') {
+    entity = document.getElementById('addColumnEntityField').value;
+    displayDiv = document.getElementById('addColumnExistingFields');
+    listDiv = document.getElementById('addColumnFieldsList');
+  }
+  
+  if (!entity || !displayDiv || !listDiv) {
+    if (displayDiv) displayDiv.style.display = 'none';
+    return;
+  }
+  
+  try {
+    const response = await fetch('/api/schema-intelligence');
+    const data = await response.json();
+    
+    if (data.entities && data.entities[entity]) {
+      const fields = data.entities[entity].fields || [];
+      if (fields.length > 0) {
+        listDiv.innerHTML = fields.map(f => `• ${f}`).join('<br>');
+        displayDiv.style.display = 'block';
+      } else {
+        listDiv.innerHTML = 'No fields found in TypeScript types. Common fields: id, created_at, updated_at';
+        displayDiv.style.display = 'block';
+      }
+    } else {
+      // Fallback for common fields
+      listDiv.innerHTML = 'Common fields: id, name, created_at, updated_at';
+      displayDiv.style.display = 'block';
+    }
+  } catch (error) {
+    listDiv.innerHTML = 'Unable to load fields';
+    displayDiv.style.display = 'block';
+  }
+}
+
 // Export for use
 window.RefactoringAnalysisView = RefactoringAnalysisView;
 window.runFullRefactoringAnalysis = runFullRefactoringAnalysis;
@@ -891,3 +936,4 @@ window.addTestViolation = addTestViolation;
 window.removeTestViolation = removeTestViolation;
 window.populateRenameFieldsDropdown = populateRenameFieldsDropdown;
 window.showFieldInfo = showFieldInfo;
+window.showExistingFields = showExistingFields;
