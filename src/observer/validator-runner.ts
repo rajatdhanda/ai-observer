@@ -284,27 +284,30 @@ export class ValidatorRunner {
    */
   private validateContracts() {
     try {
-      // Try to find contracts.yaml in the project directory
+      // Try to find contracts file in the project directory
       const projectDir = path.dirname(this.mapPath);
-      let contractsPath = path.join(projectDir, 'contracts.yaml');
       
-      // Fallback to common locations if not found
-      if (!fs.existsSync(contractsPath)) {
-        const possiblePaths = [
-          path.join(projectDir, 'src/contracts/contracts.yaml'),  // ADDED: Check src/contracts/
-          path.join(projectDir, 'contracts/contracts.yaml'),      // Check contracts/
-          'test-projects/streax/contracts.yaml',
-          'contracts/contracts.yaml',
-          '.observer/contracts.yaml'
-        ];
-        
-        const foundPath = possiblePaths.find(p => fs.existsSync(p));
-        if (!foundPath) {
-          console.log('No contracts.yaml found, skipping contract validation');
-          return;
-        }
-        contractsPath = foundPath;
+      // Check all possible paths for contract files
+      const possiblePaths = [
+        path.join(projectDir, 'src/contract/contract.yaml'),     // Check src/contract/ (singular)
+        path.join(projectDir, 'src/contract/contracts.yaml'),    // Check src/contract/ (plural)
+        path.join(projectDir, 'src/contracts/contract.yaml'),    // Check src/contracts/ (singular)
+        path.join(projectDir, 'src/contracts/contracts.yaml'),   // Check src/contracts/ (plural)
+        path.join(projectDir, 'contract/contract.yaml'),         // Check contract/ (singular)
+        path.join(projectDir, 'contract/contracts.yaml'),        // Check contract/ (plural)
+        path.join(projectDir, 'contracts/contracts.yaml'),       // Check contracts/
+        path.join(projectDir, 'contract.yaml'),                  // Root (singular)
+        path.join(projectDir, 'contracts.yaml'),                 // Root (plural)
+        'test-projects/streax/contracts.yaml',
+        '.observer/contracts.yaml'
+      ];
+      
+      const foundPath = possiblePaths.find(p => fs.existsSync(p));
+      if (!foundPath) {
+        console.log('No contracts file found, skipping contract validation');
+        return;
       }
+      const contractsPath = foundPath;
       
       // Run contract detector
       const detector = new ContractDetector(this.mapPath, contractsPath);

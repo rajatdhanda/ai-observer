@@ -67,9 +67,22 @@ class ComprehensiveContractValidator {
         return this.violations;
     }
     loadContracts() {
-        const contractsPath = path.join(this.projectPath, 'src', 'contracts', 'contracts.yaml');
-        if (!fs.existsSync(contractsPath)) {
-            console.log('⚠️  No contracts.yaml found at:', contractsPath);
+        // Check multiple possible locations for the contracts file
+        const possiblePaths = [
+            path.join(this.projectPath, 'src', 'contract', 'contract.yaml'),
+            path.join(this.projectPath, 'src', 'contract', 'contracts.yaml'),
+            path.join(this.projectPath, 'src', 'contracts', 'contract.yaml'),
+            path.join(this.projectPath, 'src', 'contracts', 'contracts.yaml'),
+        ];
+        let contractsPath = '';
+        for (const p of possiblePaths) {
+            if (fs.existsSync(p)) {
+                contractsPath = p;
+                break;
+            }
+        }
+        if (!contractsPath) {
+            console.log('⚠️  No contracts file found in any of:', possiblePaths);
             return;
         }
         try {

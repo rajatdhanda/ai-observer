@@ -47,10 +47,18 @@ export class ContractValidator {
    */
   private loadContracts() {
     const possiblePaths = [
+      // Support both singular and plural forms
+      path.join(this.projectPath, 'src', 'contract', 'contract.yaml'),
+      path.join(this.projectPath, 'src', 'contract', 'contracts.yaml'),
+      path.join(this.projectPath, 'src', 'contracts', 'contract.yaml'),
+      path.join(this.projectPath, 'src', 'contracts', 'contracts.yaml'),
+      path.join(this.projectPath, 'contract', 'contract.yaml'),
+      path.join(this.projectPath, 'contract', 'contracts.yaml'),
       path.join(this.projectPath, 'contracts', 'contracts.yaml'),
       path.join(this.projectPath, 'contracts', 'contracts.json'),
       path.join(this.projectPath, '.contracts.yaml'),
       path.join(this.projectPath, '.contracts.json'),
+      path.join(this.projectPath, 'contract.yaml'),
       path.join(this.projectPath, 'contracts.yaml'),
       path.join(this.projectPath, 'contracts.json'),
     ];

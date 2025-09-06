@@ -113,6 +113,9 @@ class CrossLayerValidator {
     loadContracts() {
         // Check multiple possible contract locations
         const contractPaths = [
+            path.join(this.projectPath, 'src', 'contract', 'contract.yaml'),
+            path.join(this.projectPath, 'src', 'contract', 'contracts.yaml'),
+            path.join(this.projectPath, 'src', 'contracts', 'contract.yaml'),
             path.join(this.projectPath, 'src', 'contracts', 'contracts.yaml'),
             path.join(this.projectPath, 'src', 'contracts', 'contracts.json'),
             path.join(this.projectPath, '.observer', 'contracts.json')
