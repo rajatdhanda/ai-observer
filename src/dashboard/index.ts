@@ -355,6 +355,214 @@ class Dashboard {
             }));
           }
         });
+      } else if (req.url === '/api/advanced-refactoring-analysis' && req.method === 'POST') {
+        let body = '';
+        req.on('data', (chunk) => {
+          body += chunk.toString();
+        });
+        req.on('end', () => {
+          try {
+            const { refactoringData } = JSON.parse(body);
+            
+            if (!this.refactoringAnalyzer) {
+              this.refactoringAnalyzer = new RefactoringAnalyzer(this.projectPath);
+            }
+            
+            // Convert refactoring data to violations format for analysis
+            let violations = [];
+            let suggestions = [];
+            
+            switch(refactoringData.type) {
+              case 'rename':
+                violations = [{
+                  property: refactoringData.fromProperty,
+                  expected: refactoringData.toProperty,
+                  entity: refactoringData.entity,
+                  file: 'user-input',
+                  line: 1
+                }];
+                suggestions = this.refactoringAnalyzer.getRefactoringSuggestions(violations);
+                break;
+                
+              case 'add_column':
+                // Generate analysis for adding a new field
+                suggestions = [{
+                  pattern: `Add ${refactoringData.fieldName} (${refactoringData.dataType})`,
+                  fromProperty: 'N/A',
+                  toProperty: refactoringData.fieldName,
+                  entity: refactoringData.entity,
+                  totalFiles: 0,
+                  totalReferences: 0,
+                  riskLevel: 'LOW',
+                  estimatedMinutes: 5,
+                  affectedFiles: [],
+                  executionSteps: [
+                    {
+                      step: 1,
+                      description: `Add ${refactoringData.fieldName} field to ${refactoringData.entity}`,
+                      files: ['schema files', 'type definitions'],
+                      riskLevel: 'LOW',
+                      automated: true
+                    },
+                    {
+                      step: 2,
+                      description: 'Update forms and validation',
+                      files: ['UI components', 'validation schemas'],
+                      riskLevel: 'LOW',
+                      automated: false
+                    }
+                  ],
+                  dependencyChain: ['types', 'validation', 'UI forms']
+                }];
+                break;
+                
+              case 'change_type':
+                // Analyze impact of changing field type
+                const typeChangePattern = `${refactoringData.fieldName}: ${refactoringData.fromType} → ${refactoringData.toType}`;
+                const typeRisk = this.calculateTypeChangeRisk(refactoringData.fromType, refactoringData.toType);
+                
+                suggestions = [{
+                  pattern: typeChangePattern,
+                  fromProperty: refactoringData.fieldName,
+                  toProperty: refactoringData.fieldName,
+                  entity: refactoringData.entity,
+                  totalFiles: typeRisk.files,
+                  totalReferences: typeRisk.references,
+                  riskLevel: typeRisk.level,
+                  estimatedMinutes: typeRisk.minutes,
+                  affectedFiles: [],
+                  executionSteps: [
+                    {
+                      step: 1,
+                      description: `Update ${refactoringData.fieldName} type definition`,
+                      files: ['type files', 'schema files'],
+                      riskLevel: typeRisk.level,
+                      automated: true
+                    },
+                    {
+                      step: 2,
+                      description: 'Migrate existing data',
+                      files: ['database', 'data files'],
+                      riskLevel: 'HIGH',
+                      automated: false
+                    },
+                    {
+                      step: 3,
+                      description: 'Update validation and parsing logic',
+                      files: ['validation', 'parsers', 'converters'],
+                      riskLevel: typeRisk.level,
+                      automated: false
+                    }
+                  ],
+                  dependencyChain: ['types', 'data', 'validation', 'UI']
+                }];
+                break;
+                
+              case 'remove_field':
+                // Analyze impact of removing a field
+                violations = [{
+                  property: refactoringData.fieldName,
+                  expected: 'REMOVED',
+                  entity: refactoringData.entity,
+                  file: 'user-input',
+                  line: 1
+                }];
+                
+                const baseAnalysis = this.refactoringAnalyzer.getRefactoringSuggestions(violations);
+                suggestions = baseAnalysis.map(s => ({
+                  ...s,
+                  pattern: `Remove ${refactoringData.fieldName}`,
+                  riskLevel: refactoringData.migrationStrategy === 'hard_delete' ? 'HIGH' : 'MEDIUM',
+                  executionSteps: [
+                    {
+                      step: 1,
+                      description: `${refactoringData.migrationStrategy === 'hard_delete' ? 'Hard delete' : 'Soft delete'} ${refactoringData.fieldName}`,
+                      files: ['schema files', 'type definitions'],
+                      riskLevel: refactoringData.migrationStrategy === 'hard_delete' ? 'HIGH' : 'LOW',
+                      automated: refactoringData.migrationStrategy !== 'data_migration'
+                    },
+                    ...(refactoringData.migrationStrategy === 'data_migration' ? [{
+                      step: 2,
+                      description: 'Migrate data to new field structure',
+                      files: ['data migration scripts'],
+                      riskLevel: 'MEDIUM',
+                      automated: false
+                    }] : []),
+                    {
+                      step: refactoringData.migrationStrategy === 'data_migration' ? 3 : 2,
+                      description: 'Remove field references from codebase',
+                      files: ['components', 'forms', 'validation'],
+                      riskLevel: 'MEDIUM',
+                      automated: false
+                    }
+                  ]
+                }));
+                break;
+                
+              case 'restructure':
+                // Analyze impact of object restructuring
+                suggestions = [{
+                  pattern: `Restructure ${refactoringData.objectPath} (${refactoringData.restructureType})`,
+                  fromProperty: refactoringData.objectPath,
+                  toProperty: `${refactoringData.objectPath}_${refactoringData.restructureType}`,
+                  entity: refactoringData.entity,
+                  totalFiles: 5,
+                  totalReferences: 15,
+                  riskLevel: 'HIGH',
+                  estimatedMinutes: 30,
+                  affectedFiles: [],
+                  executionSteps: [
+                    {
+                      step: 1,
+                      description: `${refactoringData.restructureType} object structure`,
+                      files: ['type definitions', 'schema files'],
+                      riskLevel: 'HIGH',
+                      automated: false
+                    },
+                    {
+                      step: 2,
+                      description: 'Update all object references',
+                      files: ['components', 'utilities', 'services'],
+                      riskLevel: 'HIGH',
+                      automated: false
+                    },
+                    {
+                      step: 3,
+                      description: 'Migrate existing data structure',
+                      files: ['data migration', 'database updates'],
+                      riskLevel: 'HIGH',
+                      automated: false
+                    }
+                  ],
+                  dependencyChain: ['types', 'data', 'components', 'services']
+                }];
+                break;
+                
+              default:
+                throw new Error(`Unknown refactoring type: ${refactoringData.type}`);
+            }
+            
+            const totalImpact = {
+              patterns: suggestions.length,
+              totalFiles: suggestions.reduce((sum, s) => sum + (s.totalFiles || 0), 0),
+              totalReferences: suggestions.reduce((sum, s) => sum + (s.totalReferences || 0), 0),
+              highRiskChanges: suggestions.filter(s => s.riskLevel === 'HIGH').length
+            };
+            
+            const results = { suggestions, totalImpact };
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(results));
+          } catch (error: any) {
+            this.errorCount++;
+            this.logger.error('Advanced refactoring analysis failed', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+              error: 'Advanced refactoring analysis failed',
+              message: error.message,
+              project: this.projectPath
+            }));
+          }
+        });
       } else if (req.url === '/api/test-violation' && req.method === 'POST') {
         try {
           // Simple test: run the refactoring analyzer directly with a mock violation
@@ -453,6 +661,28 @@ class Dashboard {
             res.end(JSON.stringify({ error: error.message }));
           }
         });
+      } else if (req.url === '/api/schema-intelligence') {
+        // Schema intelligence for smart refactoring (REUSING TypeExtractor)
+        try {
+          const TypeExtractor = require('../analyzer/type-extractor').TypeExtractor;
+          const extractor = new TypeExtractor();
+          const typeSystem = await extractor.extract(this.projectPath);
+          
+          // Transform to simple entity->fields mapping
+          const entities: any = {};
+          for (const def of [...typeSystem.interfaces, ...typeSystem.types]) {
+            entities[def.name] = {
+              fields: def.properties.map((p: any) => p.name),
+              types: Object.fromEntries(def.properties.map((p: any) => [p.name, p.type]))
+            };
+          }
+          
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ entities, count: Object.keys(entities).length }));
+        } catch (error: any) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: error.message, entities: {} }));
+        }
       } else if (req.url === '/api/snapshots' && req.method === 'GET') {
         // Get list of snapshots
         try {
@@ -1011,6 +1241,29 @@ Available projects: ${this.availableProjects.length}
   private runDesignSystemValidation() {
     const validator = new DesignSystemValidator(this.projectPath);
     return validator.validate();
+  }
+
+  private calculateTypeChangeRisk(fromType: string, toType: string) {
+    const riskMatrix: { [key: string]: { level: string, files: number, references: number, minutes: number } } = {
+      'string->number': { level: 'HIGH', files: 8, references: 25, minutes: 20 },
+      'string->boolean': { level: 'MEDIUM', files: 4, references: 12, minutes: 10 },
+      'string->date': { level: 'HIGH', files: 6, references: 18, minutes: 15 },
+      'number->string': { level: 'MEDIUM', files: 5, references: 15, minutes: 12 },
+      'number->boolean': { level: 'HIGH', files: 7, references: 20, minutes: 18 },
+      'number->date': { level: 'HIGH', files: 8, references: 24, minutes: 22 },
+      'boolean->string': { level: 'LOW', files: 3, references: 8, minutes: 8 },
+      'boolean->number': { level: 'MEDIUM', files: 4, references: 12, minutes: 10 },
+      'date->string': { level: 'MEDIUM', files: 5, references: 16, minutes: 12 },
+      'date->number': { level: 'HIGH', files: 6, references: 18, minutes: 15 }
+    };
+    
+    const key = `${fromType}->${toType}`;
+    return riskMatrix[key] || { 
+      level: 'MEDIUM', 
+      files: 3, 
+      references: 10, 
+      minutes: 10 
+    };
   }
 
   private async discoverProjectFiles(type: string = 'all'): Promise<string[]> {
