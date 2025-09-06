@@ -66,8 +66,27 @@ window.loadFileAnalysisView = async function() {
 function analyzeFiles(mapData) {
   const files = [];
   
+  // System files to exclude from analysis
+  const systemFiles = [
+    'package-lock.json',
+    'yarn.lock', 
+    'pnpm-lock.yaml',
+    'node_modules',
+    '.next',
+    'tsconfig.tsbuildinfo',
+    'next-env.d.ts'
+  ];
+  
+  const isSystemFile = (path) => {
+    const fileName = path.split('/').pop();
+    return systemFiles.some(sf => fileName === sf || path.includes('node_modules') || path.includes('.next/'));
+  };
+  
   // Process each file in the map
   for (const [path, data] of Object.entries(mapData.files || {})) {
+    // Skip system files
+    if (isSystemFile(path)) continue;
+    
     const metrics = data.metrics || {};
     const exports = mapData.exports[path] || [];
     const imports = mapData.imports[path] || [];
@@ -155,7 +174,9 @@ function renderFileSummary(analysis) {
 }
 
 function renderLargestFiles(analysis) {
-  const topFiles = analysis.bySize.slice(0, 10);
+  const allFiles = analysis.bySize;
+  const initialLimit = 10;
+  const maxLimit = 30; // Reasonable limit to avoid performance issues
   
   return `
     <div style="
@@ -165,44 +186,89 @@ function renderLargestFiles(analysis) {
       padding: 20px;
       margin-bottom: 20px;
     ">
-      <h3 style="color: #ef4444; margin: 0 0 16px 0;">🔴 Largest Files (Split These!)</h3>
-      
-      <div style="display: grid; gap: 8px;">
-        ${topFiles.map(file => {
-          const color = file.loc > 1000 ? '#ef4444' : file.loc > 500 ? '#f59e0b' : '#10b981';
-          return `
-            <div style="
-              background: #0f0f0f;
-              padding: 12px;
-              border-radius: 8px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              border-left: 3px solid ${color};
-            ">
-              <div>
-                <div style="color: #f8fafc; font-size: 14px;">${file.name}</div>
-                <div style="color: #64748b; font-size: 11px; font-family: monospace;">
-                  ${file.path}
-                </div>
-              </div>
-              <div style="display: flex; gap: 16px; align-items: center;">
-                <div style="text-align: center;">
-                  <div style="color: ${color}; font-size: 18px; font-weight: bold;">${file.loc}</div>
-                  <div style="color: #64748b; font-size: 10px;">LOC</div>
-                </div>
-                <div style="text-align: center;">
-                  <div style="color: #94a3b8; font-size: 14px;">${file.functions}</div>
-                  <div style="color: #64748b; font-size: 10px;">funcs</div>
-                </div>
-              </div>
-            </div>
-          `;
-        }).join('')}
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="color: #ef4444; margin: 0;">🔴 Largest Files (Split These!)</h3>
+        <div style="color: #64748b; font-size: 12px;">
+          Showing ${Math.min(initialLimit, allFiles.length)} of ${allFiles.length} files
+        </div>
       </div>
+      
+      <div id="largestFilesList" style="display: grid; gap: 8px;">
+        ${renderFileList(allFiles.slice(0, initialLimit))}
+      </div>
+      
+      ${allFiles.length > initialLimit ? `
+        <div style="text-align: center; margin-top: 16px;">
+          <button 
+            onclick="expandLargestFiles(${JSON.stringify(allFiles).replace(/"/g, '&quot;')}, ${initialLimit}, ${maxLimit})"
+            style="
+              background: #374151;
+              color: #f3f4f6;
+              border: 1px solid #4b5563;
+              padding: 8px 16px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 12px;
+            "
+          >
+            Show More (${Math.min(maxLimit - initialLimit, allFiles.length - initialLimit)} more)
+          </button>
+        </div>
+      ` : ''}
     </div>
   `;
 }
+
+function renderFileList(files) {
+  return files.map(file => {
+    const color = file.loc > 1000 ? '#ef4444' : file.loc > 500 ? '#f59e0b' : '#10b981';
+    return `
+      <div style="
+        background: #0f0f0f;
+        padding: 12px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 3px solid ${color};
+      ">
+        <div>
+          <div style="color: #f8fafc; font-size: 14px;">${file.name}</div>
+          <div style="color: #64748b; font-size: 11px; font-family: monospace;">
+            ${file.path}
+          </div>
+        </div>
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div style="text-align: center;">
+            <div style="color: ${color}; font-size: 18px; font-weight: bold;">${file.loc}</div>
+            <div style="color: #64748b; font-size: 10px;">LOC</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="color: #94a3b8; font-size: 14px;">${file.functions}</div>
+            <div style="color: #64748b; font-size: 10px;">funcs</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Global function for expanding the largest files list
+window.expandLargestFiles = function(allFiles, currentLimit, maxLimit) {
+  const newLimit = Math.min(maxLimit, allFiles.length);
+  const listElement = document.getElementById('largestFilesList');
+  const buttonContainer = listElement.parentElement.querySelector('div[style*="text-align: center"]');
+  
+  listElement.innerHTML = renderFileList(allFiles.slice(0, newLimit));
+  
+  if (newLimit >= allFiles.length || newLimit >= maxLimit) {
+    buttonContainer.style.display = 'none';
+  } else {
+    const button = buttonContainer.querySelector('button');
+    button.textContent = `Show More (${Math.min(maxLimit - newLimit, allFiles.length - newLimit)} more)`;
+    button.onclick = () => expandLargestFiles(allFiles, newLimit, maxLimit);
+  }
+};
 
 function renderMostComplexFiles(analysis) {
   const topComplex = analysis.byComplexity.slice(0, 5);
@@ -247,6 +313,9 @@ function renderMostComplexFiles(analysis) {
 function renderDisconnectedFiles(analysis) {
   if (analysis.noExports.length === 0) return '';
   
+  const initialLimit = 20;
+  const maxLimit = 50;
+  
   return `
     <div style="
       background: #1a1a1a;
@@ -262,29 +331,64 @@ function renderDisconnectedFiles(analysis) {
         These files have no exports - might be dead code or missing exports
       </p>
       
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
-        ${analysis.noExports.slice(0, 20).map(file => `
-          <div style="
-            background: #ef444410;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            color: #f8fafc;
-            font-family: monospace;
-          ">
-            ${file.name}
-          </div>
-        `).join('')}
+      <div id="disconnectedFilesList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px;">
+        ${renderDisconnectedFileList(analysis.noExports.slice(0, initialLimit))}
       </div>
       
-      ${analysis.noExports.length > 20 ? `
-        <div style="text-align: center; color: #64748b; margin-top: 12px; font-size: 12px;">
-          ... and ${analysis.noExports.length - 20} more
+      ${analysis.noExports.length > initialLimit ? `
+        <div style="text-align: center; margin-top: 16px;">
+          <button 
+            onclick="expandDisconnectedFiles(${JSON.stringify(analysis.noExports).replace(/"/g, '&quot;')}, ${initialLimit}, ${maxLimit})"
+            style="
+              background: #374151;
+              color: #f3f4f6;
+              border: 1px solid #4b5563;
+              padding: 8px 16px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 12px;
+            "
+          >
+            Show More (${Math.min(maxLimit - initialLimit, analysis.noExports.length - initialLimit)} more)
+          </button>
         </div>
       ` : ''}
     </div>
   `;
 }
+
+function renderDisconnectedFileList(files) {
+  return files.map(file => `
+    <div style="
+      background: #ef444410;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #f8fafc;
+      font-family: monospace;
+      border: 1px solid #ef444420;
+    " title="${file.path}">
+      ${file.name}
+    </div>
+  `).join('');
+}
+
+// Global function for expanding the disconnected files list
+window.expandDisconnectedFiles = function(allFiles, currentLimit, maxLimit) {
+  const newLimit = Math.min(maxLimit, allFiles.length);
+  const listElement = document.getElementById('disconnectedFilesList');
+  const buttonContainer = listElement.parentElement.querySelector('div[style*="text-align: center"]');
+  
+  listElement.innerHTML = renderDisconnectedFileList(allFiles.slice(0, newLimit));
+  
+  if (newLimit >= allFiles.length || newLimit >= maxLimit) {
+    buttonContainer.style.display = 'none';
+  } else {
+    const button = buttonContainer.querySelector('button');
+    button.textContent = `Show More (${Math.min(maxLimit - newLimit, allFiles.length - newLimit)} more)`;
+    button.onclick = () => expandDisconnectedFiles(allFiles, newLimit, maxLimit);
+  }
+};
 
 function renderFileConnections(analysis) {
   // Find most connected files (high imports + exports)

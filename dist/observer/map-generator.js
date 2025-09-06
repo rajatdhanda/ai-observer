@@ -97,7 +97,8 @@ class MapGenerator {
         return filename.endsWith('.ts') ||
             filename.endsWith('.tsx') ||
             filename.endsWith('.js') ||
-            filename.endsWith('.jsx');
+            filename.endsWith('.jsx') ||
+            filename.endsWith('.json');
     }
     async processFile(filePath) {
         const content = fs.readFileSync(filePath, 'utf-8');
@@ -182,8 +183,29 @@ class MapGenerator {
         }
         return names;
     }
-    calculateMetrics(content) {
+    calculateMetrics(content, filePath) {
         const lines = content.split('\n');
+        const isJson = filePath.endsWith('.json');
+        if (isJson) {
+            // For JSON files, just count meaningful lines (non-empty, non-whitespace)
+            const loc = lines.filter(l => l.trim()).length;
+            try {
+                const jsonData = JSON.parse(content);
+                // Estimate complexity based on nesting depth and array sizes
+                const complexity = this.calculateJsonComplexity(jsonData);
+                return {
+                    loc,
+                    functions: 0,
+                    exports: 0,
+                    imports: 0,
+                    complexity
+                };
+            }
+            catch (e) {
+                return { loc, functions: 0, exports: 0, imports: 0, complexity: 1 };
+            }
+        }
+        // Original logic for code files
         const loc = lines.filter(l => l.trim() && !l.trim().startsWith('//')).length;
         // Count functions (simple regex-based)
         const functionMatches = content.match(/function\s+\w+|=>\s*{|async\s+\w+|constructor\s*\(|class\s+\w+/g) || [];
@@ -199,11 +221,30 @@ class MapGenerator {
         const complexity = complexityPatterns.length + 1; // +1 base complexity
         return { loc, functions, exports, imports, complexity };
     }
+    calculateJsonComplexity(obj, depth = 0) {
+        if (depth > 10)
+            return 1; // Prevent infinite recursion
+        let complexity = 1;
+        if (Array.isArray(obj)) {
+            complexity += Math.min(obj.length / 10, 5); // Large arrays add complexity
+            for (const item of obj.slice(0, 3)) { // Sample first few items
+                complexity += this.calculateJsonComplexity(item, depth + 1);
+            }
+        }
+        else if (typeof obj === 'object' && obj !== null) {
+            const keys = Object.keys(obj);
+            complexity += Math.min(keys.length / 5, 3); // Many keys add complexity
+            for (const key of keys.slice(0, 5)) { // Sample first few keys
+                complexity += this.calculateJsonComplexity(obj[key], depth + 1);
+            }
+        }
+        return Math.min(complexity, 50); // Cap at reasonable max
+    }
     analyzeFile(content, filePath) {
         const analysis = {};
         const filename = path.basename(filePath);
         // Add file metrics
-        analysis.metrics = this.calculateMetrics(content);
+        analysis.metrics = this.calculateMetrics(content, filePath);
         // Check for validation patterns
         if (content.includes('.parse(') || content.includes('.safeParse(')) {
             analysis.hasParse = 1;
