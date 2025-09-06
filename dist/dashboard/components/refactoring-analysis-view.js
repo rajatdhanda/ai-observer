@@ -22,6 +22,17 @@ class RefactoringAnalysisView {
           </p>
         </div>
 
+        <!-- Run Analysis Button -->
+        <button id="runRefactoringBtn" onclick="runAdvancedRefactoringAnalysis()" style="
+          background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+          color: white; border: none; padding: 10px 16px;
+          border-radius: 6px; cursor: pointer; font-size: 14px;
+          font-weight: 500; display: inline-flex; align-items: center; gap: 8px;
+          margin: 16px 0; transition: transform 0.2s;
+        " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+          🔧 Run Analysis
+        </button>
+
         <!-- Control Panel -->
         <div style="background: #1a1a1a; border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid #333;">
           <h3 style="color: #f8fafc; margin: 0 0 16px 0;">Real Refactoring Scenarios (80% Coverage)</h3>
@@ -298,16 +309,6 @@ class RefactoringAnalysisView {
               </div>
             </div>
           </div>
-          
-          <button id="runRefactoringBtn" onclick="runAdvancedRefactoringAnalysis()" style="
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            color: white; border: none; padding: 12px 24px;
-            border-radius: 8px; cursor: pointer; font-size: 14px;
-            font-weight: 600; transition: transform 0.2s; width: 100%;
-            margin-top: 24px; margin-bottom: 24px; display: block; position: relative;
-          " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-            🔧 Analyze Refactoring Impact
-          </button>
         </div>
 
         <!-- Results Container -->

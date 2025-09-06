@@ -22,17 +22,15 @@ class RefactoringAnalysisView {
           </p>
         </div>
 
-        <!-- CRITICAL ACTION BUTTON - VISIBLE TEST -->
+        <!-- Run Analysis Button -->
         <button id="runRefactoringBtn" onclick="runAdvancedRefactoringAnalysis()" style="
-          background: #ff0000 !important; /* BRIGHT RED FOR VISIBILITY */
-          color: white !important; border: none !important; 
-          padding: 20px 30px !important; font-size: 18px !important;
-          font-weight: bold !important; width: 100% !important;
-          margin: 20px 0 !important; display: block !important;
-          border-radius: 8px !important; cursor: pointer !important;
-          z-index: 9999 !important; position: relative !important;
-        ">
-          🔧 ANALYZE REFACTORING IMPACT - CLICK ME!!!
+          background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+          color: white; border: none; padding: 10px 16px;
+          border-radius: 6px; cursor: pointer; font-size: 14px;
+          font-weight: 500; display: inline-flex; align-items: center; gap: 8px;
+          margin: 16px 0; transition: transform 0.2s;
+        " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+          🔧 Run Analysis
         </button>
 
         <!-- Control Panel -->
