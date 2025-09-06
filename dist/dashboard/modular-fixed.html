@@ -294,6 +294,7 @@
     <button class="tab" onclick="switchTab('9rules')">9 Rules</button>
     <button class="tab" onclick="switchTab('files')">File Analysis</button>
     <button class="tab" onclick="switchTab('smart')">🤖 Smart Analysis</button>
+    <button class="tab" onclick="switchTab('refactoring')">🔧 Refactoring</button>
     <button class="tab" onclick="switchTab('log')">📊 Log</button>
     <button class="tab" onclick="switchTab('cta')">💀 CTAs</button>
   </div>
@@ -349,6 +350,7 @@
   <script src="/components/file-analysis-view.js"></script>
   <script src="/components/issue-filter-panel.js"></script>
   <script src="/components/smart-analysis-view.js"></script>
+  <script src="/components/refactoring-analysis-view.js"></script>
   <script src="/components/smart-refresh-manager.js"></script>
   <script src="/components/live-log-panel.js"></script>
   <!-- Production Configuration -->
@@ -814,6 +816,12 @@
           loadSmartAnalysisView();
           break;
           
+        case 'refactoring':
+          // Hide query inspector for refactoring analysis
+          if (rightPanel) rightPanel.style.display = 'none';
+          loadRefactoringView();
+          break;
+          
         case 'log':
           // Hide query inspector for log view
           if (rightPanel) rightPanel.style.display = 'none';
@@ -843,6 +851,12 @@
     window.loadSmartAnalysisView = async function() {
       const smartView = new SmartAnalysisView('mainContent');
       await smartView.render();
+    };
+    
+    // Refactoring View loader
+    window.loadRefactoringView = async function() {
+      const refactoringView = new RefactoringAnalysisView('mainContent');
+      await refactoringView.render();
     };
     
     // Log View loader  
