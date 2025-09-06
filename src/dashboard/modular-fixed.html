@@ -739,8 +739,10 @@
       
       switch(tab) {
         case 'overview':
-          // Show query inspector for overview
+          // Show query inspector and sidebar for overview
           if (rightPanel) rightPanel.style.display = 'block';
+          const sidebarContent = document.getElementById('sidebarContent');
+          if (sidebarContent) sidebarContent.style.display = 'block';
           
           // Load overview content (entity details view)
           loadOverviewView();
