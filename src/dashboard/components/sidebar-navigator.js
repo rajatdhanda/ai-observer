@@ -18,6 +18,7 @@ class SidebarNavigator {
     this.selectedType = null;
     this.validationData = null;
     this.smartAnalysisData = null;
+    this.schemaEntities = null; // Additional schema entities for refactoring
   }
   
   async render(data) {
@@ -26,8 +27,26 @@ class SidebarNavigator {
     // Fetch validation data before rendering
     await this.updateValidationCounts();
     
+    // Fetch schema entities ONLY if we're on refactoring tab and don't have tables
+    if ((!this.data.tables || Object.keys(this.data.tables).length === 0) && !this.schemaEntities) {
+      await this.fetchSchemaEntities();
+    }
+    
     this.renderSidebar();
     this.attachEventListeners();
+  }
+  
+  async fetchSchemaEntities() {
+    try {
+      const response = await fetch('/api/schema-intelligence');
+      if (response.ok) {
+        const data = await response.json();
+        this.schemaEntities = data.entities || {};
+      }
+    } catch (error) {
+      console.log('Could not fetch schema entities:', error);
+      this.schemaEntities = {};
+    }
   }
   
   processData(data) {
@@ -84,6 +103,7 @@ class SidebarNavigator {
       </div>
       
       ${this.renderSmartAnalysisTotal()}
+      ${this.schemaEntities ? this.renderEntitiesSection() : ''}
       ${this.renderTableSection()}
       ${this.renderHookSection()}
       ${this.renderComponentSection()}
@@ -112,6 +132,58 @@ class SidebarNavigator {
           <span style="color: #f59e0b;">${total.structural}S</span>
           <span style="color: #3b82f6;">${total.compliance}C</span>
           <span style="color: #64748b;">= ${total.blockers + total.structural + total.compliance} total</span>
+        </div>
+      </div>
+    `;
+  }
+  
+  renderEntitiesSection() {
+    if (!this.schemaEntities || Object.keys(this.schemaEntities).length === 0) {
+      return '';
+    }
+    
+    const entities = Object.entries(this.schemaEntities).sort(([a], [b]) => a.localeCompare(b));
+    const count = entities.length;
+    
+    return `
+      <div class="entity-section" style="border-bottom: 1px solid #252525;">
+        <div style="padding: 12px 16px; background: #1a1a1a; display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="margin: 0; font-size: 13px; color: #94a3b8; text-transform: uppercase; font-weight: 600;">🔷 ENTITIES</h3>
+          <span style="background: #252525; padding: 2px 8px; border-radius: 12px; font-size: 11px; color: #64748b;">${count}</span>
+        </div>
+        <div id="entitiesList">
+          ${entities.map(([name, data]) => this.renderEntityItem(name, data)).join('')}
+        </div>
+      </div>
+    `;
+  }
+  
+  renderEntityItem(name, data) {
+    const fields = data.fields || [];
+    const fieldCount = fields.length;
+    
+    return `
+      <div class="table-item entity-item" data-entity="${name}" style="
+        padding: 10px 16px;
+        cursor: pointer;
+        border-bottom: 1px solid #1a1a1a;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.15s;
+      " 
+      onmouseover="this.style.background='#1a1a1a'" 
+      onmouseout="this.style.background='transparent'"
+      onclick="window.handleEntityClick && window.handleEntityClick('${name}', ${JSON.stringify(data).replace(/"/g, '&quot;')})">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 18px;">📘</span>
+          <div>
+            <div style="color: #e2e8f0; font-size: 13px; font-weight: 500;">${name}</div>
+            <div style="color: #64748b; font-size: 11px; margin-top: 2px;">${fieldCount} fields</div>
+          </div>
+        </div>
+        <div style="color: #3b82f6; font-size: 11px;">
+          TS
         </div>
       </div>
     `;

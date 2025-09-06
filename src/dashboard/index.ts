@@ -1159,13 +1159,17 @@ Available projects: ${this.availableProjects.length}
   
   private runMapValidation() {
     try {
-      // Generate or use existing map
-      const mapPath = path.join(__dirname, '..', '..', 'streax-map.json');
+      // Use the correct path for codebase-map.json
+      const mapPath = path.join(this.projectPath, '.observer', 'codebase-map.json');
       
       if (!fs.existsSync(mapPath)) {
-        // Generate map first
+        // Generate map first if it doesn't exist
         const { MapGenerator } = require('../observer/map-generator');
         const generator = new MapGenerator(this.projectPath);
+        const observerDir = path.join(this.projectPath, '.observer');
+        if (!fs.existsSync(observerDir)) {
+          fs.mkdirSync(observerDir, { recursive: true });
+        }
         generator.saveToFile(mapPath);
       }
       
@@ -1177,23 +1181,36 @@ Available projects: ${this.availableProjects.length}
       const runner = new ValidatorRunner(mapPath);
       const validationResults = runner.runAll();
       
-      // Return both map data and validation results
+      // Return both map data, validation results, and tables data that sidebar expects
       return {
         ...validationResults,
         files: mapData.files || {},
         exports: mapData.exports || {},
         imports: mapData.imports || {},
-        contractDetections: validationResults.contractDetections
+        tables: mapData.tables || {},  // This is what the sidebar needs!
+        contractDetections: validationResults.contractDetections,
+        summary: {
+          ...validationResults.summary,
+          bySeverity: {
+            critical: validationResults.violations?.filter((v: any) => v.severity === 'critical').length || 0,
+            warning: validationResults.violations?.filter((v: any) => v.severity === 'warning').length || 0,
+            info: validationResults.violations?.filter((v: any) => v.severity === 'info').length || 0
+          }
+        }
       };
     } catch (error) {
       console.error('Map validation error:', error);
       return { 
         violations: [], 
         score: 0, 
-        summary: { error: (error as Error).message },
+        summary: { 
+          error: (error as Error).message,
+          bySeverity: { critical: 0, warning: 0, info: 0 }
+        },
         files: {},
         exports: {},
         imports: {},
+        tables: {},
         contractDetections: null
       };
     }
